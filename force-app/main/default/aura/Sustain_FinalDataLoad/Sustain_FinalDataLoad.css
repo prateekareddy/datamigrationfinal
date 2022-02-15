@@ -1,0 +1,29 @@
+.THIS .align-center{
+    text-align: left;
+}
+
+.THIS .table-class
+{
+        border: 2px solid black;
+
+}
+.THIS .tableFixHead{ 
+                overflow: auto;
+                height: 513px;
+    /*border: 2px solid black;*/
+}
+.THIS .notstarted-status{
+   background: gray;
+    color: white; 
+}
+.THIS .myTextSize{
+    font-size:14px;
+    color: #1434A4;
+    font-weight: bold;
+}
+.THIS .iconStyle {
+    --sds-c-icon-color-foreground-default: #1434A4;
+}
+.THIS .float-right {
+    float: right;
+}

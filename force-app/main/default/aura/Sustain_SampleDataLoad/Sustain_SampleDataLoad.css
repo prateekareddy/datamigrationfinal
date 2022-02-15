@@ -1,0 +1,42 @@
+.THIS .iconStyle {
+    --sds-c-icon-color-foreground-default: #1434A4;
+    }
+    
+    .THIS .myCheckbox{
+        display: inline-block;
+        float: left;
+        margin-right: 10px
+    }
+    
+    .THIS .myText{
+        font-size:12px;
+    }
+    
+    .THIS .myTextSize{
+        font-size:14px;
+        color: #1434A4;
+        font-weight: bold;
+    }
+    
+    .THIS .mydualListbox{
+        margin-right: 20px
+    }
+    
+    .THIS .floatRight{
+        float: right;
+    }
+    
+    .THIS .display-inline {
+        display: inline-block;
+    }
+
+    .THIS .float-right {
+        float: right;
+    }
+
+    .THIS .font-size-14 {
+        font-size:14px;
+    }
+    .THIS .font-size-13 {
+        font-size:13px;
+    }

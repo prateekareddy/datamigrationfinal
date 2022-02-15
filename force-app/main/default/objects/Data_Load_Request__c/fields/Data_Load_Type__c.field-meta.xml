@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Data_Load_Type__c</fullName>
+    <externalId>false</externalId>
+    <label>Data Load Type</label>
+    <required>false</required>
+    <trackHistory>false</trackHistory>
+    <trackTrending>false</trackTrending>
+    <type>Picklist</type>
+    <valueSet>
+        <restricted>true</restricted>
+        <valueSetDefinition>
+            <sorted>false</sorted>
+            <value>
+                <fullName>Sample Data Load</fullName>
+                <default>false</default>
+                <label>Sample Data Load</label>
+            </value>
+            <value>
+                <fullName>Complete Data Load</fullName>
+                <default>false</default>
+                <label>Complete Data Load</label>
+            </value>
+            <value>
+                <fullName>Delete Data Load</fullName>
+                <default>false</default>
+                <label>Delete Data Load</label>
+            </value>
+        </valueSetDefinition>
+    </valueSet>
+</CustomField>

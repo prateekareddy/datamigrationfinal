@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ListView xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>All</fullName>
+    <columns>NAME</columns>
+    <columns>Source_Object_Label__c</columns>
+    <columns>Source_Object__c</columns>
+    <columns>Source_Record_Type__c</columns>
+    <columns>Target_Object__c</columns>
+    <columns>Target_Record_Type__c</columns>
+    <columns>Object_Type__c</columns>
+    <columns>Sequence_Number__c</columns>
+    <columns>Delete_Sequence_No__c</columns>
+    <columns>Total_Records__c</columns>
+    <columns>Batch_Size__c</columns>
+    <columns>Status__c</columns>
+    <columns>Mapping_Included__c</columns>
+    <filterScope>Everything</filterScope>
+    <label>All</label>
+</ListView>

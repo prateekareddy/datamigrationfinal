@@ -1,0 +1,199 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomLabels xmlns="http://soap.sforce.com/2006/04/metadata">
+    <labels>
+        <fullName>Sustain_CustomObjectInstruction</fullName>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>Sustain_CustomObjectInstruction</shortDescription>
+        <value>(Only objects used or referenced in/by Sustainability Cloud managed package are included)</value>
+    </labels>
+    <labels>
+        <fullName>Sustain_DeleteFinalLoadText</fullName>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>Sustain_DeleteFinalLoadText</shortDescription>
+        <value>The delete final load process has been initiated and you will be notified on email when it is complete.</value>
+    </labels>
+    <labels>
+        <fullName>Sustain_DeleteSampleLoadText</fullName>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>Sustain_DeleteSampleLoadText</shortDescription>
+        <value>The delete sample load process has been initiated and you will be notified on email when it is complete.</value>
+    </labels>
+    <labels>
+        <fullName>Sustain_FieldMappingInstructions</fullName>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>Sustain_FieldMappingInstructions</shortDescription>
+        <value>Total Fields is the total number of fields including calculated/formula fields in the source object. Calculated fields will not be migrated and hence not displayed in the field mapping section.</value>
+    </labels>
+    <labels>
+        <fullName>Sustain_FinalDataLoadEmails</fullName>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>Sustain_FinalDataLoadEmails</shortDescription>
+        <value>Final load has been completed in your org. Please log in and review all migrated data in Net Zero Cloud.</value>
+    </labels>
+    <labels>
+        <fullName>Sustain_InstallationStepsLabel</fullName>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>Sustain_InstallationStepsLabel</shortDescription>
+        <value>Please ensure that Sustainability Cloud managed package v1.14 or higher is installed, and all installation steps are completed successfully. Contact your admin in case of any issues.</value>
+    </labels>
+    <labels>
+        <fullName>Sustain_MetadataEmails</fullName>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>Sustain_MetadataEmails</shortDescription>
+        <value>Metadata creation has been completed in your org. Please log in and proceed with Sample data load(recommended) or Final data load.</value>
+    </labels>
+    <labels>
+        <fullName>Sustain_NoCustomObject</fullName>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>Sustain_NoCustomObject</shortDescription>
+        <value>There are no custom objects available in this org.</value>
+    </labels>
+    <labels>
+        <fullName>Sustain_OrgScanInstructions</fullName>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>Sustain_OrgScanInstructions</shortDescription>
+        <value>Custom fields of type formula or lookup references to standard objects, will not be included in migration. It can be created manually post migration.</value>
+    </labels>
+    <labels>
+        <fullName>Sustain_PreReqCheck1</fullName>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>Sustain_PreReqCheck1</shortDescription>
+        <value>Ensure the required record type configurations are completed as detailed in the Installation and Configuration of Net Zero Cloud</value>
+    </labels>
+    <labels>
+        <fullName>Sustain_PreReqCheck2</fullName>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>Sustain_PreReqCheck2</shortDescription>
+        <value>Ensure Sustainability Cloud and Sustainability Manager permissions, Sustainability cloud PSL is assigned for your user.</value>
+    </labels>
+    <labels>
+        <fullName>Sustain_PreReqCheck3</fullName>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>Sustain_PreReqCheck3</shortDescription>
+        <value>Ensure Net Zero Cloud and Net Zero Cloud Manager permissions, Net Zero Cloud PSL is assigned for your user.</value>
+    </labels>
+    <labels>
+        <fullName>Sustain_PreReqCheck4</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Sustain_PreReqCheck4</shortDescription>
+        <value>If any reference is there between custom objects, please validate and update them post migration as these will not be migrated</value>
+    </labels>
+    <labels>
+        <fullName>Sustain_PreReqCheck5</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Sustain_PreReqCheck5</shortDescription>
+        <value>Ensure all the required Vendor names are present and there are no duplicates</value>
+    </labels>
+    <labels>
+        <fullName>Sustain_PrerequisiteComplete</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Sustain_PrerequisiteComplete</shortDescription>
+        <value>I have reviewed and completed all the pre-requisites for data migration.</value>
+    </labels>
+    <labels>
+        <fullName>Sustain_SampleDataLoadEmails</fullName>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>Sustain_SampleDataLoadEmails</shortDescription>
+        <value>Sample load has been completed in your org. Please log in and review all migrated data in Net Zero Cloud.</value>
+    </labels>
+    <labels>
+        <fullName>Sustain_SampleDataLoadLabel</fullName>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>Sustain_SampleDataLoadLabel</shortDescription>
+        <value>It is recommended to do a sample data load to verify the confirmed mapping before proceeding with the final load.</value>
+    </labels>
+    <labels>
+        <fullName>Sustain_SampleDataLoadLabel1</fullName>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>Sustain_SampleDataLoadLabel1</shortDescription>
+        <value>​Choose the required organization assets to load all data related to these​.</value>
+    </labels>
+    <labels>
+        <fullName>Sustain_SampleLoadText</fullName>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>Sustain_SampleLoadText</shortDescription>
+        <value>Choose Organization Assets(s) to be included in sample load</value>
+    </labels>
+    <labels>
+        <fullName>Sustain_SkipSampleText</fullName>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>Sustain_SkipSampleText</shortDescription>
+        <value>It is recommended to verify the mapping with a sample load. Are you sure you want to skip the sample load?</value>
+    </labels>
+    <labels>
+        <fullName>Sustain_StartFinalLoadText</fullName>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>Sustain_StartFinalLoadText</shortDescription>
+        <value>The final load process has been initiated and you will be notified on email when the load is complete.</value>
+    </labels>
+    <labels>
+        <fullName>Sustain_StartSampleLoadText</fullName>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>Sustain_StartSampleLoadText</shortDescription>
+        <value>The sample load process has been initiated and you will be notified on email when the load is complete.</value>
+    </labels>
+    <labels>
+        <fullName>Sustain_StartSampleLoadText1</fullName>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>Sustain_StartSampleLoadText1</shortDescription>
+        <value>I have reviewed the sample load and approve the provided mapping for the final load</value>
+    </labels>
+    <labels>
+        <fullName>Sustain_StartSampleLoadText2</fullName>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>Sustain_StartSampleLoadText2</shortDescription>
+        <value>Please choose one or more Organization Asset(s) and then start sample load.</value>
+    </labels>
+    <labels>
+        <fullName>Sustain_UpdateFieldMappingLabel</fullName>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>Sustain_UpdateFieldMappingLabel</shortDescription>
+        <value>No fields to review</value>
+    </labels>
+    <labels>
+        <fullName>Sustain_acknowledgement_MSG</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Sustain_acknowledgement_MSG</shortDescription>
+        <value>Please provide acknowledgement for all pre-requisites by checking the acknowledgement checkbox on the bottom of the screen.</value>
+    </labels>
+    <labels>
+        <fullName>Sustain_helpPageURL</fullName>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>Sustain_helpPageURL</shortDescription>
+        <value>https://help.salesforce.com/s/articleView?language=en_US&amp;type=5&amp;id=sf.sustainability_admin.htm</value>
+    </labels>
+    <labels>
+        <fullName>Sustain_launchPage</fullName>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>Sustain_launchPage</shortDescription>
+        <value>Migrate all your existing sustainability data from Managed Package to Net Zero Cloud using a guided process.</value>
+    </labels>
+</CustomLabels>

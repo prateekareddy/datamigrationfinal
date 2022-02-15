@@ -1,0 +1,205 @@
+<!--
+  @description       : 
+  @author            : Accenture
+  @group             : 
+  @last modified on  : 09-30-2021
+  @last modified by  : Accenture
+-->
+<aura:component implements="flexipage:availableForRecordHome,flexipage:availableForAllPageTypes" controller="Sustain_MigrationWizardController" access="global">
+    <aura:attribute name="selectedStep" type="string" default="step1"/>
+    <aura:attribute name="isDiaplyNextButton" type="boolean"  default="false"/>
+    <aura:attribute name="isDiaplyConfirmButton" type="boolean"  default="true"/>
+    <aura:attribute name="showConfirmDialog" type="boolean" default="false"/>
+    <aura:attribute name="showConfirmDialogOfFieldMap" type="boolean" default="false"/>
+    <aura:attribute name="Mappingfound" type="boolean" default="false"/>
+    <aura:attribute name="showSpinner" type="Boolean" default="false" />
+    <aura:attribute name="isDiaplyNextStep" type="boolean"  default="false"/>
+    <aura:attribute name="displayStartbutton" type="boolean" default="true"/>
+    <aura:attribute name="displayRevertbutton" type="boolean" default="true"/>
+    <aura:attribute name="spinner" type="boolean" default="FALSE"/>
+    <aura:attribute name="latestDataLoad" type="boolean" default="false"/>
+    <aura:attribute name="displayBackbutton" type="boolean" default="true"/>
+    <aura:attribute name="metadataRunningJobFlag" type="Boolean"/>
+    <aura:attribute name="checkboxChecked" type="boolean" default="false"/>
+    <aura:attribute name="migStatusData" type="boolean" />
+    
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}"/>
+    <aura:handler name="reloadparent" event="c:Sustain_ReloadParentCompEvnt" action="{!c.refreshParent}"/>
+    
+    <aura:handler name="handleProceedEvent" event="c:Sustain_handleProceedEvent" action="{!c.handleNext}"/>
+    <!--aura handler with waiting and donewaiting events-->
+    <!--aura:handler event="aura:waiting" action="{!c.showSpinner}"/>
+    <aura:handler event="aura:doneWaiting" action="{!c.hideSpinner}"/-->
+    <aura:handler name="handleRefreshEvent" event="c:Sustain_UpdateParentEvent" action="{!c.handleRefreshEvent}"/>
+    <!--<lightning:spinner aura:id="Spinner" alternativeText="Loading" size="medium" variant="brand" class="slds-hide"/>-->
+    
+    <!--loading spinner start-->
+    <aura:if isTrue="{!v.spinner}">
+        <div aura:id="spinnerId" class="slds-spinner_container">
+            <div class="slds-spinner--brand  slds-spinner slds-spinner--large slds-is-relative" role="alert">
+                <span class="slds-assistive-text">Loading...</span>
+                <div class="slds-spinner__dot-a"></div>
+                <div class="slds-spinner__dot-b"></div>
+            </div>
+        </div>
+    </aura:if>
+    <!-- Loading spinner end-->   
+    
+    <!--c:Sustain_ShowSpinnerCmp show="{!v.showSpinner}"/-->
+
+    <div class="slds-p-around_xx-large" style="background:white;">
+       
+        <lightning:progressIndicator currentStep="{!v.selectedStep}" type="path">
+            <lightning:progressStep label="Org Data Scan Output" value="step1" onclick="{!c.selectStep1}" />
+            <lightning:progressStep label="Review/Update Object Mapping" value="step2" onclick="{!c.selectStep2}" />
+            <lightning:progressStep label="Review/Update Field Mapping" value="step3" disabled = "{!v.latestDataLoad}" onclick="{!c.selectStep3}" />
+            <lightning:progressStep label="Confirm Data Mapping" value="step4" onclick="{!c.selectStep4}" />
+            <lightning:progressStep label="Verify Sample Data Load" value="step5" onclick="{!c.selectStep5}" />
+            <lightning:progressStep label="Complete Data load" value="step6" />
+            
+        </lightning:progressIndicator> 
+      
+        <div class="slds-p-around--medium">
+            <div class="{!v.selectedStep == 'step1' ? 'slds-show' : 'slds-hide'}">
+                <c:Sustain_OrgScanOutput/>
+            </div>
+            <div class="{!v.selectedStep == 'step2' ? 'slds-show' : 'slds-hide'}">
+                <c:Sustain_MigrationWizard aura:id="migrationWizardCmp"/>
+            </div>
+            <div class="{!v.selectedStep == 'step3' ? 'slds-show' : 'slds-hide'}">
+                <c:Sustain_FieldMappings aura:id="fieldMappingCmp"/>
+            </div>
+            <div class="{!v.selectedStep == 'step4' ? 'slds-show' : 'slds-hide'}">
+                <c:sustain_confirmdatamapping aura:id="confirmDataMap"/>
+            </div>
+            <div class="{!v.selectedStep == 'step5' ? 'slds-show' : 'slds-hide'}">
+                <c:Sustain_SampleDataLoad/>
+            </div>
+            <div class="{!v.selectedStep == 'step6' ? 'slds-show' : 'slds-hide'}">
+                <c:Sustain_FinalDataLoad/>
+            </div>
+        </div>
+        
+    <div >
+        <aura:if isTrue="{!v.selectedStep == 'step1'}">
+            <ui:inputCheckbox disabled="{!v.migStatusData}" labelClass="myCheckboxLabel" class="{! v.checkboxChecked ? 'green-checkbox' : 'myCheckbox' }"  aura:id="checkboxPrequisite" label= "{!$Label.c.Sustain_PrerequisiteComplete}" change="{!c.onCheck}" value="{!v.checkboxChecked}" required="true"/> 
+        </aura:if>   
+    </div> 
+    
+        <div style="float: right;">
+            <aura:if isTrue="{!(v.selectedStep != 'step1' &amp;&amp; v.selectedStep != 'step5' &amp;&amp; v.selectedStep != 'step4' &amp;&amp; v.selectedStep != 'step6')}">
+                <button disabled="{!v.selectedStep != 'step1' ? '' : 'disabled'}" class="slds-button slds-button--neutral" onclick="{!c.handlePrev}">Back</button>  
+            </aura:if>
+            <aura:if isTrue="{!v.selectedStep == 'step4'}">
+            	<aura:if isTrue="{!not(v.metadataRunningJobFlag)}">
+                    <button class="slds-button slds-button--neutral" onclick="{!c.handlePrev}">Back</button>   
+                </aura:if>
+                <aura:if isTrue="{!and(v.isDiaplyConfirmButton==false,v.metadataRunningJobFlag==false)}">
+                	<button class="slds-button slds-button--brand" onclick="{!c.handleJobExecution}">Confirm And Create Metadata</button>
+            	</aura:if>
+                <aura:if isTrue="{!v.metadataRunningJobFlag}">
+                    <button class="slds-button slds-button--neutral" onclick="{!c.handleFinish}">Go to Home</button>
+                </aura:if>
+            </aura:if>
+            <aura:if isTrue="{!not(or(v.selectedStep == 'step6', and(v.selectedStep == 'step4', v.isDiaplyNextButton == false)))}">
+                <aura:if isTrue="{!v.selectedStep != 'step5'}">
+                    <button class="slds-button slds-button--brand" disabled="{!v.selectedStep=='step1'? (v.checkboxChecked? false:true): false}" onclick="{!c.handleNext}">Next</button>
+                </aura:if>
+            </aura:if>
+            <aura:if isTrue ="{!v.selectedStep == 'step5'}">
+                <aura:if isTrue="{!v.displayBackbutton}">
+                    <button class="slds-button slds-button--neutral back-button" onclick="{!c.handlePrev}">Back</button>
+                    <aura:set attribute="else">
+                        <button  class="slds-button slds-button--neutral back-button" onclick="{!c.handleFinish}">Go to Home</button>    
+                    </aura:set>
+                </aura:if>    
+            </aura:if>
+            <aura:if isTrue="{!v.selectedStep == 'step6'}"> 
+                <aura:if isTrue="{!v.displayBackbutton}">
+                    <button class="slds-button slds-button--neutral slds-m-right_xx-small" onclick="{!c.handlePrev}">Back</button>                                    
+                </aura:if>
+            	
+			</aura:if>
+        </div>
+        <aura:if isTrue="{!v.showConfirmDialog}">
+            <!--Modal Box Start-->
+            <div role="dialog" class="slds-modal slds-fade-in-open ">
+                <div class="slds-modal__container">
+                    <!--Modal Box Header Start-->
+                    <header class="slds-modal__header">
+                        <h1 class="slds-text-heading--medium">Confirmation</h1>
+                    </header>
+                    <!--Modal Box Header End-->
+                    
+                    <!--Modal Box Content Start-->
+                    <div class="slds-modal__content slds-p-around--medium">
+                        <center><b>Do you want to create the included custom fields (as part of review field mapping) in the target object?</b></center>
+                    </div>
+                    <!--Modal Box Content End-->
+                    
+                    <!--Modal Box Button Start-->
+                    <footer class="slds-modal__footer">                        
+                        <lightning:button name='Yes' label='Yes' onclick='{!c.handleConfirmDialogYes}'/>
+                        <lightning:button variant="brand" name='No' label='No' onclick='{!c.handleConfirmDialogNo}'/>
+                    </footer>
+                    <!--Modal Box Button End-->
+                </div>
+            </div>
+            <div class="slds-backdrop slds-backdrop--open"></div>            
+        </aura:if>
+        <!--Confirmation box for FieldMapping Page-->
+        <aura:if isTrue="{!v.showConfirmDialogOfFieldMap}">
+            <!--Modal Box Start-->
+            <div role="dialog" class="slds-modal slds-fade-in-open ">
+                <div class="slds-modal__container">
+                    <!--Modal Box Header Start-->
+                    <header class="slds-modal__header">
+                        <h1 class="slds-text-heading--medium">Confirmation</h1>
+                    </header>
+                    <!--Modal Box Header End-->
+                    
+                    <!--Modal Box Content Start-->
+                    <div class="slds-modal__content slds-p-around--medium">
+                        <center><b>If any field mapping was updated, you need to click on "+" to include the mapping else the changes will not be saved.</b></center>
+                    </div>
+                    <!--Modal Box Content End-->
+                    
+                    <!--Modal Box Button Start-->
+                    <footer class="slds-modal__footer">                        
+                        <lightning:button  name='Yes' label='Ok' onclick='{!c.handleConfirmDialogYesFieldMap}'/>
+                        <lightning:button variant="brand" name='No' label='Cancel' onclick='{!c.handleConfirmDialogNoFieldMap}'/>
+                    </footer>
+                    <!--Modal Box Button End-->
+                </div>
+            </div>
+            <div class="slds-backdrop slds-backdrop--open"></div>            
+        </aura:if>
+        
+        <aura:if isTrue="{!v.Mappingfound}">
+            <!--Modal Box Start-->
+            <div role="dialog" class="slds-modal slds-fade-in-open ">
+                <div class="slds-modal__container">
+                    <!--Modal Box Header Start-->
+                    <header class="slds-modal__header">
+                        <h1 class="slds-text-heading--medium">Confirmation</h1>
+                    </header>
+                    <!--Modal Box Header End-->
+                    
+                    <!--Modal Box Content Start-->
+                    <div class="slds-modal__content slds-p-around--medium">
+                        <center><b>Are you sure you want to proceed? There are some fields which are not mapped.</b></center>
+                    </div>
+                    <!--Modal Box Content End-->
+                    
+                    <!--Modal Box Button Start-->
+                    <footer class="slds-modal__footer">
+                        <lightning:button name='No' label='Ok' onclick='{!c.SubmitConfirmDataScreen}'/>
+                        <lightning:button variant="brand" name='Yes' label='Cancel' onclick='{!c.handleConfirmDialogNoFieldMap}'/>
+                    </footer>
+                    <!--Modal Box Button End-->
+                </div>
+            </div>
+            <div class="slds-backdrop slds-backdrop--open"></div>            
+        </aura:if>  
+    </div>
+</aura:component>

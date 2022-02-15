@@ -1,0 +1,102 @@
+<aura:component controller="Sustain_DataMappingDetailController" implements="force:appHostable,flexipage:availableForAllPageTypes" access="global" >
+    <aura:registerEvent name="refreshParent" type="c:Sustain_RefreshParentCompoment" />
+    <aura:attribute name="dataMappingDetails" type="object"/>
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}"/>
+    <aura:method name="reloadChild" action="{!c.doInit}" access="public"/>
+    <lightning:notificationsLibrary aura:id="notifLib"/>
+
+    
+    
+    <div class="slds slds-p-horizontal--medium slds-align_absolute-center">
+        <table class="slds-table slds-table_cell-buffer slds-table_bordered" aria-labelledby="element-with-table-label other-element-with-table-label">
+            <thead> 
+                <tr class="slds-line-height_reset"> 
+                    <th class="slds-text-align_center">Total Objects</th>
+                    <th class="slds-text-align_center">Total Fields</th>
+                    <th class="slds-text-align_center">Removed Fields</th>
+                    <th class="slds-text-align_center">Pending Review</th>
+                    <th class="slds-text-align_center">#Data Records</th>                  
+                </tr>
+            </thead>
+            <tbody>            
+                <tr class="slds-hint-parent">   
+                    <td class="slds-text-align_center">{!v.dataMappingDetails.totalCounts.totalObject}</td>                        
+                    <td class="slds-text-align_center">{!v.dataMappingDetails.totalCounts.totalFileds}</td>
+                    <td class="slds-text-align_center">{!v.dataMappingDetails.totalCounts.removedFileds}</td>
+                    <td class="slds-text-align_center">                        
+                        <aura:if isTrue="{!v.dataMappingDetails.totalCounts.pendingReview > 0}" >
+                            <div>
+                                <lightning:icon iconName="utility:warning" alternativeText="Warning!" variant="warning" title="" size="small" />
+                            </div>
+                        </aura:if>
+                        <aura:if isTrue="{!v.dataMappingDetails.totalCounts.pendingReview == 0}" >
+                            <div>
+                                <lightning:icon iconName="utility:success" alternativeText="Success!" variant="Success" title="" size="small"/>
+                            </div>
+                        </aura:if>
+                    </td>
+                    <td class="slds-text-align_center">{!v.dataMappingDetails.totalCounts.dataRecords}</td>                                            
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <br/><br/>
+    <div class="slds-p-around_small">
+    <div>
+        <div class="slds-scrollable_y">
+            <table class="slds-table slds-table_cell-buffer slds-table_bordered" aria-labelledby="element-with-table-label other-element-with-table-label">
+                <thead> 
+                    <tr class="slds-line-height_reset">
+                        <th scope="col" class="">
+                            <div class="slds-truncate" title="Source Object:Label">Source Object:Label</div>
+                        </th>
+                        <th scope="col" class="">
+                            <div class="slds-truncate" title="Record Type">Record Type</div>
+                        </th>
+                        <th scope="col" class="">
+                            <div class="slds-truncate" title="Destination Object: Label">Destination Object: Label</div>
+                        </th>
+                        <th scope="col" class="">
+                            <div class="slds-truncate" title="Feilds Mapped">Fields Mapped</div></th>
+                        <th  scope="col" class="">
+                            <div class="slds-truncate" title="Status">Status</div></th>           
+                    </tr>
+                </thead>
+                <tbody scrollbars="yes" aura:id="myConfigTable" >
+                    <lightning:navigation aura:id="navService"/>
+                    <aura:iteration items="{!v.dataMappingDetails.totalDataList}" var="item" indexVar="index">
+                        <tr id="{!item.recordId}" class="slds-hint-parent">
+                            <td scope="row">
+                                <div class="slds-truncate" title="{!item.sourceObjLabel}">{!item.sourceObjLabel}</div></td>                        
+                            <td scope="row">
+                                <div class="slds-truncate" title="{!item.recordType}">{!item.recordType}</div></td>
+                            <td scope="row">
+                                <div class="slds-truncate" title="{!item.destObjLabel}">{!item.destObjLabel}</div></td>
+                            <td scope="row">
+                                <div class="slds-truncate" title="{!item.fieldsMapped}">{!item.fieldsMapped}</div></td>                    
+                            <td scope="row">
+                                <div class="slds-truncate" >                                 
+                                    <aura:if isTrue="{!item.status}" >
+                                        <div data-value="{!item.recordId}"  data-name="{!item.destObjApi}" class=" slds-align_absolute-center green">
+                                            <a href="#"><span onclick="{!c.viewObject}" data-name="{!item.destObjApi}" data-value="{!item.recordId}">View</span></a>   
+                                        </div>
+                                        <aura:set attribute="else">
+                                            <div data-value="{!item.recordId}" data-name="{!item.destObjApi}" class="slds-align_absolute-center amber">
+                                                <lightning:icon iconName="utility:warning" alternativeText="Warning!" variant="warning" title="" size="x-small"/>
+                                                <a href="#"><span onclick="{!c.viewObject}" data-name="{!item.destObjApi}" data-value="{!item.recordId}">&nbsp;View</span></a>      
+                                            </div>   
+                                        </aura:set>
+                                        
+                                    </aura:if>
+                                </div>
+                            </td>                        
+                        </tr>
+                    </aura:iteration>
+                </tbody>
+            </table>
+            <br/><br/>          
+        </div>
+    </div>
+        </div>
+    
+</aura:component>

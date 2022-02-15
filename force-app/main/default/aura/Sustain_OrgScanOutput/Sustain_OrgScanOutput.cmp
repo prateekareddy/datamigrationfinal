@@ -1,0 +1,100 @@
+<aura:component controller="Sustain_OrgScanOutputCtrl" implements="flexipage:availableForRecordHome,flexipage:availableForAllPageTypes" access="global">
+    
+    <!--create a component attributs -->
+    <aura:attribute name="orgscanoutput" type="OrgScanOutputWrapper"/>  
+    <aura:attribute name="spinner" type="boolean" default="false"/>
+    <aura:attribute name="checkboxChecked" type="boolean" default="false"/>
+    
+    <aura:handler name="init" value="this" action="{!c.doInit}"/>
+    
+    <lightning:spinner aura:id="Spinner" alternativeText="Loading" size="medium" variant="brand" class="slds-hide"/>
+
+    <!--<aura:if isTrue="{!!v.Spinner}">-->
+    <lightning:card title="" >
+        <div class="slds-m-left_large text-size-medium" >
+            <h1><lightning:icon iconName="utility:info" alternativeText="Info!" variant="brand" title="" size="small" />
+                &nbsp;<b>{!$Label.c.Sustain_OrgScanInstructions}</b></h1> 
+            <br/>
+            <p><lightning:icon iconName="utility:success" alternativeText="Success!" variant="Success" title="" size="small"/>
+                <b> &nbsp;{!v.orgscanoutput.noOfSCObjects} </b> Sustainability Cloud Object present in this org. <b>(Installed Version - {!v.orgscanoutput.packageVer}) </b>
+            </p> <br/>
+            <p><lightning:icon iconName="utility:success" alternativeText="Success!" variant="Success" title="" size="small" />
+                <b>&nbsp; {!v.orgscanoutput.noOfCustomObjects}</b>  Custom Objects <b><I>{!$Label.c.Sustain_CustomObjectInstruction}</I></b>
+                
+            </p>
+            <br/>
+            <aura:if isTrue= "{!not(empty(v.orgscanoutput.coInfoList))}">
+                <div class="slds-col scrollbar slds-m-left_large">    
+                    <div style ="width:50%;">                    
+                        <table class="slds-table slds-table_cell-buffer slds-table_bordered" aria-labelledby="element-with-table-label other-element-with-table-label">
+                            <thead aura:id="myHead">
+                                <tr class="slds-line-height_reset">
+                                    <th scope="col">
+                                        <div class="slds-truncate" title="Source Object:Label">Custom Object:Label</div>
+                                    </th>
+                                    <th scope="col">
+                                        <div class="slds-truncate" title="Source Object:Label">Custom Object:Name</div>
+                                    </th>                               
+                                </tr>
+                            </thead>
+                            <!--table body start, Iterate object list as a <tr> -->
+                            <tbody scrollbars="yes" id="myTable" >
+                                <aura:iteration items="{!v.orgscanoutput.coInfoList}" var="co">
+                                    <tr class="slds-hint-parent">
+                                        <td scope="row">
+                                            <div class="slds-truncate" title="{!co.objLabel}">{!co.objLabel}</div>
+                                        </td>
+                                        <td scope="row">
+                                            <div class="slds-truncate" title="{!co.ObjName}">{!co.objName}</div>
+                                        </td>                                    
+                                    </tr>
+                                </aura:iteration>                            
+                            </tbody>
+                        </table>
+                        <br/>
+                    </div>
+                    <p><lightning:icon iconName="utility:info" alternativeText="Info!" variant="brand" title="" size="small" />
+                        &nbsp;<b>{!$Label.c.Sustain_PreReqCheck4}</b></p> 
+                    <br/>                    
+                </div>
+                
+                <!--<aura:set attribute="else">
+                    <h1 class = "text-size-medium">
+                        &nbsp;&nbsp;<b>{!$Label.c.Sustain_NoCustomObject}</b></h1> 
+                </aura:set>-->
+            </aura:if>           
+            
+            <!--<aura:iteration items="{!v.orgScanOutput.customObjectList}" var="co">
+                <ul class="slds-list_dotted">
+                    <li>&nbsp;{!co}</li>
+                </ul>              
+            </aura:iteration>-->
+            <p><lightning:icon iconName="utility:success" alternativeText="Success!" variant="Success" title="" size="small" />
+                <b>&nbsp; {!v.orgscanoutput.noOfCustomFields}</b> Custom fields across <b>{!v.orgscanoutput.noOfObjectwithCustomFields} objects 
+                <b><I>(Excluding Standard objects and other managed package objects)</I></b></b> </p>  
+            <br/><br/>
+            <h3 style="font-size:12px;"><b>Pre-requisites to Migration:</b></h3> 
+            <li>{!$Label.c.Sustain_PreReqCheck1}<a href="javascript:void(0)" onclick="{!c.openHelpPage}"> here.</a></li>
+            <li>{!$Label.c.Sustain_PreReqCheck2}</li>
+            <li>{!$Label.c.Sustain_PreReqCheck3}</li>
+            <li>{!$Label.c.Sustain_PreReqCheck5}<a href="javascript:void(0)" onclick="{!c.openVendorPage}"> here.</a></li>
+            
+            <!--<li>{!$Label.c.Sustain_PreReqCheck4}</li>-->
+            <!--  <ol class="slds-list_ordered">
+               
+               <li>{!$Label.c.Sustain_PreReqCheck2}</li>        
+            </ol>-->  
+            <!--<div class="slds-clearfix">
+                <div class="slds-float_right">                   
+                    <lightning:button variant="brand" label=" Next " title="Nextto Object Mappings" onclick="{! c.handleNext }" class="slds-m-right_large"/>
+                </div>
+            </div> -->           
+           
+            <!--<ui:inputCheckbox class="myCheckbox, green-checkbox" aura:id="checkboxPrequisite" label= "{!$Label.c.Sustain_PrerequisiteComplete}" change="{!c.onCheck}" required="true"/>-->   
+            <!--<div class="slds-m-left_large text-size-medium" >
+                <span style="color:#ff0000">*</span><span class="display-inline"><ui:inputCheckbox aura:id="checkbox" change="{!c.onCheck}" label="{!$Label.c.Sustain_PrerequisiteComplete}"/></span>
+                </div>-->
+        </div>        
+    </lightning:card> 
+    <!--</aura:if> -->
+</aura:component>

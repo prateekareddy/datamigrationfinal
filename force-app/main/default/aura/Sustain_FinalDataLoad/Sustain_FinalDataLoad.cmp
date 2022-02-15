@@ -1,0 +1,139 @@
+<!--
+  @description       : 
+  @author            : Accenture
+  @group             : 
+  @last modified on  : 09-18-2021
+  @last modified by  : Accenture
+-->
+<aura:component implements="flexipage:availableForRecordHome,flexipage:availableForAllPageTypes,force:appHostable" controller="Sustain_FinalDataController" access="global">
+    <aura:attribute name="wrapperList" type="object"/>
+    <aura:attribute name="startClicked" type="boolean" default="false"/>
+    <aura:attribute name="deleteClicked" type="boolean" default="false"/>
+    <aura:attribute name ="displaybuttons" type="String" />
+    <aura:attribute name ="dLR" type="Data_Load_Request__c" />
+    <aura:attribute name="status" type="String" default="Error" />
+    <aura:attribute name="displaySampleLoadButton" type="boolean" default="true"/>	
+    <aura:registerEvent name="handleRefreshEvent" type="c:Sustain_UpdateParentEvent"/>
+    <aura:handler name="init" value="{!this}" action="{!c.init}"/>
+    <div class="slds-grid slds-size_12-of-12 "  aura:id="myTable" >
+        <table class="slds-table slds-table_cell-buffer slds-table_bordered" aria-labelledby="element-with-table-label other-element-with-table-label">
+            <thead>
+                <tr class="slds-line-height_reset">
+                    <th scope="col" class="color-col" >
+                        <div class="slds-truncate labels" title="Source Object:Label">Source Object: Label</div>
+                    </th>
+                    
+                    <th scope="col" class="color-col">
+                        <div class="slds-truncate labels" title="Record Type">Record Type</div>
+                    </th>
+                    
+                    <th scope="col " class="color-col">
+                        <div class="slds-truncate labels" title="Destination Object: Label">Destination Object: Label</div>
+                    </th>
+                    
+                    <th scope="col " class="color-col">
+                        <div class="slds-truncate labels" title="Data records"># Data records</div>
+                    </th>
+                    
+                    <th scope="col" class="color-col">
+                        <div class="slds-truncate labels" title="Status">Status</div>
+                    </th> 
+                </tr>
+                
+            </thead>
+            <!--table body start, Iterate object list as a <tr> -->
+            <tbody>
+                <aura:iteration items="{!v.wrapperList.totalDataList}" var="acc1">
+                    <tr id="{!acc1.recordId}" class="tr-table slds-hint-parent" >
+                        <td scope="row">
+                            <div class="slds-cell-wrap required-field" title="{!acc1.Source_Field__c}">{!acc1.sourceObjLabel}</div>
+                        </td>
+                        <td scope="row">
+                            <div class="slds-cell-wrap" title="{!acc1.Source_Field__c}">{!acc1.recordType}</div>
+                        </td>
+                        <td scope="row">
+                            <div class="slds-cell-wrap" title="{!acc1.Source_Field_Type__c}">{!acc1.destObjLabel}</div>
+                        </td>
+                        <td scope="row">
+                            <div class="slds-cell-wrap" title="{!acc1.Source_Field_Type__c}">{!acc1.totalRecCount}</div>
+                        </td>
+                        <td scope="row">
+                            <div class="slds-truncate align-center" >  
+                            <!-- <div class="slds-cell-wrap  align-center notstarted-status" title="{!acc1.Target_Field_Type__c}">{!acc1.Objstatus}</div>-->
+                            <aura:if isTrue = "{!v.dLR.Migration_Util__Data_Load_Type__c == 'Complete Data Load' || v.dLR.Migration_Util__Request_Job_Name__c == 'Delete Error Only Data Load'}">
+                                <aura:if isTrue="{!acc1.Objstatus == 'Error'}">
+                                    <div data-value="{!acc1.recordId}"  data-name="{!acc1.sourceObjApi + '-' +acc1.sourceObjRecType}">
+                                    <a href="#"><span onclick="{!c.viewReportPage}" data-name="{!acc1.sourceObjApi + '-' +acc1.sourceObjRecType}" data-value="{!acc1.recordId}">{!acc1.Objstatus}</span></a> 
+                                    </div>
+                                    <aura:set attribute="else">
+                                        <div data-value="{!acc1.recordId}"  data-name="{!acc1.destObjApi}">
+                                            <div  title="{!acc1.Target_Field_Type__c}">{!acc1.Objstatus}</div>
+                                        </div>
+                                    </aura:set>
+                                </aura:if>
+                            
+                                <aura:set attribute="else">
+                                    <div data-value="{!acc1.recordId}"  data-name="{!acc1.destObjApi}">
+                                        <div  title="{!acc1.Target_Field_Type__c}">Not Started</div>
+                                    </div>
+                                </aura:set>
+                            </aura:if> 
+                            </div>
+                        </td>
+                        
+                    </tr>
+                </aura:iteration>
+                
+            </tbody>
+            
+        </table>
+                
+    </div>
+    <aura:if isTrue="{!(v.startClicked == false &amp;&amp; v.deleteClicked == false)}">        
+        <aura:if isTrue="{!(v.dLR == null || v.dLR.Migration_Util__Status__c =='Completed' || v.dLR.Migration_Util__Status__c =='Failed' || v.dLR.Migration_Util__Status__c =='Partial Complete')}">
+            <div class="slds-p-top_medium slds-p-right_large" style="float: right;">
+                <aura:if isTrue="{!v.displaySampleLoadButton || v.dLR.Migration_Util__Status__c =='Failed' }">
+                <button class="slds-button slds-button--brand" onclick="{!c.startLoad}">Start Complete Load</button>
+                </aura:if>
+                <aura:if isTrue="{!v.dLR!=null}">
+                	<button class="slds-button slds-button_text-destructive" onclick="{!c.deleteLoad}">Revert Data Load</button>
+                </aura:if>
+                <aura:if isTrue="{!v.dLR!=null &amp;&amp; v.dLR.Migration_Util__Data_Load_Type__c == 'Complete Data Load' &amp;&amp; (v.dLR.Migration_Util__Status__c =='Failed' || v.dLR.Migration_Util__Status__c =='Partial Complete')}">
+                	<button class="slds-button slds-button--brand" onclick="{!c.deleteErrorLoad}">Revert Error and Re-run Data Load</button>
+                </aura:if>
+                <button class="slds-button slds-button--brand slds-m-right_xx-small" onclick="{!c.handleFinish}">Finish</button>  
+            </div>
+            <aura:set attribute="else">                
+                <div class="myTextSize">
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<h1 class="myTextSize"><lightning:icon class="iconStyle" iconName="utility:clock" alternativeText="clock" variant="brand" title="" size="small" />
+                    &nbsp;<b>
+                    <aura:if isTrue = "{!v.dLR.Migration_Util__Data_Load_Type__c == 'Complete Data Load'}">
+                        {!$Label.c.Sustain_StartFinalLoadText}
+                    </aura:if> 
+                    <aura:if isTrue = "{!v.dLR.Migration_Util__Data_Load_Type__c == 'Delete Data Load'}">
+                        {!$Label.c.Sustain_DeleteFinalLoadText}
+                    </aura:if> 
+                    </b></h1>
+                </div>                              
+            </aura:set>
+        </aura:if>
+    </aura:if>
+    <aura:if isTrue="{!v.startClicked == true}">
+        <div class="myTextSize">
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<h1 class="myTextSize"><lightning:icon class="iconStyle" iconName="utility:clock" alternativeText="clock" variant="brand" title="" size="small" />
+            &nbsp;<b>{!$Label.c.Sustain_StartFinalLoadText}</b></h1>
+        </div>
+        <div class="slds-p-top_medium slds-p-right_large" style="float: right;">
+            <button class="slds-button slds-button--brand slds-m-right_xx-small" onclick="{!c.handleFinish}">Finish</button> 
+        </div> 
+    </aura:if>
+    <aura:if isTrue="{!v.deleteClicked == true}">
+        <div class="myTextSize">
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<h1 class="myTextSize"><lightning:icon class="iconStyle" iconName="utility:clock" alternativeText="clock" variant="brand" title="" size="small" />
+            &nbsp;<b>{!$Label.c.Sustain_DeleteFinalLoadText}</b></h1>
+        </div> 
+        <div class="slds-p-top_medium slds-p-right_large" style="float: right;">
+            <button class="slds-button slds-button--brand slds-m-right_xx-small" onclick="{!c.handleFinish}">Finish</button> 
+        </div> 
+    </aura:if>
+</aura:component>

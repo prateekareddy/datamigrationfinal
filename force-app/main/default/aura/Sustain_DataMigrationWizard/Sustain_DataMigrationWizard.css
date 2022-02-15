@@ -1,0 +1,42 @@
+.THIS {
+}
+.THIS .slds-tabs--path .slds-is-current {
+    background-color: yellow !important;
+}
+.THIS .slds-tabs_path .slds-is-current + .slds-is-incomplete::before {
+    background-color: yellow !important;
+}
+.THIS .slds-tabs--path .slds-is-current + .slds-is-incomplete::before{
+    background-color: yellow !important;
+}
+.THIS .back-button{
+   margin-top: -24px;
+    margin-right: 4px; 
+}
+.THIS.slds-spinner_container {  
+  z-index: 10000;
+  position: fixed;   
+}
+.THIS .background{
+background:white !important;
+}
+.THIS .floatRight{
+        float: right;
+}
+
+.THIS .myCheckboxLabel{    
+    padding-left: 0.6em;      
+}
+
+.THIS .myCheckbox{
+    display: inline-block;    
+    float: left; 
+}
+
+.THIS input[type=checkbox]:checked.green-checkbox{
+    display: inline-block;    
+    float: left;  
+    border-color: rgb(46, 132, 74); /*Choose your color*/
+    box-shadow: 0 0 3px #064706; /*Choose a darker color for the shadow*/
+    background-color: rgb(46, 132, 74);
+}

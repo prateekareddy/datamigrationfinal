@@ -1,0 +1,42 @@
+.THIS .button-icon-magin {
+     margin-left: 10px;
+}
+.THIS .slds-accordion__summary {
+     background:#F3F2F2 !important;
+}
+.THIS .scrollbar{
+        height: 161px;
+    overflow-y: scroll;
+}
+.THIS .headtable{
+    display: table;
+    width: calc( 100% - 1em );
+    table-layout: fixed;
+}
+.THIS .bodytable{
+    display: block;
+    width: 100%;
+    table-layout: fixed;
+    height: 50px;
+    overflow: auto;
+}
+/*.THIS thead{
+    display: table;
+    width: calc( 100% - 1em );
+    table-layout: fixed;
+
+}
+.THIS tbody{
+    display: block;
+    width: 100%;
+    table-layout: fixed;
+    height: 50px;
+    overflow: auto;
+}*/
+.THIS .iconStyle {
+    --sds-c-icon-color-foreground-default: #1434A4;
+}
+
+.THIS .font-13 {
+    font-size:13px;
+ }

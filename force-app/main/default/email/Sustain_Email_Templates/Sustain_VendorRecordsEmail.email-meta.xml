@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<EmailTemplate xmlns="http://soap.sforce.com/2006/04/metadata">
+    <available>true</available>
+    <encodingKey>UTF-8</encodingKey>
+    <name>Sustain_VendorRecordsEmail</name>
+    <style>none</style>
+    <subject>Migration Wizard: Vendor Records Create Status Update</subject>
+    <type>text</type>
+    <uiType>Aloha</uiType>
+</EmailTemplate>

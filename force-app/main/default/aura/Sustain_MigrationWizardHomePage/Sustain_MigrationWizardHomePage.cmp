@@ -1,0 +1,29 @@
+<aura:component implements="flexipage:availableForRecordHome,flexipage:availableForAllPageTypes" controller="Sustain_MigrationWizardController" access="global" >
+    <aura:attribute name="readyToLaunch" type="boolean" default="true"/>
+    <aura:attribute name="showPrerequisitePage" type="boolean" default="false"/>
+    <aura:attribute name="prerequisiteButtonLabel" type="String"/>
+    <aura:attribute name="showButton" type="boolean" default="false"/>
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}"/>
+    <lightning:spinner aura:id="mySpinner" alternativeText="Processing.." title="Processing.." variant="brand" size="large" class="slds-hide"/>
+    <lightning:card title="Migration Wizard">
+        <!--creating a custom label-->
+        <div class="slds-m-left_large text-size-medium" >
+            <p><br/>{!$Label.c.Sustain_launchPage}</p>
+        </div>
+        
+        <!--creating a button for launch-->
+        <div class="slds-clearfix">
+            <div class="slds-float_left"> <br/>
+                <aura:if isTrue="{!v.showButton}">
+                    <lightning:button variant="brand" label=" Launch "  onclick="{! c.redirect }" class="slds-m-left_large"/>
+                    <aura:set attribute="else">
+                        <lightning:button variant="brand" label="{!v.prerequisiteButtonLabel}"  onclick="{!c.showPage}" class="slds-m-left_large"/>
+                    </aura:set>
+                </aura:if>
+            </div>
+        </div>
+    </lightning:card>
+    <aura:if isTrue="{!v.showPrerequisitePage}">
+        <c:Sustain_CompletePrerequisite aura:id="completePrerequisiteComp"/>
+    </aura:if>
+</aura:component>

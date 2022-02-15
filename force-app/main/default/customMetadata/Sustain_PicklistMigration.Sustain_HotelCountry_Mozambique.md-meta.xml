@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomMetadata xmlns="http://soap.sforce.com/2006/04/metadata" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+    <label>Sustain_HotelCountry_Mozambique</label>
+    <protected>false</protected>
+    <values>
+        <field>Source_Field_Name__c</field>
+        <value xsi:type="xsd:string">sustain_app__HotelCountry__c</value>
+    </values>
+    <values>
+        <field>Source_Record_Type__c</field>
+        <value xsi:type="xsd:string">Hotel_Stay</value>
+    </values>
+    <values>
+        <field>Sustain_Source_Value__c</field>
+        <value xsi:type="xsd:string">Mozambique</value>
+    </values>
+    <values>
+        <field>Sustain_Target_Value__c</field>
+        <value xsi:type="xsd:string">MZ</value>
+    </values>
+    <values>
+        <field>Target_Object_Name__c</field>
+        <value xsi:type="xsd:string">HotelStayEnrgyUse</value>
+    </values>
+</CustomMetadata>

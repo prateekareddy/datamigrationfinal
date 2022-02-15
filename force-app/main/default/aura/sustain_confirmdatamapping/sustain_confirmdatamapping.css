@@ -1,0 +1,45 @@
+.THIS .override_css {
+    height:450px;
+   /* border: 2px solid black;*/
+    padding-left : 0 !important;
+    padding-right : 0 !important;
+}
+
+
+
+.THIS .slds-p-horizontal_medium .THIS.slds-p-horizontal--medium{
+    padding-left : 0 !important;
+    padding-right : 0 !important;
+}
+
+.THIS .width25 {
+    width:25%;
+}
+.THIS .width27 {
+    width:27.5%;
+}
+.THIS .width27_2 {
+    width:27.2%;
+}
+.THIS .width13 {
+    width:13%;
+}
+.THIS .width16_5 {
+    width:16.5%;
+}
+.THIS .width16 {
+    width:18%;
+}
+.THIS .width15 {
+    width:15%;
+}
+.THIS .width11 {
+    width:11%;
+}
+.THIS .width29 {
+    width:29%;
+}
+.THIS .scrollable {
+    height: 400px;
+    overflow-y: auto;
+  }

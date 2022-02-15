@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ListView xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>All_details</fullName>
+    <columns>MasterLabel</columns>
+    <columns>DeveloperName</columns>
+    <columns>NamespacePrefix</columns>
+    <columns>Field_Name__c</columns>
+    <columns>Fuel_Type__c</columns>
+    <columns>Object_Name__c</columns>
+    <columns>Field_Unit__c</columns>
+    <filterScope>Everything</filterScope>
+    <filters>
+        <field>Object_Name__c</field>
+        <operation>equals</operation>
+        <value>sustain_app__EmissionFactorOther__c</value>
+    </filters>
+    <label>All details</label>
+</ListView>

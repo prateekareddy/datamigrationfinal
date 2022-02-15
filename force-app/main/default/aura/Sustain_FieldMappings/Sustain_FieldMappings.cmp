@@ -1,0 +1,267 @@
+<!--
+  @description       : 
+  @author            : Accenture
+  @group             : 
+  @last modified on  : 09-30-2021
+  @last modified by  : Accenture
+-->
+<aura:component implements="flexipage:availableForRecordHome,flexipage:availableForAllPageTypes" controller="Sustain_MigrationWizardController" access="global">
+    
+   <!-- <aura:attribute name="wrapObject" type="Sustain_MigrationWizardController.MappingListWrapper"/>-->
+    <aura:attribute name="updatedSet" type="List" default="[]"/>
+    <aura:attribute name="wrapperList" type="object"/>
+    <aura:attribute name="selectedObject" type="boolean" default="false"/>
+    <aura:attribute name="filterField" type="boolean" default="false"/>
+
+    <aura:attribute name="objectId" type="String"/>
+    <aura:attribute name="fieldMappingList" type="object"/>
+    <aura:attribute name="affectedfFieldMappingList" type="object"/>
+    <aura:attribute name="custFieldList" type="object"/>
+    <aura:attribute name="custFieldFullMap" type="List" default="[]"/>
+    <aura:method name="reloadChild" action="{!c.getList}" access="public"/>
+    <aura:attribute name="filtertedList" type="object"/>
+    <aura:attribute name="allMappingList" type="List" default="[]"/>
+    <aura:attribute name="picklistValueChange" type="boolean" default="false"/>
+    <aura:registerEvent name="reloadparent" type="c:Sustain_ReloadParentCompEvnt"/>
+    <aura:method name="saveMapping" action="{!c.handleAuraMethod}" access="public">
+        <aura:attribute name="callback" type="Function" />
+    </aura:method>
+    <aura:method name="handleChange" action="{!c.handleAuraforPicklistChangefunction}" access="public">
+        <aura:attribute name="callback" type="Function" />
+    </aura:method>
+    
+    <aura:handler name="init" value="{!this}" action="{!c.getList}"/>
+    <aura:handler event="c:Sustain_RefreshParentCompoment" action="{!c.refreshComponent}"/>
+    <h1><lightning:icon iconName="utility:info" alternativeText="Info!" variant="brand" title="" size="small" />
+        &nbsp;<b>{!$Label.c.Sustain_FieldMappingInstructions}</b></h1> 
+    <br/>
+    <div class="slds-grid"> 
+        <div class="slds-col slds-size_3-of-12">
+               <div class="slds-col slds-align_absolute-center">
+                        <span class="font-bold ">Object Mappings: Source --> Target</span>                      
+                    </div>
+            <div class="slds-nav-vertical__section vertical-section" id="verticalList">
+                <ul aura:id="theList">
+                  
+                    <aura:iteration items="{!v.wrapperList}" var="att" indexVar="indx">
+                        <li aura:id="testli" class="{!att.Id == v.objectId ? 'slds-is-active' : 'striped-list'}" data-id="{!indx}" >
+                            <aura:if isTrue="{!and(att.Migration_Util__Source_Recordtype_Label__c != null, att.Migration_Util__Target_RecordType_Label__c != null)}">
+                                <div id="{!att}" class="slds-nav-vertical__action vertical-list" data-num="{!att.Id}" data-target="{!att.Migration_Util__Target_Object__c}" onclick="{!c.handlerightcomponent}"  >
+                                    <span class="text" data-num="{!att.Id}" data-target="{!att.Migration_Util__Target_Object__c}" onclick="{!c.handlerightcomponent}">{!att.Migration_Util__Source_Object_Label__c}({!att.Migration_Util__Source_Recordtype_Label__c}) -> {!att.Migration_Util__Destination_Object_Label__c}({!att.Migration_Util__Target_RecordType_Label__c})
+                                    <aura:if isTrue="{!att.Migration_Util__Total_To_Review_Fields__c > 0}">
+                                           <lightning:icon iconName="utility:warning" alternativeText="Warning!" variant="warning" title="" size="x-small" class="slds-float_right"/>
+
+                                    </aura:if>
+                                    </span>                      
+                                </div>
+                                <aura:set attribute="else">
+                                    <aura:if isTrue="{!att.Migration_Util__Source_Recordtype_Label__c != null}">
+                                        <div id="{!att}" class="slds-nav-vertical__action vertical-list" data-num="{!att.Id}" data-target="{!att.Migration_Util__Target_Object__c}" onclick="{!c.handlerightcomponent}"  >
+                                            <span class="text" data-num="{!att.Id}" data-target="{!att.Migration_Util__Target_Object__c}" onclick="{!c.handlerightcomponent}">{!att.Migration_Util__Source_Object_Label__c} ({!att.Migration_Util__Source_Recordtype_Label__c}) -> {!att.Migration_Util__Destination_Object_Label__c}</span>
+                                                 <aura:if isTrue="{!att.Migration_Util__Total_To_Review_Fields__c > 0}">
+                                           <lightning:icon iconName="utility:warning" alternativeText="Warning!" variant="warning" title="" size="x-small" class="slds-float_right"/>
+
+                                    			</aura:if>
+                                        </div>
+                                        <aura:set attribute="else">
+                                            <aura:if isTrue="{!att.Migration_Util__Target_RecordType_Label__c != null}">
+                                                
+                                                <div id="{!att}" class="slds-nav-vertical__action vertical-list" data-num="{!att.Id}" data-target="{!att.Migration_Util__Target_Object__c}" onclick="{!c.handlerightcomponent}"  >
+                                                    <span class="text" data-num="{!att.Id}" data-target="{!att.Migration_Util__Target_Object__c}" onclick="{!c.handlerightcomponent}">{!att.Migration_Util__Source_Object_Label__c} -> {!att.Migration_Util__Destination_Object_Label__c}({!att.Migration_Util__Target_RecordType_Label__c})</span> 
+                                                         <aura:if isTrue="{!att.Migration_Util__Total_To_Review_Fields__c > 0}">
+                                           				<lightning:icon iconName="utility:warning" alternativeText="Warning!" variant="warning" title="" size="x-small" class="slds-float_right"/>
+
+                                   					 </aura:if>
+                                                </div>
+                                                <aura:set attribute="else">
+                                                    <div id="{!att}" class="slds-nav-vertical__action vertical-list" data-num="{!att.Id}" data-target="{!att.Migration_Util__Target_Object__c}" onclick="{!c.handlerightcomponent}"  >
+                                                        <span class="text" data-num="{!att.Id}" data-target="{!att.Migration_Util__Target_Object__c}" onclick="{!c.handlerightcomponent}">{!att.Migration_Util__Source_Object_Label__c} -> {!att.Migration_Util__Destination_Object_Label__c}</span>
+                                                        <aura:if isTrue="{!att.Migration_Util__Total_To_Review_Fields__c > 0}">
+                                                            <lightning:icon iconName="utility:warning" alternativeText="Warning!" variant="warning" title="" size="x-small" class="slds-float_right"/>
+                                                            
+                                                        </aura:if>
+                                                    </div>
+                                                </aura:set>
+                                            </aura:if>
+                                        </aura:set>
+                                    </aura:if>
+                                    
+                                </aura:set>
+                            </aura:if>
+                            
+                        </li>
+                    </aura:iteration>                
+                </ul>
+            </div>
+        </div>
+        <div class="slds-col  slds-size_9-of-12 actions-margin" >
+            <aura:if isTrue="{!v.selectedObject}">
+                <div class="slds-grid slds-size_12-of-12"  >
+                    <div class="slds-col">  
+                        <span class="font-bold">Total Fields: {!v.affectedfFieldMappingList[0].Migration_Util__Object_Mapping__r.Migration_Util__Total_Fields__c}</span>
+                    </div>
+                    <div class="slds-col">  
+                        <span class="font-bold margin-toReview" >To Review: {!v.affectedfFieldMappingList[0].Migration_Util__Object_Mapping__r.Migration_Util__Total_To_Review_Fields__c}</span>
+                    </div>
+                    <div class="slds-col">
+                        <span class="slds-form-element_stacked">
+                            <lightning:select aura:id="select1" label="View:" onchange="{!c.handleFilterChange}">
+                                <option value="All">All</option>
+                                <option value="To Be Reviewed">To Be Reviewed</option>
+                            </lightning:select>
+                        </span>
+                    </div>
+                    
+                    
+                </div>
+                <div class="slds-grid slds-size_12-of-12 "  aura:id="myTable" >
+                <table class="slds-table slds-table_cell-buffer slds-table_bordered" aria-labelledby="element-with-table-label other-element-with-table-label">
+                    <thead>
+                        <tr class="slds-line-height_reset">
+                            <th scope="col" class="color-col">
+                                <div class="slds-truncate labels"  title="Source Object:Label">{!v.affectedfFieldMappingList[0].Migration_Util__Object_Mapping__r.Migration_Util__Source_Object_Label__c}</div>
+                                <div class="slds-grid"> 
+                                    <div class="slds-col slds-size_1-of-2 slds-align_absolute-center" >
+                                        <th scope="col" class="color-col" >
+                                            <div class="slds-truncate labels" title="Source Object:Label">Source Label</div>
+                                        </th>
+                                    </div>
+                                    <div class="slds-col slds-size_1-of-2 slds-align_absolute-center" >
+                                        
+                                        <th scope="col" class="color-col">
+                                            <div class="slds-truncate labels" title="Record Type">Type</div>
+                                        </th>
+                                    </div>
+                                </div>
+                            </th>
+                            <th scope="col" class="color-col" style="width: 40%;">
+                                <div class="slds-truncate labels"  title="Record Type">{!v.affectedfFieldMappingList[0].Migration_Util__Object_Mapping__r.Migration_Util__Destination_Object_Label__c}</div>
+                                <div class="slds-grid"> 
+                                    <div class="slds-col slds-size_1-of-2 slds-align_absolute-center" >
+                                        <th scope="col " class="color-col">
+                                            <div class="slds-truncate labels" title="Total Fields">Destination Label</div>
+                                        </th>
+                                    </div>
+                                    <div class="slds-col slds-size_1-of-2 slds-align_absolute-center" >
+                                        <th scope="col " class="color-col">
+                                            <div class="slds-truncate labels" title="To Review">Type</div>
+                                        </th>
+                                    </div>
+                                </div>
+                            </th>
+                            <th scope="col" class="color-col">
+                                <div class="slds-truncate labels" title="Total Fields">Comments </div>
+                            </th>
+                            <th scope="col" class="color-col">
+                                <div class="slds-truncate labels" title="To Review">Actions</div>
+                            </th>
+                            
+                        </tr>
+                        
+                    </thead>
+                    <!--table body start, Iterate object list as a <tr> -->
+                    <tbody>
+                        <aura:iteration items="{!v.filtertedList}" var="acc1">
+                            <tr class="slds-hint-parent">
+                                <td>
+                                    <div class="slds-grid slds-size_2-of-2"> 
+                                        <div class=" slds-grid slds-wrap slds-col slds-size_1-of-2  slds-align_absolute-left margin-type" >
+                                            <aura:if isTrue="{!acc1.Migration_Util__Required__c == true}">
+                                                 <td scope="row">
+                                                <div class="slds-cell-wrap required-field" title="{!acc1.Migration_Util__Source_Field__c}">{!acc1.Migration_Util__Source_Field_Label__c}</div>
+                                            </td>
+                                            
+                                              <aura:set attribute="else">
+                                                   <td scope="row">
+                                                <div class="slds-cell-wrap" title="{!acc1.Migration_Util__Source_Field__c}">{!acc1.Migration_Util__Source_Field_Label__c}</div>
+                                           		 </td>
+                                               </aura:set>       
+                                           
+                                            </aura:if>
+                                        </div>
+                                        <div class="slds-col slds-size_1-of-2 slds-align_absolute-left margin-type" >
+                                            
+                                            <td scope="row">
+                                                <div class="slds-cell-wrap" title="{!acc1.Migration_Util__Source_Field_Type__c}">{!acc1.Migration_Util__Source_Field_Type__c}</div>
+                                            </td>
+                                        </div>
+                                    </div>
+                                </td>
+                                
+                                
+                                <td>
+                                    <div class="slds-grid slds-size_2-of-2"> 
+                                        <div class="slds-grid slds-wrap slds-col slds-size_1-of-2 slds-align_absolute-left margin-type" >
+                                            
+                                            <td scope="row">
+                                                
+                                                <aura:if isTrue="{!acc1.Migration_Util__Custom_Field__c}">
+                                                     <div class="slds-cell-wrap">
+                                                
+                                                    <select class="picklist-class" name="fieldList" id="{!acc1.Id}" disabled="{!acc1.Migration_Util__Mapping_Included__c== true}" onchange="{!c.handleSelectChange}">
+                                                        <option  value="None">None</option>
+                                                        <aura:iteration items="{!v.custFieldList}" var="ind" >
+                                                            <option selected="{!acc1.Migration_Util__Target_Field__c == ind.targetFieldAPI}" value="{!concat(concat(concat(concat(concat(concat(ind.targetFieldAPI,','),ind.targetFieldLabel),','),ind.targetFieldType),','),ind.referenceTo)}">{!ind.targetFieldLabel} ({!ind.targetFieldType})</option>
+                                                        </aura:iteration>
+                                                    </select>
+                                                    </div>
+                                                    
+                                                    <aura:set attribute="else">
+                                                        <div class="slds-cell-wrap" title="{!acc1.Migration_Util__Target_Field_Label__c}">{!acc1.Migration_Util__Target_Field_Label__c}</div>
+                                                    </aura:set>
+                                                </aura:if>
+                                                
+                                            </td>
+                                        </div>
+                                        <div class="slds-col slds-size_1-of-2 slds-align_absolute-left margin-type" >
+                                            
+                                            <td scope="row">
+                                                <div class="slds-cell-wrap" title="{!acc1.Migration_Util__Target_Field_Type__c}">{!acc1.Migration_Util__Target_Field_Type__c}</div>
+                                            </td>
+                                        </div>
+                                    </div>
+                                </td>
+                                
+                                
+                                <td scope="row" >
+                                    <!--aura:if isTrue="{!acc1.Mapping_Included__c== false}">
+                                      <div class="slds-truncate labels"  title="{!acc1.Comments__c}">Custom Field</div>
+            <aura:set attribute="else">
+                                         <div class="slds-truncate labels" title="{!acc1.Comments__c}">{!acc1.Comments__c}</div>
+                                        </aura:set>
+                                    </aura:if-->
+                                    <aura:if isTrue="{!and(acc1.Migration_Util__Mapping_Included__c== true, acc1.Migration_Util__Custom_Field__c ==true) }">
+                                            <div class="slds-truncate labels"  title="{!acc1.Migration_Util__Comments__c}">{!acc1.Migration_Util__Comments__c}</div>
+                                        
+                                        <aura:set attribute="else">
+                                            <div class="slds-truncate labels"  title="{!acc1.Migration_Util__Comments__c}">{!acc1.Migration_Util__Comments__c}</div>
+                                            
+                                        </aura:set>
+                                    </aura:if>
+                                    
+                                </td>
+                                
+                                <td scope="row" class="">
+                                    <aura:if isTrue="{!acc1.Migration_Util__Custom_Field__c == true }">
+                                        
+                                        <aura:if isTrue="{!acc1.Migration_Util__Mapping_Included__c== false}">
+                                            <lightning:buttonIcon iconName="utility:add" size="x-small" alternativeText="Add" value="{!acc1.Id}" class="button-icon-magin actions-margin" onclick="{!c.handleAddItem}"/>
+                                            <aura:set attribute="else">
+                                                <lightning:buttonIcon iconName="utility:ban" size="x-small" alternativeText="Remove" value="{!acc1.Id}" class="button-icon-magin actions-margin" onclick="{!c.handleRemoveItem}"/>
+                                            </aura:set>
+                                        </aura:if>
+                                        
+                                    </aura:if>
+                                </td>
+                                
+                            </tr>
+                        </aura:iteration>
+                        
+                    </tbody>
+                    
+                </table> 
+                </div></aura:if>
+            
+        </div>
+    </div>
+</aura:component>

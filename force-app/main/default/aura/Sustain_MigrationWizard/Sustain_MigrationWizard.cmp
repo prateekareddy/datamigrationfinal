@@ -1,0 +1,245 @@
+<!--
+@description       : 
+@author            : Accenture
+@group             : 
+@last modified on  : 09-28-2021
+@last modified by  : Accenture
+-->
+<aura:component implements="flexipage:availableForRecordHome,flexipage:availableForAllPageTypes" controller="Sustain_MigrationWizardController" access="global">
+
+<aura:attribute name="wrapObject" type="ObjMappingListWrapper"/>
+<aura:attribute name="updateCustObjList" type="List"/>
+<aura:attribute name="updatedSet" type="List" default="[]"/>
+<aura:attribute name="activeSections" type="String" default="B" />
+<aura:attribute name="objMap" type="object" default="[]"/>
+
+<aura:attribute name="spinner" type="boolean" default="false"/>
+<lightning:spinner aura:id="Spinner" alternativeText="Loading" size="medium" variant="brand" class="slds-hide"/>
+<!--Aura Method -->
+<aura:method name="saveMapping" action="{!c.handleAuraMethod}" access="public"/>
+<aura:handler name="init" value="{!this}" action="{!c.doInit}"/>
+<h1><lightning:icon iconName="utility:info" alternativeText="Info!" variant="brand" title="" size="small" />
+    &nbsp;<b>Review the standard mapping and make changes as appropriate.</b></h1>
+<p><h1 class="font-13"><b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Note: In case of Custom objects, field count is defaulted to zero. When a mapping is included by clicking on "+", the field count will be updated appropriately.</b></h1></p>
+
+        <!--<h2 style="font-size:12px;"><lightning:icon class="iconStyle" iconName="utility:info" size="x-small" alternativeText="info" variant="brand" title=""  />
+        &nbsp;  Review the standard mapping and make changes as appropriate.</h2> 
+    <p><h2 style="font-size:12px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Note: In case of Custom objects, field count is defaulted to zero. When a mapping is included by clicking on "+", the field count will be updated appropriately.</h2></p>-->
+    <br/>
+
+<lightning:accordion aura:id="accordion" activeSectionName="{!v.activeSections}" allowMultipleSectionsOpen="true" > 
+    <aura:if isTrue="{!not(empty(v.wrapObject.stdObjwithCustFieldList))}">
+        
+        <lightning:accordionSection name="B" label="Standard Managed Package Objects with Custom Fields">
+            <aura:set attribute="actions">
+            </aura:set>
+            <aura:set attribute="body">
+                <div class="slds-p-bottom_x-small"></div>
+            <div  class="slds-col slds-scrollable_y" aura:id="myTable" >
+                
+                <table class="slds-table slds-table_cell-buffer slds-table_bordered" aria-labelledby="element-with-table-label other-element-with-table-label">
+                    <thead aura:id="myHead">
+                        <tr class="slds-line-height_reset">
+                            <th scope="col" class="borderStyle">
+                                <div class="slds-truncate" title="Source Object:Label">Source Object:Label</div>
+                            </th>
+                            <th scope="col"  class="borderStyle">
+                                <div class="slds-truncate" title="Record Type">Record Type</div>
+                            </th>
+                            <th scope="col"  class="borderStyle">
+                                <div class="slds-truncate" title="Total Fields">Total Fields</div>
+                            </th>
+                            <th scope="col"  class="borderStyle">
+                                <div class="slds-truncate" title="To Review">To Review</div>
+                            </th>
+                            <th scope="col"  class="borderStyle">
+                                <div class="slds-truncate" title="Destination Object: Label">Destination Object: Label</div>
+                            </th>
+                            <!--th scope="col" style="background: lightcyan;">
+                                <div class="slds-truncate" title="Actions">Actions</div>
+                            </th-->
+                        </tr>
+                    </thead>
+                    <!--table body start, Iterate object list as a <tr> -->
+                    <tbody scrollbars="yes"  >
+                        <aura:iteration items="{!v.wrapObject.stdObjwithCustFieldList}" var="acc">
+                            <tr class="slds-hint-parent">
+                                <td scope="row">
+                                    <div class="slds-truncate" title="{!acc.Source_Object_Label__c}">{!acc.Migration_Util__Source_Object_Label__c}</div>
+                                </td>
+                                <td scope="row">
+                                    <div class="slds-truncate" title="{!acc.Source_Recordtype_Label__c}">{!acc.Migration_Util__Source_Recordtype_Label__c}</div>
+                                </td>
+                                <td scope="row">
+                                    <div class="slds-truncate" title="{!acc.Total_Fields__c}">{!acc.Migration_Util__Total_Fields__c}</div>
+                                </td>
+                                <td scope="row">
+                                    <div class="slds-truncate" title="{!acc.Total_To_Review_Fields__c}">{!acc.Migration_Util__Total_To_Review_Fields__c}</div>
+                                </td>
+                                <td scope="row">
+                                    <div class="slds-truncate" title="{!acc.Destination_Object_Label__c}">{!acc.Migration_Util__Destination_Object_Label__c}</div>
+                                </td>
+                                <!--th scope="row">
+                                    <lightning:buttonIcon iconName="utility:preview" size="x-small" alternativeText="View" class="button-icon-magin"/>
+                                    <lightning:buttonIcon iconName="utility:ban" size="x-small" alternativeText="Remove" value="{!acc.Id}" class="button-icon-magin" onclick="{!c.handleRemoveItem}"/>
+                                </th-->
+                            </tr>
+                        </aura:iteration>
+                        
+                    </tbody>
+                </table>
+            </div>
+            </aura:set>
+        </lightning:accordionSection>
+    </aura:if>
+    <br/>
+    <aura:if isTrue="{!not(empty(v.wrapObject.customObjList))}">
+        
+        <lightning:accordionSection name="A" label="Custom Objects used in Sustainability Cloud">
+            <aura:set attribute="actions">
+            </aura:set>
+            <aura:set attribute="body">
+                <div class="slds-p-bottom_x-small"></div>
+                <div class="slds-col slds-scrollable_y" aura:id="myTable1">
+                    
+                    <table class="slds-table slds-table_cell-buffer slds-table_bordered" aria-labelledby="element-with-table-label other-element-with-table-label">
+                        <thead>
+                            <tr class="slds-line-height_reset">
+                                <th scope="col"  class="borderStyle">
+                                    <div class="slds-truncate" title="Source Object:Label">Source Object:Label</div>
+                                </th>
+                                <!--<th scope="col" style="background: lightcyan;">
+                                    <div class="slds-truncate" title="Record Type">Record Type</div>
+                                </th>-->
+                                <th scope="col"  class="borderStyle">
+                                    <div class="slds-truncate" title="Total Fields">Total Fields</div>
+                                </th>
+                                <th scope="col"  class="borderStyle">
+                                    <div class="slds-truncate" title="To Review">To Review</div>
+                                </th>
+                                <th scope="col"  class="borderStyle">
+                                    <div class="slds-truncate" title="Destination Object: Label">Destination Object: Label</div>
+                                </th>
+                                <th scope="col"  class="borderStyle">
+                                    <div class="slds-truncate" title="Actions">Actions</div>
+                                </th>
+                            </tr>
+                        </thead>
+                        <!--table body start, Iterate object list as a <tr> -->
+                        <tbody scrollbars="yes" >
+                            <aura:iteration items="{!v.wrapObject.customObjList}" var="acc1">
+                                <tr class="slds-hint-parent">
+                                    <td scope="row">
+                                        <div class="slds-truncate" title="{!acc1.Source_Object_Label__c}">{!acc1.Migration_Util__Source_Object_Label__c}</div>
+                                    </td>
+                                    <!--<td scope="row">
+                                        <div class="slds-truncate" title="{!acc1.Source_Recordtype_Label__c}">{!acc1.Source_Recordtype_Label__c}</div>
+                                    </td>-->
+                                    <td scope="row">
+                                        <div class="slds-truncate" title="{!acc1.Total_Fields__c}">{!acc1.Migration_Util__Total_Fields__c}</div>
+                                    </td>
+                                    <td scope="row">
+                                        <div class="slds-truncate" title="{!acc1.Total_To_Review_Fields__c}">{!acc1.Migration_Util__Total_To_Review_Fields__c}</div>
+                                    </td>
+                                    <td scope="row">
+                                        <aura:if isTrue="{!acc1.Migration_Util__Mapping_Included__c== false}">
+                                            <select name="objectList" id="{!acc1.Id}" disabled="{!acc1.Migration_Util__Mapping_Included__c== true}">
+                                                <aura:iteration items="{!v.objMap}" var="ind" indexVar="key">
+                                                    <option  value="{!concat(concat(ind.key,','),ind.value)}" selected="{!ind.value==acc1.Migration_Util__Target_Object__c}" >{!ind.key}</option>
+                                                </aura:iteration>
+                                            </select>
+                                            <aura:set attribute="else">
+                                                <div class="slds-truncate" title="{!acc1.Migration_Util__Destination_Object_Label__c}">{!acc1.Migration_Util__Destination_Object_Label__c}</div>    
+                                            </aura:set>
+                                        </aura:if>
+                                        <!--lightning:select aura:id="objectPicklist">
+                                            <aura:iteration items="{!v.wrapObject.objectList}" var="ind" >
+                                                <option  value="{!ind}" selected="{!ind==acc1.Target_Object__c}" >{!ind}</option>
+                                            </aura:iteration>
+                                        </lightning:select-->
+                                        <!--div class="slds-truncate" title="{!acc1.Target_Object__c}">{!acc1.Target_Object__c}</div-->
+                                    </td>
+                                    <td scope="row">
+                                        <aura:if isTrue="{!acc1.Migration_Util__Mapping_Included__c== false}">
+                                            <lightning:buttonIcon iconName="utility:add" size="x-small" alternativeText="Add" value="{!acc1.Id}" class="button-icon-magin" onclick="{!c.handleAddItem}"/>
+                                            <aura:set attribute="else">
+                                                <lightning:buttonIcon iconName="utility:ban" size="x-small" alternativeText="Remove" value="{!acc1.Id}" class="button-icon-magin" onclick="{!c.handleRemoveItem}"/>
+                                            </aura:set>
+                                        </aura:if>
+                                    </td>
+                                </tr>
+                            </aura:iteration>
+                            
+                        </tbody>
+                        
+                    </table>
+                    
+                </div>
+            </aura:set>
+        </lightning:accordionSection>
+    </aura:if>
+    <br/>
+    <aura:if isTrue="{!not(empty(v.wrapObject.stdObjList))}">
+        
+        <lightning:accordionSection name="C" label="Other Standard Managed Package Objects">
+            <aura:set attribute="actions">
+            </aura:set>
+        <aura:set attribute="body">
+            <div class="slds-p-bottom_x-small"></div>
+            <div class="slds-col slds-scrollable_y" aura:id="myTable2">
+                
+                <table class="slds-table slds-table_cell-buffer slds-table_bordered" aria-labelledby="element-with-table-label other-element-with-table-label">
+                    <thead aura:id="myHead">
+                        <tr class="slds-line-height_reset">
+                            <th scope="col"  class="borderStyle">
+                                <div class="slds-truncate" title="Source Object:Label">Source Object:Label</div>
+                            </th>
+                            <th scope="col"  class="borderStyle">
+                                <div class="slds-truncate" title="Record Type">Record Type</div>
+                            </th>
+                            <th scope="col"  class="borderStyle">
+                                <div class="slds-truncate" title="Total Fields">Total Fields</div>
+                            </th>
+                            <th scope="col"  class="borderStyle">
+                                <div class="slds-truncate" title="To Review">To Review</div>
+                            </th>
+                            <th scope="col"  class="borderStyle">
+                                <div class="slds-truncate" title="Destination Object: Label">Destination Object: Label</div>
+                            </th>
+                            <!--th scope="col" style="background: lightcyan;">
+                                <div class="slds-truncate" title="Actions">Actions</div>
+                            </th-->
+                        </tr>
+                    </thead>
+                    <!--table body start, Iterate object list as a <tr> -->
+                    <tbody scrollbars="yes" >
+                        <aura:iteration items="{!v.wrapObject.stdObjList}" var="acc2">
+                            <tr class="slds-hint-parent">
+                                <td scope="row">
+                                    <div class="slds-truncate" title="{!acc2.Source_Object_Label__c}">{!acc2.Migration_Util__Source_Object_Label__c}</div>
+                                </td>
+                                <td scope="row">
+                                    <div class="slds-truncate" title="{!acc2.Source_Recordtype_Label__c}">{!acc2.Migration_Util__Source_Recordtype_Label__c}</div>
+                                </td>
+                                <td scope="row">
+                                    <div class="slds-truncate" title="{!acc2.Total_Fields__c}">{!acc2.Migration_Util__Total_Fields__c}</div>
+                                </td>
+                                <td scope="row">
+                                    <div class="slds-truncate" title="{!acc2.Total_To_Review_Fields__c}">{!acc2.Migration_Util__Total_To_Review_Fields__c}</div>
+                                </td>
+                                <td scope="row">
+                                    <div class="slds-truncate" title="{!acc2.Destination_Object_Label__c}">{!acc2.Migration_Util__Destination_Object_Label__c}</div>
+                                </td>
+                                <!--th scope="row">                     
+                                </th-->
+                            </tr>
+                        </aura:iteration>
+                        
+                    </tbody>
+                </table>
+            </div>
+            </aura:set>
+        </lightning:accordionSection>
+    </aura:if>
+</lightning:accordion>    
+</aura:component>

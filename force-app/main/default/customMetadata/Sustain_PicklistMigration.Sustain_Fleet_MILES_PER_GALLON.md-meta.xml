@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomMetadata xmlns="http://soap.sforce.com/2006/04/metadata" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+    <label>Sustain_Fleet_MILES_PER_GALLON</label>
+    <protected>false</protected>
+    <values>
+        <field>Source_Field_Name__c</field>
+        <value xsi:type="xsd:string">sustain_app__Fuel_Efficiency_Unit__c</value>
+    </values>
+    <values>
+        <field>Source_Record_Type__c</field>
+        <value xsi:type="xsd:string">Fleet_Vehicle</value>
+    </values>
+    <values>
+        <field>Sustain_Source_Value__c</field>
+        <value xsi:type="xsd:string">Miles per Gallon</value>
+    </values>
+    <values>
+        <field>Sustain_Target_Value__c</field>
+        <value xsi:type="xsd:string">MILES_PER_GALLON</value>
+    </values>
+    <values>
+        <field>Target_Object_Name__c</field>
+        <value xsi:type="xsd:string">VehicleAssetEnrgyUse</value>
+    </values>
+</CustomMetadata>

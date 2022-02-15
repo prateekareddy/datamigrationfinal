@@ -1,0 +1,192 @@
+<aura:component implements="flexipage:availableForAllPageTypes" access="global" controller="Sustain_MigrationWizardController">
+    <aura:attribute name="modalHeading" type="String" default="Prerequisites to Migration"/>
+    <aura:attribute name="showModal" type="Boolean" default="true"/>
+    <aura:attribute name="fctrWrap" type="EmissionFactorWrapper"/>
+    <aura:attribute name="fctrMap" type="Map"/>
+    <aura:attribute name="correctVersion" type="Boolean"/>
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}"/>
+    <aura:method name="openModal" action="{!c.openModal}" access="public"/>
+    <aura:if isTrue="{!v.showModal}">
+        <section role="dialog" tabindex="-1" class="slds-modal slds-fade-in-open slds-modal_medium" aria-labelledby="modal-heading-01" aria-modal="true" aria-describedby="modal-content-id-1">
+            <div class="slds-modal__container">
+                <header class="slds-modal__header">
+                    <h2 id="modal-heading-01" class="slds-modal__title slds-hyphenate">{!v.modalHeading}</h2>
+                </header>    
+                <div class="slds-scrollable_y background">
+                    <h1 class="slds-m-top_x-small slds-m-left_x-small"><lightning:icon iconName="utility:info" alternativeText="Info!" variant="brand" title="" size="small" />
+                        &nbsp;Ensure the following prerequisites are completed to be able to initiate migration</h1><br/>
+                    <lightning:accordion aura:id="accordion" activeSectionName="B" allowMultipleSectionsOpen="true" >
+                        <lightning:accordionSection name="A" label="Check Sustainability Cloud Managed Package Version">
+                            
+                            <aura:if isTrue="{!v.correctVersion}">
+                                <span class="slds-float_right"><lightning:icon iconName="utility:success" alternativeText="Success!" variant="Success" title="" size="small" /></span>
+                                <div class="slds-m-left_large">
+                                    <h1><b>Supported version of v1.14 or higher is already installed in the Org</b></h1>
+                                </div>
+                                <aura:set attribute="else">
+                                    <span class="slds-float_right"><lightning:icon iconName="utility:warning" alternativeText="Install Correct Package" variant="warning" title="" size="small" /></span>
+                                    <div class="slds-m-left_large">
+                                        <h1>The latest version (v1.14) of the Sustainability cloud managed package should be installed</h1>
+                                        <div class="redFont"><h3><b>Upgrade to the latest package using the help <a href="javascript:void(0)" onclick="{!c.openHelpPage}"> here.</a></b></h3></div>
+                                    </div> 
+                                </aura:set>
+                            </aura:if>
+                        </lightning:accordionSection>
+                        <lightning:accordionSection name="B" label="Choose Default Emission Factors">
+                            <div class="slds-m-left_large">
+                                <h1>Select default Emission factors to be used for the emission sources in the target (Stationary asset environmental source, Vehicle emission sources, Scope 3 emission sources)</h1><br/>
+                                <table class="slds-table slds-table_cell-buffer slds-table_bordered" aria-label="Example default base table of Opportunities">
+                                    <thead>
+                                        <tr class="slds-line-height_reset">
+                                            <th class="" scope="col">
+                                                <div class="slds-truncate" title="Emission Factor">Emission Factor</div>
+                                            </th>
+                                            <th class="" scope="col">
+                                                <div class="slds-truncate" title="Required Default Value">Required Default Value</div>
+                                            </th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr class="slds-hint-parent">
+                                            <aura:if isTrue="{!not(empty(v.fctrWrap.elecFctrList))}">
+                                                <td data-label="Emission Factor">
+                                                    <div class="slds-truncate" title="Electricity Emission Factor">Electricity Emission Factor</div>
+                                                </td>
+                                                <td data-label="Required Default Value">
+                                                    <div class="slds-truncate" title="Electricity Emission Values">
+                                                        <lightning:select aura:id="ElectricityEmssnFctrId" name="select1" label="" required="true">
+                                                            <aura:iteration items="{!v.fctrWrap.elecFctrList}" var="att">
+                                                                <option value="{!att.Id}">{!att.Name}</option>
+                                                            </aura:iteration>
+                                                        </lightning:select>
+                                                    </div>
+                                                </td>
+                                            </aura:if>
+                                        </tr>
+                                        <tr class="slds-hint-parent">
+                                            <aura:if isTrue="{!not(empty(v.fctrWrap.othFctrList))}">
+                                                <td data-label="Emission Factor">
+                                                    <div class="slds-truncate" title="Other Emission Factor">Other Emission Factor</div>
+                                                </td>
+                                                <td data-label="Required Default Value">
+                                                    <div class="slds-truncate" title="Other Emission Values">
+                                                        <lightning:select aura:id="OtherEmssnFctrId" name="select1" label="" required="true">
+                                                            <aura:iteration items="{!v.fctrWrap.othFctrList}" var="att">
+                                                                <option value="{!att.Id}">{!att.Name}</option>
+                                                            </aura:iteration>
+                                                        </lightning:select>
+                                                    </div>
+                                                </td>
+                                            </aura:if>
+                                        </tr>
+                                        <tr class="slds-hint-parent">
+                                            <aura:if isTrue="{!not(empty(v.fctrWrap.airFctrList))}">
+                                                <td data-label="Emission Factor">
+                                                    <div class="slds-truncate" title="Air Travel Emission Factor">Air Travel Emission Factor</div>
+                                                </td>
+                                                <td data-label="Required Default Value">
+                                                    <div class="slds-truncate" title="Air Travel Emission Values">
+                                                        <lightning:select aura:id="AirTravelEmssnFctrId" name="select1" label="" required="true">
+                                                            <aura:iteration items="{!v.fctrWrap.airFctrList}" var="att">
+                                                                <option value="{!att.Id}">{!att.Name}</option>
+                                                            </aura:iteration>
+                                                        </lightning:select>
+                                                    </div>
+                                                </td>
+                                            </aura:if>
+                                        </tr>
+                                        <tr class="slds-hint-parent">
+                                            <aura:if isTrue="{!not(empty(v.fctrWrap.grndFctrList))}">
+                                                <td data-label="Emission Factor">
+                                                    <div class="slds-truncate" title="Ground Travel Emission Factor">Ground Travel Emission Factor</div>
+                                                </td>
+                                                <td data-label="Required Default Value">
+                                                    <div class="slds-truncate" title="Ground Travel Emission Values">
+                                                        <lightning:select aura:id="GroundTravelEmssnFctrId" name="select1" label="" required="true">
+                                                            <aura:iteration items="{!v.fctrWrap.grndFctrList}" var="att">
+                                                                <option value="{!att.Id}">{!att.Name}</option>
+                                                            </aura:iteration>
+                                                        </lightning:select>
+                                                    </div>
+                                                </td>
+                                            </aura:if>
+                                        </tr>
+                                        <tr class="slds-hint-parent">
+                                            <aura:if isTrue="{!not(empty(v.fctrWrap.frgtFctrList))}">
+                                                <td data-label="Emission Factor">
+                                                    <div class="slds-truncate" title="Freight Hauling Emission Factor">Freight Hauling Emission Factor</div>
+                                                </td>
+                                                <td data-label="Required Default Value">
+                                                    <div class="slds-truncate" title="Freight Hauling Emission Values">
+                                                        <lightning:select aura:id="FrgtHaulingEmssnFctrId" name="select1" label="" required="true">
+                                                            <aura:iteration items="{!v.fctrWrap.frgtFctrList}" var="att">
+                                                                <option value="{!att.Id}">{!att.Name}</option>
+                                                            </aura:iteration>
+                                                        </lightning:select>
+                                                    </div>
+                                                </td>
+                                            </aura:if>
+                                        </tr>
+                                        <tr class="slds-hint-parent">
+                                            <aura:if isTrue="{!not(empty(v.fctrWrap.htlFctrList))}">
+                                                <td data-label="Emission Factor">
+                                                    <div class="slds-truncate" title="Hotel Stay Emission Factor">Hotel Stay Emission Factor</div>
+                                                </td>
+                                                <td data-label="Required Default Value">
+                                                    <div class="slds-truncate" title="Hotel Stay Emission Values">
+                                                        <lightning:select aura:id="HotelStayEmssnFctrId" name="select1" label="" required="true">
+                                                            <aura:iteration items="{!v.fctrWrap.htlFctrList}" var="att">
+                                                                <option value="{!att.Id}">{!att.Name}</option>
+                                                            </aura:iteration>
+                                                        </lightning:select>
+                                                    </div>
+                                                </td>
+                                            </aura:if>
+                                        </tr>
+                                        <tr class="slds-hint-parent">
+                                            <aura:if isTrue="{!not(empty(v.fctrWrap.refriFctrList))}">
+                                                <td data-label="Emission Factor">
+                                                    <div class="slds-truncate" title="Refrigerant Emission Factor">Refrigerant Emission Factor</div>
+                                                </td>
+                                                <td data-label="Required Default Value">
+                                                    <div class="slds-truncate" title="Refrigerant Emission Values">
+                                                        <lightning:select aura:id="RefrigerantEmssnFctrId" name="select1" label="" required="true">
+                                                            <aura:iteration items="{!v.fctrWrap.refriFctrList}" var="att">
+                                                                <option value="{!att.Id}">{!att.Name}</option>
+                                                            </aura:iteration>
+                                                        </lightning:select>
+                                                    </div>
+                                                </td>
+                                            </aura:if>
+                                        </tr>
+                                        <tr class="slds-hint-parent">
+                                            <aura:if isTrue="{!not(empty(v.fctrWrap.rntalFctrList))}">
+                                                <td data-label="Emission Factor">
+                                                    <div class="slds-truncate" title="Rental Car Emission Factor">Rental Car Emission Factor</div>
+                                                </td>
+                                                <td data-label="Required Default Value">
+                                                    <div class="slds-truncate" title="Rental Car Emission Values">
+                                                        <lightning:select aura:id="RentalCarEmssnFctrId" name="select1" label="" required="true">
+                                                            <aura:iteration items="{!v.fctrWrap.rntalFctrList}" var="att">
+                                                                <option value="{!att.Id}">{!att.Name}</option>
+                                                            </aura:iteration>
+                                                        </lightning:select>
+                                                    </div>
+                                                </td>
+                                            </aura:if>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </lightning:accordionSection>
+                    </lightning:accordion>
+                </div>
+                <footer class="slds-modal__footer">
+                    <button class="slds-button slds-button_neutral" onclick="{!c.closeModal}">Cancel</button>
+                    <button class="slds-button slds-button_brand" onclick="{!c.saveData}">Save</button>
+                </footer>
+            </div>
+        </section>
+        <div class="slds-backdrop slds-backdrop_open"></div>
+    </aura:if>
+</aura:component>

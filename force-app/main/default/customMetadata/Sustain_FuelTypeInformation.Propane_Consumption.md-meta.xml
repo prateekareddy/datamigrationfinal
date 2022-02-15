@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomMetadata xmlns="http://soap.sforce.com/2006/04/metadata" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+    <label>Propane Consumption</label>
+    <protected>false</protected>
+    <values>
+        <field>Field_Name__c</field>
+        <value xsi:type="xsd:string">sustain_app__Value_Propane_Consumption__c</value>
+    </values>
+    <values>
+        <field>Field_Unit__c</field>
+        <value xsi:type="xsd:string">sustain_app__Unit_Propane_Consumption__c</value>
+    </values>
+    <values>
+        <field>Fuel_Type__c</field>
+        <value xsi:type="xsd:string">Propane</value>
+    </values>
+    <values>
+        <field>Object_Name__c</field>
+        <value xsi:type="xsd:string">sustain_app__EnergyConsumption__c</value>
+    </values>
+    <values>
+        <field>Parent_Total_Field__c</field>
+        <value xsi:type="xsd:string">sustain_app__Total_Propane_consumption_kWh__c</value>
+    </values>
+</CustomMetadata>

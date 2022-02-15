@@ -1,0 +1,228 @@
+<!--
+  @description       : 
+  @author            : Accenture
+  @group             : 
+  @last modified on  : 09-24-2021
+  @last modified by  : Accenture
+-->
+<aura:component controller="Sustain_SampleDataLoadCtrl"  implements="force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,force:lightningQuickAction" access="global" >
+    <aura:attribute name="searchKeyword" type="String"/>
+    <aura:attribute name="listOfSearchRecords" type="List" description="Use for store the list of search records which returns from apex class"/>
+    <aura:attribute name="lstSelectedRecords" type="sObject[]" default="[]" description="Use,for store SELECTED sObject Records"/>
+    <aura:attribute name="startClicked" type="boolean" default="false"/>
+    <aura:attribute name="skipClicked" type="boolean" default="false"/>
+    <aura:attribute name="deleteClicked" type="boolean" default="false"/>
+    <aura:attribute name="checkboxChecked" type="boolean" default="true"/>
+    <aura:attribute name="showmodalpopup" type="Boolean" access="public" default="false" />
+    <aura:attribute name="listOfAssetRecords" type="List"/>
+    <aura:attribute name="resultCmp" type="List"/>
+    <aura:attribute name="allAssetRecords" type="List"/>
+    <aura:attribute name="selAssetRec" type="boolean" default="false"/>
+    <aura:attribute name="batchSuccess" type="boolean" default="false"/>
+    <aura:attribute name ="displaybuttons" type="String" />
+    <aura:attribute name ="dLR" type="Data_Load_Request__c" />
+    <aura:attribute name="SelectedAsset" type="String[]"/> 
+    <aura:attribute name="assetSel" type="boolean" default="false"/>
+    <aura:attribute name="displaySampleLoadButton" type="boolean" default="true"/>	
+    <aura:registerEvent name="handleProceedEvent" type="c:Sustain_handleProceedEvent"/>
+    <aura:registerEvent name="handleRefreshEvent" type="c:Sustain_UpdateParentEvent"/>
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}" />
+    <lightning:empApi aura:id="empApi"/>
+  <div class="slds-m-left_large myText" >
+        <!--<h1 class="myTextSize"><lightning:icon class="iconStyle" iconName="utility:info" alternativeText="info" variant="brand" title="" size="small" />
+            &nbsp;{!$Label.c.Sustain_SampleDataLoadLabel}</h1> 
+        <p><h1 class="myTextSize">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{!$Label.c.Sustain_SampleDataLoadLabel1}</h1></p>
+        -->
+      
+        <h1><lightning:icon iconName="utility:info" alternativeText="Info!" variant="brand" title="" size="small" />
+        &nbsp;<b>{!$Label.c.Sustain_SampleDataLoadLabel}</b></h1>
+    	<p><h1 class="font-size-13" ><b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{!$Label.c.Sustain_SampleDataLoadLabel1}</b></h1></p>
+      	<br/>
+        <div  aura:id="searchRes" class="slds-form-element slds-lookup slds-is-close">
+            <lightning:layout class="slds-m-bottom_x-small slds-wrap" multipleRows="true">
+                <lightning:layoutItem class="slds-size_6-of-12 slds-p-right_small">
+                    <h1 class="font-size-14"><b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{!$Label.c.Sustain_SampleLoadText}</b></h1>
+               
+                     <lightning:dualListbox class ="mydualListbox" aura:id="selectGenre"
+                               name="Genre"
+                               sourceLabel="Available Asset"
+                               selectedLabel="Selected Asset"
+                               options="{!v.listOfAssetRecords }"
+                               value="{!v.resultCmp}"
+                               onchange="{!c.handleAssetChange}"/>
+                </lightning:layoutItem>
+                
+                <!-- keyup="{!c.keyPressController} updateOn="keyup"-->
+                
+                <lightning:layoutItem class="slds-size_6-of-12 slds-p-left_small">
+                    <!--<input type="text" onclick="{!c.openModel}" 
+                           class="inputSize  display-inline-block inputText-display"
+                           value="{!v.resultCmp}" />-->
+                    <!--<ui:inputText 
+                                  class="inputSize  display-inline-block inputText-display"
+                                  value="{!v.resultCmp}"
+                                  click="{!c.openModel}"
+                                  />-->
+                  <!--  <lightning:dualListbox aura:id="selectGenre"
+                               name="Genre"
+                               sourceLabel="Available Asset"
+                               selectedLabel="Selected Asset"
+                               options="{!v.listOfAssetRecords }"
+                               value="{!v.resultCmp}"
+                               onchange="{!c.handleAssetChange}"/> -->
+                    <!--  <div class="slds-grid slds-m-top_xx-small">
+                        <Selected Records Pills Section>
+                        <div class=" inputSize slds-m-left_xx-small slds-size_6-of-12 display-inline-block slds-form-element__control">
+                            <aura:iteration items="{!v.lstSelectedRecords}" var="sr">
+                                <lightning:pill class="slds-m-around_xx-small" label="{!sr.Name}" name="{!sr.Id}" onremove="{! c.clear }">
+                                    <aura:set attribute="media">
+                                        <lightning:icon iconName="standard:answer_public" size="x-small" alternativeText="icon"/>
+                                    </aura:set>
+                                </lightning:pill>
+                            </aura:iteration>
+                            <ul style="min-height:40px;margin-top:0px !important" class="slds-listbox slds-listbox_vertical slds-dropdown slds-dropdown_fluid slds-lookup__menu slds" role="listbox">
+                                <lightning:spinner class="slds-hide" variant="brand" size="small" aura:id="mySpinner"/>
+                                <aura:iteration items="{!v.listOfSearchRecords}" var="singleRec">
+                                    <c:Sustain_ChildDataLoad oRecord="{!singleRec}"/>                                
+                                </aura:iteration>
+                            </ul>
+                        </div>
+                    </div> -->
+                </lightning:layoutItem>
+            </lightning:layout>
+            
+        </div>
+    </div>
+    <aura:if isTrue="{!v.batchSuccess == true}">
+            <div class="slds-align_left slds-m-left_large">
+                <span class="display-inline"><ui:inputCheckbox aura:id="checkbox" change="{!c.onCheck}"/></span>
+                &nbsp;<span style="color:#ff0000">*</span><span>{!$Label.c.Sustain_StartSampleLoadText1}</span></div>
+            <div class="slds-m-left_xx-small slds-m-right_xx-small" style="float: right;">
+                <button disabled = "{!v.checkboxChecked}" class="slds-button slds-button--brand" onclick="{!c.handleProceed}">Proceed</button>
+            </div>
+    </aura:if>
+    <aura:if isTrue="{!(v.startClicked == false &amp;&amp; v.skipClicked == false &amp;&amp; v.deleteClicked == false)}">        
+        <aura:if isTrue="{!(v.dLR == null || v.dLR.Migration_Util__Status__c =='Completed' || v.dLR.Migration_Util__Status__c =='Failed' || v.dLR.Migration_Util__Status__c =='Partial Complete')}">
+            <div style="float: right;">
+                <aura:if isTrue="{!v.displaySampleLoadButton}">
+                <button class="slds-button slds-button--brand" onclick="{!c.startLoad}">Start Sample Load</button>
+                <button class="slds-button slds-button--brand" onclick="{!c.skipLoad}">Skip Sample Load</button>
+                </aura:if>
+                <aura:if isTrue="{!and(v.dLR!=null,v.dLR.Migration_Util__Data_Load_Type__c!='Complete Data Load')}">
+                    <button class="slds-button slds-button_text-destructive" onclick="{!c.deleteLoad}">Revert Data Load</button>
+                </aura:if>
+            </div>
+            <aura:set attribute="else">
+                <div class="myTextSize">
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<h1 class="myTextSize"><lightning:icon class="iconStyle" iconName="utility:clock" alternativeText="clock" variant="brand" title="" size="small" />
+                    &nbsp;<b>
+                    <aura:if isTrue = "{!v.dLR.Migration_Util__Data_Load_Type__c == 'Sample Data Load'}">
+                        {!$Label.c.Sustain_StartSampleLoadText}
+                    </aura:if> 
+                    <aura:if isTrue = "{!v.dLR.Migration_Util__Data_Load_Type__c == 'Delete Data Load'}">
+                        {!$Label.c.Sustain_DeleteSampleLoadText}
+                    </aura:if> 
+                    </b></h1>
+                </div>
+        	</aura:set>
+        </aura:if>                
+    </aura:if>
+    <div style="float: right;">
+        <aura:if isTrue="{!and(v.dLR != null , v.dLR.Migration_Util__Data_Load_Type__c=='Complete Data Load')}">
+            <button class="slds-button slds-button--brand" onclick="{!c.handleProceed}">Next</button>
+        </aura:if>
+    </div>
+    <aura:if isTrue="{!v.startClicked == true}">
+        <div class="myTextSize">
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<h1 class="myTextSize"><lightning:icon class="iconStyle" iconName="utility:clock" alternativeText="clock" variant="brand" title="" size="small" />
+            &nbsp;<b>{!$Label.c.Sustain_StartSampleLoadText}</b></h1>
+        </div>
+    </aura:if>
+    <aura:if isTrue="{!v.skipClicked == true}">
+        <!--Modal Box Start-->
+        <div role="dialog" class="slds-modal slds-fade-in-open ">
+            <div class="slds-modal__container">
+                <!--Modal Box Header Start-->
+                <header class="slds-modal__header">
+                    <h1 class="slds-text-heading--medium">Confirmation</h1>
+                </header>
+                <!--Modal Box Header End-->
+                
+                <!--Modal Box Content Start-->
+                <div class="slds-modal__content slds-p-around--medium">
+                    <center><b>{!$Label.c.Sustain_SkipSampleText}</b></center>
+                </div>
+                <!--Modal Box Content End-->
+                
+                <!--Modal Box Button Start-->
+                <footer class="slds-modal__footer">
+                    <lightning:button name='No' label='Ok' onclick='{!c.handleProceed}'/>
+                    <lightning:button variant="brand" name='Yes' label='Cancel' onclick='{!c.handleCloseModal}'/>
+                </footer>
+                <!--Modal Box Button End-->
+            </div>
+        </div>
+        <div class="slds-backdrop slds-backdrop--open"></div>       	
+    </aura:if>
+    <aura:if isTrue="{!v.deleteClicked == true}">
+        <div class="myTextSize">
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<h1 class="myTextSize"><lightning:icon class="iconStyle" iconName="utility:clock" alternativeText="clock" variant="brand" title="" size="small" />
+            &nbsp;<b>{!$Label.c.Sustain_DeleteSampleLoadText}</b></h1>
+        </div>  
+    </aura:if>
+    <!-- Modal PopUp for Organisation Asset Data -->
+    <aura:if isTrue="{!v.showmodalpopup}">
+        <section role="dialog" tabindex="-1" aria-labelledby="modal-heading-01" aria-modal="true" 
+                 aria-describedby="modal-content-id-1" class="slds-modal slds-fade-in-open">
+            <div class="slds-modal__container">
+                <!-- Modal Header -->
+                <header class="slds-modal__header">
+                    <lightning:buttonIcon iconName="utility:close"
+                                          onclick="{! c.handleCloseModal }"
+                                          alternativeText="close"
+                                          variant="bare-inverse"
+                                          class="slds-modal__close"/>
+                    <!--<div>
+                        <ui:inputText 
+                                      updateOn="keyup"
+                                      keyup="{!c.keyPressController}"
+                                      class="inputSize  display-inline-block inputText-display"
+                                      value="{!v.searchKeyword}"
+                                      placeholder="Type Name of Organization Asset"/>
+                        <div class=" inputSize slds-m-left_xx-small slds-size_2-of-12 display-inline-block slds-form-element__control">
+                            <aura:iteration items="{!v.resultCmp}" var="sr">
+                                <lightning:pill class="slds-m-around_xx-small" label="{!sr}" name="{!sr}" onremove="{! c.clear }">
+                                    <aura:set attribute="media">
+                                        <lightning:icon iconName="standard:answer_public" size="x-small" alternativeText="icon"/>
+                                    </aura:set>
+                                </lightning:pill>
+                            </aura:iteration>
+                        </div>
+                    </div>-->
+                </header>
+                <div class="slds-modal__content slds-p-around_medium" id="modal-content-id-1">
+                    <h1 class="myTextSize"><b>Available Organization Assets</b></h1>
+                    <br/>
+                    <aura:iteration items="{!v.listOfAssetRecords}" var="assets">
+                        <!--<ui:inputCheckbox class="myCheckbox" aura:id="checkboxs" label="{!assets}" text="{!assets}" change="{!c.handleCheckTask}"/>-->
+                    	<!--<ui:inputCheckbox class="myCheckbox" aura:id="checkboxs" label="{!assets.value}"  value="{!assets.status}" text="{!assets.value}" />-->
+                        <lightning:input aura:id="checkboxs" type="checkbox" label="{!assets.value}" checked="{!assets.status}" value="{!assets.value}" />
+                    	<!--<div class="slds-checkbox">
+                            <input type="checkbox" name="chk" id="{!assets}" onchange="{!c.getSelectedAsset}"/>                            
+                            <label class="slds-checkbox__label" for="{!assets}">
+                                <span class="slds-checkbox_faux"></span>                                
+                            </label>
+                        </div>-->
+                    </aura:iteration>
+                    <br/>
+                </div>
+                <div class="slds-modal__footer">
+                    <div >                      		
+                        <span class="slds-var-p-around_medium">  <lightning:button variant="brand" label="Ok" title="Brand action" onclick="{! c.handleCloseModal }" class="slds-float_right"/> </span>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <div class="slds-backdrop slds-backdrop_open"></div>
+    </aura:if>
+</aura:component>

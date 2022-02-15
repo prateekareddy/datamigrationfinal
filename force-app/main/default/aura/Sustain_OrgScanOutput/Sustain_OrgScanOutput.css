@@ -1,0 +1,22 @@
+.THIS.slds-spinner_container {  
+    z-index: 10000;
+    position: fixed;   
+  }
+
+.THIS.text-size-medium{
+  font-size:12px;
+}
+
+
+.THIS.text-size-large{
+  font-size:16px;
+}
+
+.THIS width{
+    width: 50%;
+}
+
+.THIS .myCheckbox{
+  display: inline-block;
+  float: left;
+}

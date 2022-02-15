@@ -1,0 +1,106 @@
+.THIS .picklist-class{
+	width: 100%;
+}
+.THIS .required-field::before {
+    content: "*";
+    color: red;
+}
+.THIS .font-bold{
+    font-weight: bold;
+}
+.THIS .margin-toReview{
+    margin-left: 50px;
+}
+.THIS .filterclass{
+    width: 147px;
+    float: right;
+}
+
+.THIS .margin-type{
+                    margin-left: 35px;
+
+            }
+.THIS .slds-form-element__label {
+    font-size: 12px;
+    font-weight: bold;
+    color: black;
+        margin-top: -8px;
+
+}
+.THIS .tableFixHead{ 
+                overflow: auto;
+                height: 513px;
+    /*border: 2px solid black;*/
+}
+.THIS .tableFixHead thead th{
+    position:sticky;
+    top:0;
+    z-index:1;   
+}
+.THIS .tableFixHead1{
+                  overflow: auto;
+    /*border: 2px solid black;*/
+
+}
+.THIS table{
+    border-collapse: collapse;
+}
+.THIS th, .THIS td{
+    padding:8px,16px
+}
+
+.THIS .slds-nav-vertical__item {
+    background: lightgray;
+}
+.THIS .slds-is-active{
+        background: #0176D3 !important;
+    border-top: 2px solid lightgray !important;
+
+}
+.THIS li:active {
+   background: #0176D3;
+}
+.THIS .labels{
+        text-align: center;
+
+}
+.THIS .actions-margin{
+        margin-left: 10px;
+
+}
+.THIS .vertical-list{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.THIS .vertical-section{
+    overflow-y: auto;
+    height: 514px ; /*419px;*/
+    overflow-x: hidden;
+        margin-top: 41px;
+	border: 2px solid black; 
+
+}
+.THIS .slds-table_bordered tbody td{
+        border-top: 0 !IMPORTANT;
+
+}
+.THIS .slds-table_bordered tbody th 
+{    border-top: 0 !IMPORTANT;
+}
+.THIS .slds-table--bordered tbody td {
+        border-top: 0 !IMPORTANT;
+
+}
+.THIS .slds-table--bordered tbody th {
+    border-top: 0 !IMPORTANT;
+}
+.THIS .tr-table{
+    border-collapse:  collapse !important;
+    border-top: var(--lwc-borderWidthThin,1px) solid var(--lwc-colorBorder,rgb(221, 219, 218)) !important;
+}
+.THIS .slds-th__action{ justify-content: center; }
+
+.THIS .striped-list{
+	border-top: 2px solid lightgray !important;                
+}
