@@ -172,10 +172,20 @@ public without sharing class Sustain_MigrationWizardController {
     public static List<CustomFieldWrapper> getAllCustomFields(String objName){
         List<String> utilityFields=Sustain_UtilConstants.getUtilityItems();  
         List<CustomFieldWrapper> fieldList =new List<CustomFieldWrapper>();
+        Set<String> calculatedFields = new Set<String>();
+
+        for(Field_Mappings__c fld: [Select Id, Name, Target_Field__c from Field_Mappings__c where Object_Mapping__r.Target_Object__c =: objName AND 
+                Target_Field__c != null AND Calculated__c = true limit 50000]){
+            calculatedFields.add(fld.Target_Field__c);
+        }
+
+        calculatedFields.addAll(Sustain_UtilConstants.calculateddFieldList);
+
         SObjectType sObj = Schema.getGlobalDescribe().get(objName);
         for (SObjectField aField : sObj.getDescribe().fields.getMap().values()) {
             Schema.DescribeFieldResult fieldDesc = aField.getDescribe();
-            if (!Sustain_UtilConstants.stdFieldList.contains(fieldDesc.getName()) && !utilityFields.contains(fieldDesc.getName().removeStart('Migration_Util__'))) {
+            if (!Sustain_UtilConstants.stdFieldList.contains(fieldDesc.getName()) && !utilityFields.contains(fieldDesc.getName().removeStart('Migration_Util__')) && 
+                !calculatedFields.contains(objName+fieldDesc.getName().removeStart('Migration_Util__c'))) {
                 CustomFieldWrapper wrap=new CustomFieldWrapper();
                 wrap.targetFieldLabel=fieldDesc.getLabel();
                 wrap.targetFieldAPI=fieldDesc.getName().removeStart('Migration_Util__');

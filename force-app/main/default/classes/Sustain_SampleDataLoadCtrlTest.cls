@@ -13,13 +13,18 @@ private class Sustain_SampleDataLoadCtrlTest {
         Sustain_SampleDataLoadCtrl ms=new Sustain_SampleDataLoadCtrl();
         
         sustain_app__Asset__c asset=new sustain_app__Asset__c();
-        asset.Name='test';
+        /*asset.Name='test';
         asset.Target_SFDC_ID__c = null;
         asset.Migration_Status__c = 'Not Started';
         insert asset;
         
+        asset=new sustain_app__Asset__c();*/
+        asset.Name='140 Mission St';
+        asset.Target_SFDC_ID__c = null;
+        asset.Migration_Status__c = 'Not Started';
+        insert asset;
         List<String> lstAsset=new List<String>();
-        lstAsset.add(asset.Name);
+        lstAsset.add(asset.name);
         
         Data_Load_Request__c dataRec = new Data_Load_Request__c();
         dataRec.Request_Job_Name__c = 'Sample Data Load';
@@ -82,7 +87,7 @@ private class Sustain_SampleDataLoadCtrlTest {
         Sustain_SampleDataLoadCtrl.fetchLookUpValues('bufdg', lstAsset);
         Sustain_SampleDataLoadCtrl.fetchLookUpValues('q', lstAsset);
         Sustain_SampleDataLoadCtrl.fetchLookUpValues('bufdg', null);
-        //Sustain_SampleDataLoadCtrl.createDataLoadReq(lstAsset);
+       // Sustain_SampleDataLoadCtrl.createDataLoadReq(lstAsset);
           System.assertNotEquals(null, batchProcessId);
         
     }
@@ -92,7 +97,8 @@ private class Sustain_SampleDataLoadCtrlTest {
      
         
         Sustain_SampleDataLoadCtrl.getOrgAssetData();
-       
+       Sustain_SampleDataLoadCtrl.deleteErrorDataLoadReq(true);
+              Sustain_SampleDataLoadCtrl.deleteErrorDataLoadReq(false);
         Sustain_SampleDataLoadCtrl.getlatestDataLoad();
        Sustain_SampleDataLoadCtrl.deleteDataLoadReq();
         Sustain_SampleDataLoadCtrl.checkRunningJobIsSampleFinal();

@@ -23,9 +23,11 @@ public without sharing class Sustain_UtilConstants {
     public static final Map<String,String> stepStageMap=new  Map<String,String>{'step1' => 'Org Data Scan Output','step2' => 'Review/Update Object Mapping','step3' => 'Review/Update Field Mapping',
                                                                 'step4' => 'Confirm Data Mapping','step5' => 'Verify Sample Data Load','step6' => 'Complete Data Load'}; 
     public static final Map<String,String> coreObjectMap=new  Map<String,String>{'Carbon Emissions Scope Allocation' => 'CrbnEmssnScopeAlloc','Carbon Emissions Scope Allocation Value' => 'CrbnEmssnScopeAllocVal','Generated Waste' => 'GeneratedWaste',
-                                                                'Waste Footprint' => 'WasteFootprint','Waste Footprint Item' => 'WasteFootprintItem'}; 
+                                                                'Waste Footprint' => 'WasteFootprint'}; 
     public static final List<String> stdFieldList=new List<String>{'OwnerId','CreatedById','LastModifiedById','LastModifiedDate','Id','IsDeleted','CreatedDate',
                                                                    'SystemModstamp','LastViewedDate','LastReferencedDate','LastActivityDate','Source_Record_ID__c'};
+    
+    public static final List<String> calculateddFieldList =new List<String>{'GeneratedWasteDisposedWasteQuantityinTonnes','GeneratedWasteScope1EmissionsInTco2e'};
                                                                        
      public static final List<String> MIGRATION_DATA_OBJECTS=new List<String>{'sustain_app__EmissionFactorElectricity__c','sustain_app__EmissionFactorOther__c','sustain_app__EmissionFactorScope3Dataset__c','sustain_app__EmissionFactorScope3__c','sustain_app__BuildingEnergyIntensity__c',
                                                                    'sustain_app__InflationRate__c'};

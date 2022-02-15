@@ -83,6 +83,8 @@ public class Sustain_MigrationWizardControllerTest {
         asset.Target_SFDC_ID__c = null;
         asset.Migration_Status__c = 'Not Started';
         insert asset;
+          List<String> lstAsset=new List<String>();
+        lstAsset.add(asset.name);
         Object_Mappings__c obj = Sustain_TestDataFactory.createObjectMapping();
          obj.Source_Object__c= 'sustain_app__Asset__c';
         obj.Target_Object__c = 'Contact';
@@ -98,6 +100,7 @@ public class Sustain_MigrationWizardControllerTest {
         System.runAs(u1){
             test.startTest();
             Sustain_MigrationWizardController.deleteDataLoadReq();
+            //Sustain_SampleDataLoadCtrl.createDataLoadReq(lstAsset);
             test.stopTest();
         }
         list<Object_Mappings__c> objs = [select id from Object_Mappings__c];
