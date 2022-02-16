@@ -819,15 +819,17 @@
 		<members>Sustain_Reports/New_Emission_Factors_Scope_3_Report_jrz</members>
 		<members>Sustain_Reports/New_Energy_Use_Records_Report_Dkq</members>
 		<members>Sustain_Reports/New_Inflation_Rates_Report_SZN</members>
-		<members>Sustain_Reports/New_Report_bkc</members>
 		<members>Sustain_Reports/New_Report_iky</members>
 		<members>Sustain_Reports/New_Vendor_Report_Type_Report_csY</members>
 		<members>Sustain_Reports/Organization_Assets_W6P</members>
+		<members>Sustain_Reports/Procurement_Dataset_jEq</members>
+		<members>Sustain_Reports/Procurement_Entries_WUv</members>
 		<members>Sustain_Reports/Suppliers_V0Y</members>
 		<name>Report</name>
 	</types>
 	<types>
 		<members>Vendor_Report_Type</members>
+        <members>Procurement_Entries</members>
 		<name>ReportType</name>
 	</types>
 	<types>

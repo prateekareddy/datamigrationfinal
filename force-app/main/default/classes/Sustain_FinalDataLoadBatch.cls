@@ -150,6 +150,8 @@ global class Sustain_FinalDataLoadBatch implements Database.Batchable<sObject>,D
                             sql += ' and sustain_app__VendorName__c != null';
                         }
                         
+                        Set<Id> dataSetIds = new Set<Id>();
+
                         if(datas != null) {
                             for(sustain_app__EnergyConsumption__c data : datas) {
                                 if(sequenceNo == 1) {
@@ -161,6 +163,7 @@ global class Sustain_FinalDataLoadBatch implements Database.Batchable<sObject>,D
                                     ids.add(data.sustain_app__EmissionFactorScope3__r.sustain_app__EmissionFactorScope3Dataset__c);
                                 }else if(sequenceNo >= 6 && sequenceNo <= 12) {
                                     ids.add(data.sustain_app__EmissionFactorScope3__c);
+                                    dataSetIds.add(data.sustain_app__EmissionFactorScope3__r.sustain_app__EmissionFactorScope3Dataset__c);
                                 } else  if(sequenceNo == 17 ) {
                                     ids.add(data.sustain_app__ServiceProvider__r.id);
                                 }else if(sequenceNo == 18) {
@@ -181,6 +184,16 @@ global class Sustain_FinalDataLoadBatch implements Database.Batchable<sObject>,D
                             if(resultMap != null) {
                                 for(string key :resultMap.keyset()) {
                                     ids.add(resultMap.get(key).sustain_app__EmissionFactorScope3Dataset__c);
+                                }
+                            }
+                        }
+                        if(sequenceNo >= 6 && sequenceNo <=12 && dataSetIds.size() > 0){
+                            System.debug('dataSetIds '+dataSetIds);
+                            map<string, sustain_app__ProcurementEntry__c>  pEntryMap = new map<string, sustain_app__ProcurementEntry__c>([select id, sustain_app__EmissionFactorScope3__c from sustain_app__ProcurementEntry__c where sustain_app__ProcurementDataset__c in :dataSetIds AND sustain_app__EmissionFactorScope3__c != null]);
+                            
+                            if(pEntryMap != null) {
+                                for(string key :pEntryMap.keyset()) {
+                                    ids.add(pEntryMap.get(key).sustain_app__EmissionFactorScope3__c);
                                 }
                             }
                         }

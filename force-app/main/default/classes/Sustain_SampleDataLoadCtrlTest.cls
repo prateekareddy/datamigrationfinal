@@ -14,11 +14,11 @@ private class Sustain_SampleDataLoadCtrlTest {
         
         sustain_app__Asset__c asset=new sustain_app__Asset__c();
         /*asset.Name='test';
-        asset.Target_SFDC_ID__c = null;
-        asset.Migration_Status__c = 'Not Started';
-        insert asset;
-        
-        asset=new sustain_app__Asset__c();*/
+asset.Target_SFDC_ID__c = null;
+asset.Migration_Status__c = 'Not Started';
+insert asset;
+
+asset=new sustain_app__Asset__c();*/
         asset.Name='140 Mission St';
         asset.Target_SFDC_ID__c = null;
         asset.Migration_Status__c = 'Not Started';
@@ -46,17 +46,17 @@ private class Sustain_SampleDataLoadCtrlTest {
         obj.Status__c='Completed';
         insert obj;
         
-      /*  obj = new Object_Mappings__c();
-        obj.Target_Object__c='OtherEmssnFctrSet';
-        obj.Source_Object__c='sustain_app__EmissionFactorOther__c';
-        obj.Source_Record_Type__c='Mobile_Fuels';
-        obj.Target_Record_Type__c ='Master';
-        obj.Status__c = 'Not Started' ;
-        obj.Object_Type__c = 'standard'; 
-        obj.mapping_included__c=true  ;
-        obj.sequence_number__c=3;
-        obj.Delete_Sequence_No__c=3;
-        insert obj;*/
+        /*  obj = new Object_Mappings__c();
+obj.Target_Object__c='OtherEmssnFctrSet';
+obj.Source_Object__c='sustain_app__EmissionFactorOther__c';
+obj.Source_Record_Type__c='Mobile_Fuels';
+obj.Target_Record_Type__c ='Master';
+obj.Status__c = 'Not Started' ;
+obj.Object_Type__c = 'standard'; 
+obj.mapping_included__c=true  ;
+obj.sequence_number__c=3;
+obj.Delete_Sequence_No__c=3;
+insert obj;*/
         
         Field_Mappings__c objF = new Field_Mappings__c();
         objF.Mapping_Included__c= true;
@@ -82,30 +82,31 @@ private class Sustain_SampleDataLoadCtrlTest {
         objF.Required__c = true;
         objF.object_mapping__c = obj.id;
         insert objF;
-          Sustain_DeleteTargetRecordsBatch batchRecords = new Sustain_DeleteTargetRecordsBatch(dataRec, obj, false);
+        Sustain_DeleteTargetRecordsBatch batchRecords = new Sustain_DeleteTargetRecordsBatch(dataRec, obj, false);
         ID batchProcessId = database.executeBatch(batchRecords, 1000);
         Sustain_SampleDataLoadCtrl.fetchLookUpValues('bufdg', lstAsset);
         Sustain_SampleDataLoadCtrl.fetchLookUpValues('q', lstAsset);
         Sustain_SampleDataLoadCtrl.fetchLookUpValues('bufdg', null);
-       // Sustain_SampleDataLoadCtrl.createDataLoadReq(lstAsset);
-          System.assertNotEquals(null, batchProcessId);
+        //Sustain_SampleDataLoadCtrl.createDataLoadReq(lstAsset);
+        System.assertNotEquals(null, batchProcessId);
         
     }
-         @isTest static void test() {
+    @isTest static void test() {
         Test.startTest();
-       
-     
+        
+        
         
         Sustain_SampleDataLoadCtrl.getOrgAssetData();
-       Sustain_SampleDataLoadCtrl.deleteErrorDataLoadReq(true);
-              Sustain_SampleDataLoadCtrl.deleteErrorDataLoadReq(false);
+        Sustain_SampleDataLoadCtrl.deleteErrorDataLoadReq(true);
+        Sustain_SampleDataLoadCtrl.deleteErrorDataLoadReq(false);
         Sustain_SampleDataLoadCtrl.getlatestDataLoad();
-       Sustain_SampleDataLoadCtrl.deleteDataLoadReq();
+        Sustain_SampleDataLoadCtrl.deleteDataLoadReq();
         Sustain_SampleDataLoadCtrl.checkRunningJobIsSampleFinal();
         
+        
         Test.stopTest();
-           
-     
+        
+        
     }
     
 }
