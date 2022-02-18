@@ -15,22 +15,18 @@
     width: 147px;
     float: right;
 }
-
 .THIS .margin-type{
-                    margin-left: 35px;
-
-            }
+    margin-left: 35px;
+}
 .THIS .slds-form-element__label {
     font-size: 12px;
     font-weight: bold;
     color: black;
-        margin-top: -8px;
-
+    margin-top: -8px;
 }
 .THIS .tableFixHead{ 
-                overflow: auto;
-                height: 513px;
-    /*border: 2px solid black;*/
+    overflow: auto;
+    height: 513px;
 }
 .THIS .tableFixHead thead th{
     position:sticky;
@@ -38,9 +34,7 @@
     z-index:1;   
 }
 .THIS .tableFixHead1{
-                  overflow: auto;
-    /*border: 2px solid black;*/
-
+    overflow: auto;
 }
 .THIS table{
     border-collapse: collapse;
@@ -53,9 +47,8 @@
     background: lightgray;
 }
 .THIS .slds-is-active{
-        background: #0176D3 !important;
+    background: #0176D3 !important;
     border-top: 2px solid lightgray !important;
-
 }
 .THIS li:active {
    background: #0176D3;
@@ -77,9 +70,8 @@
     overflow-y: auto;
     height: 514px ; /*419px;*/
     overflow-x: hidden;
-        margin-top: 41px;
-	border: 2px solid black; 
-
+    margin-top: 41px;
+	border: 2px solid black;
 }
 .THIS .slds-table_bordered tbody td{
         border-top: 0 !IMPORTANT;

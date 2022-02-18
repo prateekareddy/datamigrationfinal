@@ -13,7 +13,6 @@ global class Sustain_UpdateCustomObjectRefBatch implements Database.Batchable<sO
     String dataLoadType = '';
     private static final string CurrentClassName = 'Sustain_UpdateCustomObjectRefBatch';
 
-    // public Sustain_UpdateCustomObjectRefBatch(){}
     public Sustain_UpdateCustomObjectRefBatch( Object_Mappings__c objMap, String dlType){       
         this.objMapping = objMap;
         this.dataLoadType = dlType;
@@ -59,8 +58,6 @@ global class Sustain_UpdateCustomObjectRefBatch implements Database.Batchable<sO
             }
                   
             update objMapping;
-
-            //String sqlStr = 'select id,Target_Object__c,Source_Object__c,Source_Record_Type__c,Target_Record_Type__c from Object_Mappings__c where Status__c = \'Not Started\' AND Object_Type__c = \'custom\' order by Source_Object__c null last limit 1';    
             List<Object_Mappings__c> customObjectList = Sustain_UpdateCustomObjectRelationship.getCustomObjectMappingtoUpdate();
             if(customObjectList.size() >0){
                 Sustain_UpdateCustomObjectRefBatch nextcustBatch = new Sustain_UpdateCustomObjectRefBatch(customObjectList[0], dataLoadType);
@@ -89,27 +86,17 @@ global class Sustain_UpdateCustomObjectRefBatch implements Database.Batchable<sO
                      system.debug('dataReq update error-->' + e);
                      Sustain_UtilityError.createErrorLog(e, CurrentClassName, CurrentMethodName); 
                 }
-                /*if(String.isBlank(errorMessage)){     
-                    objMapping.Status__c = 'Completed';
-                }else{
-                    objMapping.Status__c = 'Error';   
-                }
-            
-                update objMapping;*/
-
+                
                 user us = [Select id,Name,email from User where id=:Userinfo.getUserId() limit 1];
                 List<String> emailAddress = new List<String>();
                 emailAddress.add(us.email);
-                //if(String.isBlank(errorMessage)){
-                    Sustain_SendNotification sendData =new Sustain_SendNotification();
-                    sendData.sendChatterNotification('MetadataEmails');
-                    if('FinalDataLoad'.equalsIgnoreCase(dataLoadType)){
-                        sendData.sendEmailNotification(emailTemplate, emailAddress);
-                        sendData.sendChatterNotification('FinalDataLoadEmails');
-                    }/*else{
-                        sendData.sendEmailNotification('Sustain_SampleDataLoadEmails',emailAddress);
-                    }*/
-                //}
+                
+                Sustain_SendNotification sendData =new Sustain_SendNotification();
+                sendData.sendChatterNotification('MetadataEmails');
+                if('FinalDataLoad'.equalsIgnoreCase(dataLoadType)){
+                    sendData.sendEmailNotification(emailTemplate, emailAddress);
+                    sendData.sendChatterNotification('FinalDataLoadEmails');
+                }
             }
         }catch(Exception ex){
             Sustain_UtilityError.createErrorLog(ex, CurrentClassName, CurrentMethodName);     

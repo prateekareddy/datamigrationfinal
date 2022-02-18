@@ -1,3 +1,10 @@
+/***************************************************************************************************************
+* Name - Sustain_MigrateCustomFieldsContTest
+* Description - This class is used as a test class for Sustain_MigrateCustomFieldsController apex class.
+* Author - Accenture (Bindhyachal)
+* Created Date -9/19/2021
+* Last Modified By & Date - Accenture, 2/16/2022
+* ***************************************************************************************************************/
 @isTest(SeeAllData=False)
 private class Sustain_MigrateCustomFieldsContTest {
     static testMethod void unitTestMethod(){     
@@ -36,25 +43,22 @@ private class Sustain_MigrateCustomFieldsContTest {
         
         Map<String,List<Field_Mappings__c>> refFieldMap=new Map<String,List<Field_Mappings__c>>();
         MetadataService.SaveResult saveResult=new MetadataService.SaveResult ();
-        
-       // Sustain_MigrateCustomFieldsController.createCustomField(objFieldsMapping, 'sustain_app__AssetContact__c', refFieldMap);
-       // Sustain_MigrateCustomFieldsController.createCustomField(null, null, null);
-        Sustain_MigrateCustomFieldsController.processFieldMappings(refFieldMap);
-        Sustain_MigrateCustomFieldsController.processFieldMappings(null);
-        Sustain_MigrateCustomFieldsController.handleSaveResults(saveResult, set1);
-         Sustain_MigrateCustomFieldsController.handleSaveResults(null, null);
-        Sustain_MigrateCustomFieldsController.readCustomObjectSync(my_list, 'AirTravelEnrgyUse', set1, refFieldMap);
-       
+
         Profile p = [SELECT Id FROM Profile WHERE Name='System Administrator'];
         User u1 = new User(Alias = 'newUser', Email='aforce@aforceorg.com',
                            EmailEncodingKey='UTF-8', LastName='aforce', LanguageLocaleKey='en_US',
                            LocaleSidKey='en_US', ProfileId = p.Id,
                            TimeZoneSidKey='America/Los_Angeles', UserName='aforce@aforceorg.com');
-     
         
         System.runAs(u1){
             Test.startTest();
-            
+                Sustain_MigrateCustomFieldsController.createCustomField(null, null, null);
+                Sustain_MigrateCustomFieldsController.processFieldMappings(refFieldMap);
+                Sustain_MigrateCustomFieldsController.processFieldMappings(null);
+                Sustain_MigrateCustomFieldsController.handleSaveResults(saveResult, set1);
+                Sustain_MigrateCustomFieldsController.handleSaveResults(null, null);
+                Sustain_MigrateCustomFieldsController.readCustomObjectSync(my_list, 'AirTravelEnrgyUse', set1, refFieldMap);
+                Sustain_MigrateCustomFieldsController.createCustomField(objFieldsMapping, 'sustain_app__AssetContact__c', refFieldMap);
             Test.stopTest();
         }
         system.assertNotEquals(u1.Id,null);

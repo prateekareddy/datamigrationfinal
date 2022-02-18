@@ -42,7 +42,7 @@ global class Sustain_DeleteSampleLoadBatch implements Database.Batchable<sObject
         try{
             Set<String> processedID = new Set<String>();
             List<SObject> objListtobeCleared = new List<SObject>();
-            String currentObjectName = 'Migration_Util__'+currentObjMap.Source_Object__c;
+            String currentObjectName = Label.Sustain_Name_Space_Prefix+currentObjMap.Source_Object__c;
             for(SObject obj: scope){
                 System.debug('processedID '+processedID);
                 if(!processedID.contains(obj.Id) && (obj.get('Target_SFDC_ID__c') != null || obj.get('Migration_Status__c') != null || 

@@ -5,14 +5,11 @@
   @last modified on  : 09-30-2021
   @last modified by  : Accenture
 -->
-<aura:component implements="flexipage:availableForRecordHome,flexipage:availableForAllPageTypes" controller="Sustain_MigrationWizardController" access="global">
-    
-   <!-- <aura:attribute name="wrapObject" type="Sustain_MigrationWizardController.MappingListWrapper"/>-->
+<aura:component implements="flexipage:availableForRecordHome,flexipage:availableForAllPageTypes" controller="Sustain_MigrationWizardController" access="global">   
     <aura:attribute name="updatedSet" type="List" default="[]"/>
     <aura:attribute name="wrapperList" type="object"/>
     <aura:attribute name="selectedObject" type="boolean" default="false"/>
     <aura:attribute name="filterField" type="boolean" default="false"/>
-
     <aura:attribute name="objectId" type="String"/>
     <aura:attribute name="fieldMappingList" type="object"/>
     <aura:attribute name="affectedfFieldMappingList" type="object"/>
@@ -84,11 +81,9 @@
                                                 </aura:set>
                                             </aura:if>
                                         </aura:set>
-                                    </aura:if>
-                                    
+                                    </aura:if>                                    
                                 </aura:set>
-                            </aura:if>
-                            
+                            </aura:if>                            
                         </li>
                     </aura:iteration>                
                 </ul>
@@ -110,8 +105,7 @@
                                 <option value="To Be Reviewed">To Be Reviewed</option>
                             </lightning:select>
                         </span>
-                    </div>
-                    
+                    </div>                   
                     
                 </div>
                 <div class="slds-grid slds-size_12-of-12 "  aura:id="myTable" >
@@ -223,13 +217,7 @@
                                 </td>
                                 
                                 
-                                <td scope="row" >
-                                    <!--aura:if isTrue="{!acc1.Mapping_Included__c== false}">
-                                      <div class="slds-truncate labels"  title="{!acc1.Comments__c}">Custom Field</div>
-            <aura:set attribute="else">
-                                         <div class="slds-truncate labels" title="{!acc1.Comments__c}">{!acc1.Comments__c}</div>
-                                        </aura:set>
-                                    </aura:if-->
+                                <td scope="row" >                                   
                                     <aura:if isTrue="{!and(acc1.Migration_Util__Mapping_Included__c== true, acc1.Migration_Util__Custom_Field__c ==true) }">
                                             <div class="slds-truncate labels"  title="{!acc1.Migration_Util__Comments__c}">{!acc1.Migration_Util__Comments__c}</div>
                                         

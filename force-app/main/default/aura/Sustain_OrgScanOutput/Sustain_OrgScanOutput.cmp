@@ -9,7 +9,6 @@
     
     <lightning:spinner aura:id="Spinner" alternativeText="Loading" size="medium" variant="brand" class="slds-hide"/>
 
-    <!--<aura:if isTrue="{!!v.Spinner}">-->
     <lightning:card title="" >
         <div class="slds-m-left_large text-size-medium" >
             <h1><lightning:icon iconName="utility:info" alternativeText="Info!" variant="brand" title="" size="small" />
@@ -58,17 +57,8 @@
                     <br/>                    
                 </div>
                 
-                <!--<aura:set attribute="else">
-                    <h1 class = "text-size-medium">
-                        &nbsp;&nbsp;<b>{!$Label.c.Sustain_NoCustomObject}</b></h1> 
-                </aura:set>-->
             </aura:if>           
             
-            <!--<aura:iteration items="{!v.orgScanOutput.customObjectList}" var="co">
-                <ul class="slds-list_dotted">
-                    <li>&nbsp;{!co}</li>
-                </ul>              
-            </aura:iteration>-->
             <p><lightning:icon iconName="utility:success" alternativeText="Success!" variant="Success" title="" size="small" />
                 <b>&nbsp; {!v.orgscanoutput.noOfCustomFields}</b> Custom fields across <b>{!v.orgscanoutput.noOfObjectwithCustomFields} objects 
                 <b><I>(Excluding Standard objects and other managed package objects)</I></b></b> </p>  
@@ -77,24 +67,7 @@
             <li>{!$Label.c.Sustain_PreReqCheck1}<a href="javascript:void(0)" onclick="{!c.openHelpPage}"> here.</a></li>
             <li>{!$Label.c.Sustain_PreReqCheck2}</li>
             <li>{!$Label.c.Sustain_PreReqCheck3}</li>
-            <li>{!$Label.c.Sustain_PreReqCheck5}<a href="javascript:void(0)" onclick="{!c.openVendorPage}"> here.</a></li>
-            
-            <!--<li>{!$Label.c.Sustain_PreReqCheck4}</li>-->
-            <!--  <ol class="slds-list_ordered">
-               
-               <li>{!$Label.c.Sustain_PreReqCheck2}</li>        
-            </ol>-->  
-            <!--<div class="slds-clearfix">
-                <div class="slds-float_right">                   
-                    <lightning:button variant="brand" label=" Next " title="Nextto Object Mappings" onclick="{! c.handleNext }" class="slds-m-right_large"/>
-                </div>
-            </div> -->           
-           
-            <!--<ui:inputCheckbox class="myCheckbox, green-checkbox" aura:id="checkboxPrequisite" label= "{!$Label.c.Sustain_PrerequisiteComplete}" change="{!c.onCheck}" required="true"/>-->   
-            <!--<div class="slds-m-left_large text-size-medium" >
-                <span style="color:#ff0000">*</span><span class="display-inline"><ui:inputCheckbox aura:id="checkbox" change="{!c.onCheck}" label="{!$Label.c.Sustain_PrerequisiteComplete}"/></span>
-                </div>-->
+            <li>{!$Label.c.Sustain_PreReqCheck5}<a href="javascript:void(0)" onclick="{!c.openVendorPage}"> here.</a></li>            
         </div>        
     </lightning:card> 
-    <!--</aura:if> -->
 </aura:component>

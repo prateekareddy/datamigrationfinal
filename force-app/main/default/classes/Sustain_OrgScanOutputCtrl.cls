@@ -55,20 +55,15 @@ public with sharing class Sustain_OrgScanOutputCtrl{
                         cObjectInfoList.add(coi);
                         isValidObj = true;                        
                     }
-                }
-                //system.debug( 'Sobject Name: ' + objResult.getName() );
-
+                }                
                 // Check whether the object is relevant or not based on Object type. if object valid then set customfield count for an object
                 if(isValidObj){
-                    //custFieldsPerObject = countCustomFields(objResult, custFieldsPerObject, mwmSet);
+                   
                     if(custFieldsPerObject.get(objResult.getName()) != null ){           
-                        customFieldCount = customFieldCount + custFieldsPerObject.get(objResult.getName());
-                        //System.debug('custFieldsPerObject.get(objResult.getName()) custom'+ custFieldsPerObject.get(objResult.getName()));
-                        //system.debug( 'Sobject API Name Custom: ' + objResult.getName() ); 
+                        customFieldCount = customFieldCount + custFieldsPerObject.get(objResult.getName());                        
                     }
                     isValidObj = false;
-                }
- 
+                } 
             }
         
             System.debug(' Custom Objects has fields '+custFieldsPerObject.size());
@@ -101,53 +96,21 @@ public with sharing class Sustain_OrgScanOutputCtrl{
 
     @AuraEnabled
     public static ListView getListViews() {
+        String objectName = Label.Sustain_Name_Space_Prefix+'Vendor__c';
         ListView listviews =
-            [SELECT Id, Name FROM ListView WHERE SobjectType = 'Migration_Util__Vendor__c' and NAME = 'All Vendors' limit 1];
+            [SELECT Id, Name FROM ListView WHERE SobjectType = :objectName and NAME = 'All Vendors' limit 1];
 
         // Perform isAccessible() check here
         return listviews;
-    }
-
-    /*
-    @AuraEnabled 
-    public static Boolean redirectToObjectMappings(String migStage){
-        try{    
-            Migration_Status__c ms = Migration_Status__c.getOrgDefaults();
-            ms.Current_Migration_Stage__c = migStage;
-            update ms;
-            return true;
-        }catch(Exception ex){
-            Sustain_UtilityError.createErrorLog(ex);
-            return false;
-        }        
-    }*/
-
-     // This method is used to count the number of custom fields for a given objects 
-     /*private static Map<String, Integer> countCustomFields(Schema.DescribeSObjectResult objReslt, Map<String, Integer> custFieldsPerObject, Set<String> mwmetadata){
-        Integer customFieldCount = 0;
-        
-        for (SObjectField aField : objReslt.fields.getMap().values()) {
-            if (aField.getDescribe().isCustom() && !aField.getDescribe().getName().startsWith('sustain_app__') && !mwmetadata.contains(aField.getDescribe().getName())) {
-                customFieldCount++;
-            }
-        }
-        
-        System.debug('customFieldCount '+customFieldCount);
-        
-        // if object has custom field then put into map otherwise skip that object from map
-        if(customFieldCount > 0){
-            custFieldsPerObject.put(objReslt.getName(), customFieldCount);
-        }
-        return custFieldsPerObject;
-    }*/
+    } 
 
     // This method is used to count the number of custom fields for a given objects 
     private static Set<String> getAllReferenceCustomObject(Set<String> mwmetadata, Map<String, Integer> customFieldsPerObject){
         Integer customFieldCount = 0;
-       // Map<String, List<Schema.sObjectType>> objReferenceToMap = new Map<String, List<Schema.sObjectType>>();
+      
         Set<String> objectSet = new Set<String>();
         List<Schema.sObjectType> sobjType;
-        //Set<String> sObjectType;
+       
 
         for ( Schema.SObjectType o : Schema.getGlobalDescribe().values() ){
             Schema.DescribeSObjectResult objResult = o.getDescribe();   
@@ -160,9 +123,9 @@ public with sharing class Sustain_OrgScanOutputCtrl{
                     if(Sustain_UtilConstants.castTypeToString(aField.getDescribe().getType()).equals(Sustain_UtilConstants.referenceLabel) && 
                         aField.getDescribe().isNamePointing()==false &&
                         aField.getDescribe().isCustom() ){                        
-                        //sobjType.addAll(aField.getDescribe().getReferenceTo());
+                        
                         sobjType = aField.getDescribe().getReferenceTo();                         
-                        //System.debug('sObjType '+ sobjType + 'objectName '+objResult.getName()); 
+                        
                         if(objResult.getName().startsWith('sustain_app__')  && String.valueOf(sobjType[0]).contains('__c') && !String.valueOf(sobjType[0]).startsWith('sustain_app__')){
                             objectSet.add(string.valueOf(sobjType[0]));
                         }else if(String.valueOf(sobjType[0]).startsWith('sustain_app__')  && objResult.getName().contains('__c') && !objResult.getName().startsWith('sustain_app__')){
@@ -170,23 +133,14 @@ public with sharing class Sustain_OrgScanOutputCtrl{
                         }                       
                     }
                     if (aField.getDescribe().isCustom() && !aField.getDescribe().getName().startsWith('sustain_app__') && 
-                        !mwmetadata.contains(aField.getDescribe().getName().removeStart('Migration_Util__'))) {
+                        !mwmetadata.contains(aField.getDescribe().getName().removeStart(Label.Sustain_Name_Space_Prefix))) {
                         customFieldCount++;
                     }                
                 }           
 
-                /*for(Schema.sObjectType refObj: sobjType){
-                    if(objResult.getName().startsWith('sustain_app__')  && String.valueOf(refObj).contains('__c') && !String.valueOf(refObj).startsWith('sustain_app__')){
-                        objectSet.add(string.valueOf(refObj));
-                    }else if(String.valueOf(refObj).startsWith('sustain_app__')  && objResult.getName().contains('__c') && !objResult.getName().startsWith('sustain_app__')){
-                        objectSet.add(objResult.getName());
-                    }
-                } */
-
                 // if object has custom field then put into map otherwise skip that object from map
                 if(customFieldCount > 0 && (objResult.getName().startsWith('sustain_app__') || objectSet.contains(objResult.getName()))){
-                    customFieldsPerObject.put(objResult.getName(), customFieldCount);     
-                    //System.debug('customFieldsPerObject.get(objResult.getName()) custom'+ customFieldsPerObject.get(objResult.getName()) + 'objResult.getName() '+ objResult.getName());
+                    customFieldsPerObject.put(objResult.getName(), customFieldCount);                      
                 }
             }
         }

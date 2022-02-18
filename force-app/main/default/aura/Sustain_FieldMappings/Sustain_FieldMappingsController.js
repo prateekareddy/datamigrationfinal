@@ -1,37 +1,25 @@
 ({
-    getList : function(component, event, helper) {
-        // alert('mapping')
+    getList : function(component, event, helper) {        
         // Helper function - fetchContacts called for interaction with server
         helper.loadData(component, event, helper);
         
     },
     
-    refreshComponent : function(component, event,helper) {   
-        /*  alert(2)
-        var message;
-        var objName;
-        var params = event.getParam('arguments');
-        if (params) {
-            message = params.recordId;
-            objName = params.targetObjName;
-        }*/
-        //alert('mapping refresh')
+    refreshComponent : function(component, event,helper) {       
         var selValue=component.find("select1").get("v.value");
         var message = event.getParam("recordId");        
         var objName=event.getParam("targetObjName");
-        //alert(message + '--' + objName)
+        
         var fieldList= [];
         //call apex class method
-        var action = component.get("c.getAllMapping");
+        var action = component.get("c.getAllMapping");       
         
-        //var tabName = component.find()
         // set the parameters to method  
         action.setCallback(this, function(response) {
             //store state of response
             var state = response.getState();
             if (state === "SUCCESS") {
-                var resultData = response.getReturnValue();
-                //console.log("v.dataSize" +resultData.length);
+                var resultData = response.getReturnValue();                
                 //set response value in wrapperList attribute on component.
                 
                 component.set("v.selectedObject" , true);
@@ -52,8 +40,7 @@
                 if(selValue==='All'){
                     component.set("v.filtertedList",fieldList);
                 }
-                else if(selValue==='To Be Reviewed'){
-                    // component.set("v.filtertedList",null);
+                else if(selValue==='To Be Reviewed'){                    
                     for(var i=0;i<fieldList.length;i++){
                         if(fieldList[i].To_Review__c===true){
                             temp.push(fieldList[i]);
@@ -88,8 +75,7 @@
         if(selValue==='All'){
             component.set("v.filtertedList",fieldList);
         }
-        else if(selValue==='To Be Reviewed'){
-           // component.set("v.filtertedList",null);
+        else if(selValue==='To Be Reviewed'){           
             for(var i=0;i<fieldList.length;i++){
                 if(fieldList[i].Migration_Util__To_Review__c===true){
                     temp.push(fieldList[i]);
@@ -180,8 +166,7 @@
             }
         }
         component.set("v.filtertedList",filterList);
-        component.set("v.affectedfFieldMappingList",wrapList);
-        //helper.handleRemoveLabel(component, event, recordId);
+        component.set("v.affectedfFieldMappingList",wrapList);        
     },
     handleAddItem :function(component, event, helper){
         var recordId= event.getSource().get("v.value");
@@ -342,10 +327,8 @@
                 }
                 component.set("v.filtertedList",filterList);
             }
-            component.set("v.affectedfFieldMappingList",wrapList);
-            //  helper.addMapping(component,event,recordId);            
-        }
-        
+            component.set("v.affectedfFieldMappingList",wrapList);                     
+        }        
     },
     handlerightcomponent : function(component, event, helper) {
         var objectMappingSel = true;
@@ -397,8 +380,7 @@
         if (params) {
             callback = params.callback;
         }
-        //console.log('391 '+serverCall);
-        //console.log('392 '+varSet);
+        
         for(var i=0; i<varSet.length; i++){
             if(varSet[i].Migration_Util__Required__c=== true && varSet[i].Migration_Util__Mapping_Included__c=== false){
                 var toastEvent = $A.get("e.force:showToast");
@@ -412,7 +394,7 @@
                 break;
             }
         }
-        //console.log(serverCall);
+       
         console.log('407 '+varSet.length);
         if(serverCall && varSet.length>0){
             // create a one-time use instance of the serverEcho action
@@ -423,10 +405,7 @@
             // the server-side action returns
             action.setCallback(this, function(response) {
                 var state = response.getState();
-                if (state === "SUCCESS") {
-                    // You would typically fire a event here to trigger 
-                    // client-side notification that the server-side 
-                    // action is complete
+                if (state === "SUCCESS") {                   
                     var toastEvent = $A.get("e.force:showToast");
                     toastEvent.setParams({
                         title: 'Success!',
@@ -440,11 +419,6 @@
                 }
             });
             
-            // optionally set storable, abortable, background flag here
-            
-            // A client-side action could cause multiple events, 
-            // which could trigger other events and 
-            // other server-side action calls.
             // $A.enqueueAction adds the server-side action to the queue.
             $A.enqueueAction(action);
         }        
@@ -453,7 +427,7 @@
                 callback('Completed');
             } 
         }
-        //helper.saveMappingHelper(component, event);
+        
     },
     handleSelectChange : function(component, event, helper){
         component.set("v.picklistValueChange", true);

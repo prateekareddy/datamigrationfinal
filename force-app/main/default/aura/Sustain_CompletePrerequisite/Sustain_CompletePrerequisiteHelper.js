@@ -1,24 +1,9 @@
 ({
-	/*scheduleCreateFieldBatch : function(component, event, helper) {
-		//call apex class method
-         var action = component.get("c.createSourceIDField");
-         
-         //var tabName = component.find()
-         // set the parameters to method  
-         action.setCallback(this, function(response) {
-             //store state of response
-             var state = response.getState();
-             if (state === "SUCCESS") {
-                 var resultData = response.getReturnValue();                
-             }
-         });
-         $A.enqueueAction(action);
-	},*/
+	
     getFactorList : function(component, event, helper) {
 		//call apex class method
          var action = component.get("c.getAllEmissionFactors");
          
-         //var tabName = component.find()
          // set the parameters to method  
          action.setCallback(this, function(response) {
              //store state of response
@@ -34,9 +19,8 @@
 	},
     getVersionFlag : function(component, event, helper) {
 		//call apex class method
-         var action = component.get("c.getSCPackageVersion");
+         var action = component.get("c.getSCPackageVersion");        
          
-         //var tabName = component.find()
          // set the parameters to method  
          action.setCallback(this, function(response) {
              //store state of response
@@ -54,7 +38,7 @@
 		//call apex class method
          var action = component.get("c.createEmissionFactorRecords");
          action.setParams({ emissionFactorMap : component.get("v.fctrMap")});
-         //var tabName = component.find()
+         
          // set the parameters to method  
          action.setCallback(this, function(response) {
              //store state of response

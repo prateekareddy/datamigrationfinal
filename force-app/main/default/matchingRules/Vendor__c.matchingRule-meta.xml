@@ -6,7 +6,7 @@
         <label>Duplicate Vendor Matching Rule</label>
         <matchingRuleItems>
             <blankValueBehavior>NullNotAllowed</blankValueBehavior>
-            <fieldName>Vendor_Name__c</fieldName>
+            <fieldName>Migration_Util__Vendor_Name__c</fieldName>
             <matchingMethod>Exact</matchingMethod>
         </matchingRuleItems>
         <ruleStatus>Active</ruleStatus>

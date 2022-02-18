@@ -187,7 +187,7 @@
         <language>en_US</language>
         <protected>false</protected>
         <shortDescription>Sustain_helpPageURL</shortDescription>
-        <value>https://help.salesforce.com/s/articleView?language=en_US&amp;type=5&amp;id=sf.sustainability_admin.htm</value>
+        <value>https://help.salesforce.com/s/articleView?id=sf.netzero_admin.htm&amp;type=5</value>
     </labels>
     <labels>
         <fullName>Sustain_launchPage</fullName>

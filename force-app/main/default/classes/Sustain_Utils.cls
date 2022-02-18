@@ -50,226 +50,213 @@ public without sharing class Sustain_Utils {
     private static Set<String> errorSourceRecordIds = new Set<String>();
     private static List<Sobject> errorSourceRecordList = new List<Sobject>();
       
-        public static  SustainUtilWrapper createGenericRecords(List<sObject> srcRecords,List<Field_Mappings__c> fldList){
-            List<SObject> recordToBeInserted = new List<SObject>();
-            errorSourceRecordIds = new Set<String>();
-            errorSourceRecordList = new List<Sobject>();
+    public static  SustainUtilWrapper createGenericRecords(List<sObject> srcRecords,List<Field_Mappings__c> fldList){
+        List<SObject> recordToBeInserted = new List<SObject>();
+        errorSourceRecordIds = new Set<String>();
+        errorSourceRecordList = new List<Sobject>();
 
-            string CurrentMethodName = 'createGenericRecords';
-            SustainUtilWrapper finalWrapper = new SustainUtilWrapper();
-            List<String> assetContactIdList = new List<String>();
-            List<String> supplierIdList = new List<String>();
-            List<String> vendorIdList = new List<String>();
-            set<String> vendorNameSet = new Set<String>();
-            Map<String,String> cfEnergyUseMap = new Map<String,String>();
-            Map<String, ID> supplierIdMap = new Map<String, ID>();
+        string CurrentMethodName = 'createGenericRecords';
+        SustainUtilWrapper finalWrapper = new SustainUtilWrapper();
+        List<String> assetContactIdList = new List<String>();
+        List<String> supplierIdList = new List<String>();
+        List<String> vendorIdList = new List<String>();
+        set<String> vendorNameSet = new Set<String>();
+        Map<String,String> cfEnergyUseMap = new Map<String,String>();
+        Map<String, ID> supplierIdMap = new Map<String, ID>();
 
-            try{
-                String trgtObject=fldList[0].Object_Mapping__r.Target_Object__c;
-                string trgtRecordtype=fldList[0].Object_Mapping__r.Target_Record_Type__c;
-                string srcOj=fldList[0].Object_Mapping__r.Source_object__c;
-                string sourceRcdType= fldList[0].Object_Mapping__r.Source_Record_Type__c;
-                list<Field_Mappings__c> emissionFld = new list<Field_Mappings__c>();
-                system.debug('createGenericRecords:trgtObject----->' + trgtObject);
-                system.debug('createGenericRecords:trgtRecordtype----->' + trgtRecordtype);
-                system.debug('createGenericRecords:srcOj----->' + srcOj);
-                system.debug('createGenericRecords:srcRecords---->' + srcRecords.size());
-                if(srcOj.equals(EnergyUseObjAPI)){
-                    List<sustain_app__ConsumptionReportItem__c> CFItemList = [Select Id, Name,sustain_app__ConsumptionReport__r.Target_SFDC_ID__c, sustain_app__EnergyConsumption__c from sustain_app__ConsumptionReportItem__c where sustain_app__EnergyConsumption__c IN:srcRecords];
-                    for(sustain_app__ConsumptionReportItem__c cfi: CFItemList){
-                        cfEnergyUseMap.put(cfi.sustain_app__EnergyConsumption__c, cfi.sustain_app__ConsumptionReport__r.Target_SFDC_ID__c);
-                    }
-                    
-                    if( trgtObject != 'StnryAssetEnrgyUse'){
-                        for(sustain_app__EnergyConsumption__c energyUse: [SELECT id, sustain_app__VendorName__c from sustain_app__EnergyConsumption__c where sustain_app__VendorName__c != null AND ID IN:srcRecords ]){
-                            vendorNameSet.add(energyUse.sustain_app__VendorName__c);
-                        }
-
-                        for(Supplier sup: [Select Id, Name from Supplier where Name IN: vendorNameSet]){
-                            supplierIdMap.put(sup.Name, sup.Id);
-                        }
-                    }
+        try{
+            String trgtObject=fldList[0].Object_Mapping__r.Target_Object__c;
+            string trgtRecordtype=fldList[0].Object_Mapping__r.Target_Record_Type__c;
+            string srcOj=fldList[0].Object_Mapping__r.Source_object__c;
+            string sourceRcdType= fldList[0].Object_Mapping__r.Source_Record_Type__c;
+            list<Field_Mappings__c> emissionFld = new list<Field_Mappings__c>();
+            system.debug('createGenericRecords:trgtObject----->' + trgtObject);
+            system.debug('createGenericRecords:trgtRecordtype----->' + trgtRecordtype);
+            system.debug('createGenericRecords:srcOj----->' + srcOj);
+            system.debug('createGenericRecords:srcRecords---->' + srcRecords.size());
+            if(srcOj.equals(EnergyUseObjAPI)){
+                List<sustain_app__ConsumptionReportItem__c> CFItemList = [Select Id, Name,sustain_app__ConsumptionReport__r.Target_SFDC_ID__c, sustain_app__EnergyConsumption__c from sustain_app__ConsumptionReportItem__c where sustain_app__EnergyConsumption__c IN:srcRecords];
+                for(sustain_app__ConsumptionReportItem__c cfi: CFItemList){
+                    cfEnergyUseMap.put(cfi.sustain_app__EnergyConsumption__c, cfi.sustain_app__ConsumptionReport__r.Target_SFDC_ID__c);
                 }
-                for(sObject cf: srcRecords){                   
-                    System.debug('fldList[0].Object_Mapping__r.Source_Record_Type__c------>' + fldList[0].Object_Mapping__r.Source_Record_Type__c);
-
-                    String recordTypeName = fldList[0].Object_Mapping__r.Source_Record_Type__c != null && fldList[0].Object_Mapping__r.Source_Record_Type__c != '' && fldList[0].Object_Mapping__r.Source_Record_Type__c !='Master' ? Schema.getGlobalDescribe().get(srcOj).getDescribe().getRecordTypeInfosById().get((String)cf.get('RecordTypeId')).getDeveloperName() : '';
-                    system.debug('createGenericRecords:recordTypeName-->' + recordTypeName);
-                    if(String.isBlank(recordTypeName) || recordTypeName == fldList[0].Object_Mapping__r.Source_Record_Type__c ) {
-                        //String recordTypeName = fldList[0].Object_Mapping__r.source_Record_Type__c !='Master' ? Schema.getGlobalDescribe().get(srcOj).getDescribe().getRecordTypeInfosById().get((String)cf.get('RecordTypeId')).getName() : '';
-                        //system.debug('createGenericRecords:recordTypeName-->' + recordTypeName);
-                        //if(String.isnotBlank(recordTypeName) || recordTypeName == fldList[0].Object_Mapping__r.source_Record_Type__c ) {
-                            SObject obj = Schema.getGlobalDescribe().get(trgtObject).newSObject();                            
-                            for(Field_Mappings__c fMapping : fldList){
-                                system.debug('createGenericRecords:trgtObject---->1 ' + fMapping.Object_Mapping__r.Target_Object__c);
-                                system.debug('createGenericRecords:trgtRecordtype---->1 ' + fMapping.Object_Mapping__r.Target_Record_Type__c);
-                                system.debug('createGenericRecords:srcOj---->1 ' + fMapping.Object_Mapping__r.Source_object__c);
-                               // if (!eimissionFactorFldList.contains(fMapping.source_Field__c)) {     
-                                    if((!fMapping.Source_Field_Type__c.containsIgnoreCase(Sustain_UtilConstants.lookupLabel) 
-                                        && !fMapping.Source_Field_Type__c.containsIgnoreCase(Sustain_UtilConstants.referenceLabel) 
-                                        && !fMapping.Source_Field_Type__c.containsIgnoreCase(Sustain_UtilConstants.masterDetailLabel)) || 
-                                       (!fMapping.Source_Field__c.contains('sustain_app__') && !fMapping.Reference_To__c.contains('sustain_app__')
-                                        && (fMapping.Source_Field_Type__c.containsIgnoreCase(Sustain_UtilConstants.lookupLabel) 
-                                            || fMapping.Source_Field_Type__c.containsIgnoreCase(Sustain_UtilConstants.referenceLabel) 
-                                            || fMapping.Source_Field_Type__c.containsIgnoreCase(Sustain_UtilConstants.masterDetailLabel)))){                    
-                                                if(fMapping.source_Field__c=='Name' && Sustain_UtilConstants.MIGRATION_DATA_OBJECTS.contains(fMapping.Object_Mapping__r.source_Object__c) && 
-                                                     fMapping.Object_Mapping__r.Source_Object__c+fMapping.Object_Mapping__r.source_Record_Type__c  != 'sustain_app__BuildingEnergyIntensity__cCommercialBuilding' ){
-                                                    obj.put(fMapping.Target_Field__c, ((String)cf.get(fMapping.Source_Field__c)+ '_Migrated'));                                                    
-                                                } else {
-                                                    if((!(fldList[0].Object_Mapping__r.Target_Object__c == 'Contact' && fMapping.source_Field__c=='Name')) && 
-                                                        fMapping.source_Field__c != 'sustain_app__VendorName__c') {                                         
-                                                        obj.put(fMapping.Target_Field__c,cf.get(fMapping.Source_Field__c) );
-                                                    } else if(fldList[0].Object_Mapping__r.Target_Object__c == 'Contact' && fMapping.source_Field__c=='Name') {
-                                                        obj.put('lastname',cf.get(fMapping.Source_Field__c) );
-                                                    }else if(fldList[0].Object_Mapping__r.Source_Object__c == 'sustain_app__EnergyConsumption__c' && fMapping.source_Field__c=='sustain_app__VendorName__c' && 
-                                                        cf.get(fMapping.Source_Field__c) != null && supplierIdMap.get((string)cf.get(fMapping.Source_Field__c)) != null){
-                                                        obj.put(fMapping.Target_Field__c,supplierIdMap.get((string)cf.get(fMapping.Source_Field__c)));
-                                                    }
-                                                }
-                                            }
-                                    else{
-                                        obj=addRelationShipField(cf,fMapping,trgtObject,obj);
-                                    }
-                               /* }else if(eimissionFactorFldList.contains(fMapping.source_Field__c)) {
-                                    emissionFld.add(fMapping);
-                                }*/
-                                if(CONSUMPTIONREPORT == cf.getSObjectType().getDescribe().getName()) {
-                                    if((fMapping.Source_Field__c.contains(EXTRAPOLATION_STATUS) || fMapping.Source_Field__c.contains(STAGE)) && cf.get(fMapping.Source_Field__c)!=null && picklistTransfrmList.containskey((String)cf.get(fMapping.Source_Field__c))) {
-                                        obj.put(fMapping.Target_Field__c, picklistTransfrmList.get((String)cf.get(fMapping.Source_Field__c)).Sustain_Target_Value__c);
-                                    } 
-                                }
-                                if(fMapping.Source_Field_Type__c.containsIgnoreCase(Sustain_UtilConstants.Picklistabel)) {
-                                    String str = fMapping.Object_Mapping__r.Target_Object__c+fMapping.Source_Field__c;
-                                    str+=fMapping.Object_Mapping__r.Source_Record_Type__c !=Sustain_UtilConstants.masterLabel ? fMapping.Object_Mapping__r.Source_Record_Type__c : '' ;
-                                    str+= (String)cf.get(fMapping.Source_Field__c);
-                                    System.debug('key is '+str);
-                                    if(transfromPickListVals.containskey(str)) {
-                                    obj.put(fMapping.Target_Field__c, transfromPickListVals.get(str).Sustain_Target_Value__c);
-
-                                   }
-                                    // for(Sustain_PicklistMigration__mdt mdt : picklistTransfrmList.values()) {
-                                    //     if(cf.cf.get(fMapping.Source_Field__c) == mdt.Sustain_Source_Value__c) {
-                                    //         obj.put(fMapping.Target_Field__c, mdt.Sustain_Target_Value__c);
-                                    //         break;
-                                    //     }
-                                    // }
-                                }
-                            }
-                            if(srcOj.equals(EnergyUseObjAPI)){
-                                if(cfEnergyUseMap != null && cfEnergyUseMap.get(cf.Id) != null){
-                                    if(trgtObject.equals(VehicleAssetEnergyUseObjAPI)){
-                                        obj.put('VehicleAssetCrbnFtprntId', cfEnergyUseMap.get(cf.Id));                                        
-                                    }
-                                    else{
-                                        obj.put('Scope3CrbnFtprntId', cfEnergyUseMap.get(cf.Id));
-                                    }                                    
-                                }
-                                if(trgtObject.equals(VehicleAssetEnergyUseObjAPI) && sourceRcdType.equals('Private_Jet')){ 
-                                    Obj.put('FuelType','JetFuel');
-                                    if(cf.get('sustain_app__Annual_Fuel_Used_Value__c') == null){
-                                        Obj.put('FuelConsumption',0);
-                                    }                                    
-                                }else if(trgtObject.equals(RentalCarEnergyUseObjAPI)){
-                                    Obj.put('FuelType','Gasoline');                                     
-                                }
-                            }
-
-                            obj.put('Source_Record_ID__c' , cf.id);
-                            if(String.isNotBlank(trgtRecordtype) && !Sustain_UtilConstants.masterLabel.equalsIgnoreCase(trgtRecordtype)){
-                                try {
-                                    obj.put('RecordTypeId', Schema.getGlobalDescribe().get(trgtObject).getDescribe().getRecordTypeInfosByDeveloperName().get(trgtRecordtype).getRecordTypeId());
-                                } catch(exception e) {
-                                    obj.put('RecordTypeId', Schema.getGlobalDescribe().get(trgtObject).getDescribe().getRecordTypeInfosByName().get(trgtRecordtype).getRecordTypeId());
-                                }
-                            }
-                            
-                            String objAPI=cf.getSObjectType().getDescribe().getName();
-                            
-                            System.debug('OBJAPI '+objAPI.removeStart('Migration_Util__'));
-
-                            if(ASSET_API_NAME == objAPI) {
-                                for(String key : assetTargetObjAPIName.keyset()) {
-                                    if(key.equalsIgnoreCase(trgtObject)) {
-                                        for(String fldName :  assetTargetObjAPIName.get(key)) {
-                                            obj.put(fldName, Default_Emission_Factors__c.getValues(fldName).Factor_Value__c);
-                                        }
-                                    }
-                                }            
-
-                                string emissionRcdSql = '';
-                                if(emissionFld.size()>0) {
-                                    emissionRcdSql = 'SELECT id,';
-                                    for(Field_Mappings__c str : emissionFld) {
-                                        emissionRcdSql += str.source_Field__c + ',';
-                                        emissionRcdSql+= str.Source_Field__c.remove('__c')+'__r.Target_SFDC_ID__c,' ;
-                                    }
-                                    
-                                    emissionRcdSql = emissionRcdSql.removeEnd(',');
-                                    emissionRcdSql = ' from sustain_app__EnergyConsumption__c where id =:cf.id';
-                                    for(Field_Mappings__c str : emissionFld) {
-                                        emissionRcdSql += ' and '+str.source_Field__c + ' !=null';
-                                    }  
-                                    list<sustain_app__EnergyConsumption__c>  rcrds = database.query(emissionRcdSql);
-                                    if(rcrds != null && rcrds.size()>0) {
-                                        sustain_app__EnergyConsumption__c rcrd = rcrds[0];
-                                        for(Field_Mappings__c str : emissionFld) {
-                                            obj=addRelationShipField(rcrd,str,trgtObject,obj);
-                                        }
-                                    }                      
-                                }
-                            } else if(ASSET_Contact_API_NAME.equals(objAPI)){
-                                assetContactIdList.add(cf.id);
-                            }else if(SUPPLIER_API_NAME.equals(objAPI) && trgtObject.equals('Supplier')){
-                                supplierIdList.add(cf.id);
-                            } else if(VENDOR_API_NAME.equals(objAPI.removeStart('Migration_Util__')) && trgtObject.equals('Supplier')){
-                                vendorIdList.add(cf.id);
-                            } else if(EmissionFactorScope3API.equals(objAPI) && trgtObject.equals('FrgtHaulingEmssnFctr') && 
-                                (cf.get('sustain_app__Emission_Factors_Other__c') == null || cf.get('sustain_app__Emission_Factors_Other__c') == '')){
-                                obj.put('OtherEmssnFctrId' , Default_Emission_Factors__c.getValues('OtherEmssnFctrId').Factor_Value__c ); 
-                            }
-                            if(!errorSourceRecordIds.contains((string)obj.get('Source_Record_Id__c'))){
-                                recordToBeInserted.add(obj); 
-                            }                                                       
-                        }
-                    }
-                    if(trgtObject.equals(Scope3ProcurementSummAPI)){
-                        System.debug('carbonFootPrintIdList '+carbonFootPrintIdList);
-                        Map<String,String> footPrintIdScope3EmssnIdMap=getFootPrintIdScope3EmssnIdMap(carbonFootPrintIdList);
-                        for(Sobject sobj : recordToBeInserted){
-                            if(footPrintIdScope3EmssnIdMap.containsKey((String)sobj.get(Scope3PrntIdFieldAPI))){
-                                sobj.put('Scope3EmssnSrcId',footPrintIdScope3EmssnIdMap.get((string)sobj.get(Scope3PrntIdFieldAPI)));
-                            }
-                        }
-                    } 
-                        
-                    if(assetContactIdList.size()>0){
-                        addAccountField(assetContactIdList, null, recordToBeInserted);
-                    }
-
-                    if(supplierIdList.size()>0){
-                        addAccountField(null, supplierIdList, recordToBeInserted);
-                    }
-                    
-                    if(vendorIdList.size()>0){
-                        addAccountIDField(vendorIdList, recordToBeInserted);
-                    }
-                List<Database.SaveResult> results = new List<Database.SaveResult>();
-                SYSTEM.debug('createGenericRecords:recordToBeInserted---->' +trgtObject + ' : '+  + srcOj + '  :  ' +recordToBeInserted.size());
-                if(recordToBeInserted.size()>0){
-                    results = Database.insert(recordToBeInserted, false);
-                }
-                finalWrapper = updateErrorResult(recordToBeInserted,results);
                 
-                //updateSourceObjectRecords(srcRecords,recordToBeInserted,trgtObject);                           
+                if( trgtObject != 'StnryAssetEnrgyUse'){
+                    for(sustain_app__EnergyConsumption__c energyUse: [SELECT id, sustain_app__VendorName__c from sustain_app__EnergyConsumption__c where sustain_app__VendorName__c != null AND ID IN:srcRecords ]){
+                        vendorNameSet.add(energyUse.sustain_app__VendorName__c);
+                    }
+                    String supSoql = 'Select Id, Name from Supplier where Name IN: vendorNameSet';
+                    for(Sobject sup: database.query(supSoql)){
+                        supplierIdMap.put((string)sup.get('Name'), (id)sup.get('Id'));
+                    }
+                }
             }
-            catch(Exception e){
-                system.debug('createGenericRecords: Error-->'  + e);                
-                updateExceptionDetail(srcRecords,e);                
-                Sustain_UtilityError.createErrorLog(e, CurrentClassName, CurrentMethodName); 
+            for(sObject cf: srcRecords){                   
+                //System.debug('fldList[0].Object_Mapping__r.Source_Record_Type__c------>' + fldList[0].Object_Mapping__r.Source_Record_Type__c);
+
+                String recordTypeName = fldList[0].Object_Mapping__r.Source_Record_Type__c != null && fldList[0].Object_Mapping__r.Source_Record_Type__c != '' && fldList[0].Object_Mapping__r.Source_Record_Type__c !='Master' ? Schema.getGlobalDescribe().get(srcOj).getDescribe().getRecordTypeInfosById().get((String)cf.get('RecordTypeId')).getDeveloperName() : '';
+                //system.debug('createGenericRecords:recordTypeName-->' + recordTypeName);
+                if(String.isBlank(recordTypeName) || recordTypeName == fldList[0].Object_Mapping__r.Source_Record_Type__c ) {
+                    SObject obj = Schema.getGlobalDescribe().get(trgtObject).newSObject();                            
+                    for(Field_Mappings__c fMapping : fldList){
+                        //system.debug('createGenericRecords:trgtObject---->1 ' + fMapping.Object_Mapping__r.Target_Object__c);
+                        //system.debug('createGenericRecords:trgtRecordtype---->1 ' + fMapping.Object_Mapping__r.Target_Record_Type__c);
+                        //system.debug('createGenericRecords:srcOj---->1 ' + fMapping.Object_Mapping__r.Source_object__c);                               
+                        if((!fMapping.Source_Field_Type__c.containsIgnoreCase(Sustain_UtilConstants.lookupLabel) 
+                                && !fMapping.Source_Field_Type__c.containsIgnoreCase(Sustain_UtilConstants.referenceLabel) 
+                                && !fMapping.Source_Field_Type__c.containsIgnoreCase(Sustain_UtilConstants.masterDetailLabel)) || 
+                                (!fMapping.Source_Field__c.contains('sustain_app__') && !fMapping.Reference_To__c.contains('sustain_app__')
+                                && (fMapping.Source_Field_Type__c.containsIgnoreCase(Sustain_UtilConstants.lookupLabel) 
+                                    || fMapping.Source_Field_Type__c.containsIgnoreCase(Sustain_UtilConstants.referenceLabel) 
+                                    || fMapping.Source_Field_Type__c.containsIgnoreCase(Sustain_UtilConstants.masterDetailLabel)))){                    
+                                        if(fMapping.source_Field__c=='Name' && Sustain_UtilConstants.MIGRATION_DATA_OBJECTS.contains(fMapping.Object_Mapping__r.source_Object__c) && 
+                                                fMapping.Object_Mapping__r.Source_Object__c+fMapping.Object_Mapping__r.source_Record_Type__c  != 'sustain_app__BuildingEnergyIntensity__cCommercialBuilding' ){
+                                            obj.put(fMapping.Target_Field__c, ((String)cf.get(fMapping.Source_Field__c)+ '_Migrated'));                                                    
+                                        } else {
+                                            if((!(fldList[0].Object_Mapping__r.Target_Object__c == 'Contact' && fMapping.source_Field__c=='Name')) && 
+                                                fMapping.source_Field__c != 'sustain_app__VendorName__c') {                                         
+                                                obj.put(fMapping.Target_Field__c,cf.get(fMapping.Source_Field__c) );
+                                            } else if(fldList[0].Object_Mapping__r.Target_Object__c == 'Contact' && fMapping.source_Field__c=='Name') {
+                                                obj.put('lastname',cf.get(fMapping.Source_Field__c) );
+                                            }else if(fldList[0].Object_Mapping__r.Source_Object__c == 'sustain_app__EnergyConsumption__c' && fMapping.source_Field__c=='sustain_app__VendorName__c' && 
+                                                cf.get(fMapping.Source_Field__c) != null && supplierIdMap.get((string)cf.get(fMapping.Source_Field__c)) != null){
+                                                obj.put(fMapping.Target_Field__c,supplierIdMap.get((string)cf.get(fMapping.Source_Field__c)));
+                                            }
+                                        }
+                                    }
+                            else{
+                                obj=addRelationShipField(cf,fMapping,trgtObject,obj);
+                            }
+                        /* }else if(eimissionFactorFldList.contains(fMapping.source_Field__c)) {
+                            emissionFld.add(fMapping);
+                        }*/
+                        if(CONSUMPTIONREPORT == cf.getSObjectType().getDescribe().getName()) {
+                            if((fMapping.Source_Field__c.contains(EXTRAPOLATION_STATUS) || fMapping.Source_Field__c.contains(STAGE)) && cf.get(fMapping.Source_Field__c)!=null && picklistTransfrmList.containskey((String)cf.get(fMapping.Source_Field__c))) {
+                                obj.put(fMapping.Target_Field__c, picklistTransfrmList.get((String)cf.get(fMapping.Source_Field__c)).Sustain_Target_Value__c);
+                            } 
+                        }
+                        if(fMapping.Source_Field_Type__c.containsIgnoreCase(Sustain_UtilConstants.Picklistabel)) {
+                            String str = fMapping.Object_Mapping__r.Target_Object__c+fMapping.Source_Field__c;
+                            str+=fMapping.Object_Mapping__r.Source_Record_Type__c !=Sustain_UtilConstants.masterLabel ? fMapping.Object_Mapping__r.Source_Record_Type__c : '' ;
+                            str+= (String)cf.get(fMapping.Source_Field__c);
+                            //System.debug('key is '+str);
+                            if(transfromPickListVals.containskey(str)) {
+                            obj.put(fMapping.Target_Field__c, transfromPickListVals.get(str).Sustain_Target_Value__c);
+
+                            }                               
+                        }
+                    }
+                    if(srcOj.equals(EnergyUseObjAPI)){
+                        if(cfEnergyUseMap != null && cfEnergyUseMap.get(cf.Id) != null){
+                            if(trgtObject.equals(VehicleAssetEnergyUseObjAPI)){
+                                obj.put('VehicleAssetCrbnFtprntId', cfEnergyUseMap.get(cf.Id));                                        
+                            }
+                            else{
+                                obj.put('Scope3CrbnFtprntId', cfEnergyUseMap.get(cf.Id));
+                            }                                    
+                        }
+                        if(trgtObject.equals(VehicleAssetEnergyUseObjAPI) && sourceRcdType.equals('Private_Jet')){ 
+                            Obj.put('FuelType','JetFuel');
+                            if(cf.get('sustain_app__Annual_Fuel_Used_Value__c') == null){
+                                Obj.put('FuelConsumption',0);
+                            }                                    
+                        }else if(trgtObject.equals(RentalCarEnergyUseObjAPI)){
+                            Obj.put('FuelType','Gasoline');                                     
+                        }
+                    }
+
+                    obj.put('Source_Record_ID__c' , cf.id);
+                    if(String.isNotBlank(trgtRecordtype) && !Sustain_UtilConstants.masterLabel.equalsIgnoreCase(trgtRecordtype)){
+                        try {
+                            obj.put('RecordTypeId', Schema.getGlobalDescribe().get(trgtObject).getDescribe().getRecordTypeInfosByDeveloperName().get(trgtRecordtype).getRecordTypeId());
+                        } catch(exception e) {
+                            obj.put('RecordTypeId', Schema.getGlobalDescribe().get(trgtObject).getDescribe().getRecordTypeInfosByName().get(trgtRecordtype).getRecordTypeId());
+                        }
+                    }
+                        
+                    String objAPI=cf.getSObjectType().getDescribe().getName();
+                    
+                    System.debug('OBJAPI '+objAPI.removeStart(Label.Sustain_Name_Space_Prefix));
+
+                    if(ASSET_API_NAME == objAPI) {
+                        for(String key : assetTargetObjAPIName.keyset()) {
+                            if(key.equalsIgnoreCase(trgtObject)) {
+                                for(String fldName :  assetTargetObjAPIName.get(key)) {
+                                    obj.put(fldName, Default_Emission_Factors__c.getValues(fldName).Factor_Value__c);
+                                }
+                            }
+                        }            
+
+                        string emissionRcdSql = '';
+                        if(emissionFld.size()>0) {
+                            emissionRcdSql = 'SELECT id,';
+                            for(Field_Mappings__c str : emissionFld) {
+                                emissionRcdSql += str.source_Field__c + ',';
+                                emissionRcdSql+= str.Source_Field__c.remove('__c')+'__r.Target_SFDC_ID__c,' ;
+                            }
+                            
+                            emissionRcdSql = emissionRcdSql.removeEnd(',');
+                            emissionRcdSql = ' from sustain_app__EnergyConsumption__c where id =:cf.id';
+                            for(Field_Mappings__c str : emissionFld) {
+                                emissionRcdSql += ' and '+str.source_Field__c + ' !=null';
+                            }  
+                            list<sustain_app__EnergyConsumption__c>  rcrds = database.query(emissionRcdSql);
+                            if(rcrds != null && rcrds.size()>0) {
+                                sustain_app__EnergyConsumption__c rcrd = rcrds[0];
+                                for(Field_Mappings__c str : emissionFld) {
+                                    obj=addRelationShipField(rcrd,str,trgtObject,obj);
+                                }
+                            }                      
+                        }
+                    } else if(ASSET_Contact_API_NAME.equals(objAPI)){
+                        assetContactIdList.add(cf.id);
+                    }else if(SUPPLIER_API_NAME.equals(objAPI) && trgtObject.equals('Supplier')){
+                        supplierIdList.add(cf.id);
+                    } else if(VENDOR_API_NAME.equals(objAPI.removeStart(Label.Sustain_Name_Space_Prefix)) && trgtObject.equals('Supplier')){
+                        vendorIdList.add(cf.id);
+                    } else if(EmissionFactorScope3API.equals(objAPI) && trgtObject.equals('FrgtHaulingEmssnFctr') && 
+                        (cf.get('sustain_app__Emission_Factors_Other__c') == null || cf.get('sustain_app__Emission_Factors_Other__c') == '')){
+                        obj.put('OtherEmssnFctrId' , Default_Emission_Factors__c.getValues('OtherEmssnFctrId').Factor_Value__c ); 
+                    }
+                    if(!errorSourceRecordIds.contains((string)obj.get('Source_Record_Id__c'))){
+                        recordToBeInserted.add(obj); 
+                    }                                                       
+                }
+            }
+            if(trgtObject.equals(Scope3ProcurementSummAPI)){
+                System.debug('carbonFootPrintIdList '+carbonFootPrintIdList);
+                Map<String,String> footPrintIdScope3EmssnIdMap=getFootPrintIdScope3EmssnIdMap(carbonFootPrintIdList);
+                for(Sobject sobj : recordToBeInserted){
+                    if(footPrintIdScope3EmssnIdMap.containsKey((String)sobj.get(Scope3PrntIdFieldAPI))){
+                        sobj.put('Scope3EmssnSrcId',footPrintIdScope3EmssnIdMap.get((string)sobj.get(Scope3PrntIdFieldAPI)));
+                    }
+                }
             } 
-            //return recordToBeInserted;
-            return finalWrapper;
-        }
+                    
+            if(assetContactIdList.size()>0){
+                addAccountField(assetContactIdList, null, recordToBeInserted);
+            }
+
+            if(supplierIdList.size()>0){
+                addAccountField(null, supplierIdList, recordToBeInserted);
+            }
+            
+            if(vendorIdList.size()>0){
+                addAccountIDField(vendorIdList, recordToBeInserted);
+            }
+            List<Database.SaveResult> results = new List<Database.SaveResult>();
+            SYSTEM.debug('createGenericRecords:recordToBeInserted---->' +trgtObject + ' : '+  + srcOj + '  :  ' +recordToBeInserted.size());
+            if(recordToBeInserted.size()>0){
+                results = Database.insert(recordToBeInserted, false);
+            }
+            finalWrapper = updateErrorResult(recordToBeInserted,results);                                          
+        }catch(Exception e){
+            system.debug('createGenericRecords: Error-->'  + e);                
+            updateExceptionDetail(srcRecords,e);                
+            Sustain_UtilityError.createErrorLog(e, CurrentClassName, CurrentMethodName); 
+        }             
+        return finalWrapper;
+    }
+
     public static SustainUtilWrapper createEnergyUseandItemRecords(List<sObject> srcRecords,List<Field_Mappings__c> fldList){
         SustainUtilWrapper finalWrapper = new SustainUtilWrapper();
         string CurrentMethodName = 'createEnergyUseandItemRecords';       
@@ -278,19 +265,17 @@ public without sharing class Sustain_Utils {
         errorSourceRecordIds = new Set<String>();
         errorSourceRecordList = new List<Sobject>();
         
-        Map<String, sustain_app__ConsumptionReportItem__c> cfEnergyUseMap = new Map<String,sustain_app__ConsumptionReportItem__c>();
-        //Set<String> cfIds = new Set<String>();
+        Map<String, sustain_app__ConsumptionReportItem__c> cfEnergyUseMap = new Map<String,sustain_app__ConsumptionReportItem__c>();        
        
         try{            
             List<sustain_app__ConsumptionReportItem__c> CFItemList = [Select Id, Name,sustain_app__ConsumptionReport__r.sustain_app__Total_Steam_consumption_kWh__c,sustain_app__ConsumptionReport__r.sustain_app__Total_Propane_consumption_kWh__c,sustain_app__ConsumptionReport__r.sustain_app__Total_Natural_Gas_consumption_kWh__c,
             sustain_app__ConsumptionReport__r.sustain_app__Total_Heat_consumption_kWh__c,sustain_app__ConsumptionReport__r.sustain_app__Total_Fuel_Oil_consumption_kWh__c,sustain_app__ConsumptionReport__r.sustain_app__Total_Electricity_Consumption_kWh__c,sustain_app__ConsumptionReport__r.sustain_app__Total_Diesel_Consumption_kWh__c,
             sustain_app__ConsumptionReport__r.sustain_app__Total_Cooling_consumption_kWh__c,sustain_app__ConsumptionReport__r.Target_SFDC_ID__c, sustain_app__EnergyConsumption__c from sustain_app__ConsumptionReportItem__c where sustain_app__EnergyConsumption__c IN:srcRecords];
             for(sustain_app__ConsumptionReportItem__c cfi: CFItemList){
-                cfEnergyUseMap.put(cfi.sustain_app__EnergyConsumption__c, cfi);
-                //cfIds.add(cfi.sustain_app__ConsumptionReport__r.target_sfdc_id__c);
+                cfEnergyUseMap.put(cfi.sustain_app__EnergyConsumption__c, cfi);                
             }
             System.debug('cfEnergyUseMap '+cfEnergyUseMap);
-            //System.debug('cfIds '+cfIds);
+           
             String trgtObject=fldList[0].Object_Mapping__r.Target_Object__c;
             string trgtRecordtype=fldList[0].Object_Mapping__r.Target_Record_Type__c;
             string srcRecordtype=fldList[0].Object_Mapping__r.Source_Record_Type__c;
@@ -301,23 +286,14 @@ public without sharing class Sustain_Utils {
             List<Field_Mappings__c> notEffectedFieldMappingList=new List<Field_Mappings__c>();
             Map<String,Sustain_FuelTypeInformation__mdt> fieldFuelTypemap=Sustain_UtilConstants.getFuelTypeConsumptionMdt(fldList[0].Object_Mapping__r.Source_Object__c);
             Set<String> fieldList=new Set<String>();
-            /*Set<String> uniqueFtPrntList=new Set<String>();
-
-            String soql = 'Select Id, Name, FuelType, ParentCarbonFootprintId from StnryAssetCrbnFtprntItm where ParentCarbonFootprintId IN: cfIds';
-
-            for(Sobject saCFItem: database.query(soql)){
-                uniqueFtPrntList.add((string)saCFItem.get('ParentCarbonFootprintId')+(string)saCFItem.get('FuelType'));
-            }
-            System.debug('uniqueFtPrntList '+uniqueFtPrntList);*/
-            //fieldFuelTypemap.keySet();
+            
             for(Sustain_FuelTypeInformation__mdt mdt : fieldFuelTypemap.values()){
                 fieldList.add(mdt.Field_Unit__c);
                 fieldList.add(mdt.Field_Name__c);
             }
             System.debug('fieldList '+fieldList);
             System.debug('fldList '+fldList + 'Size '+fldList.size());
-            for(Field_Mappings__c fMapping : fldList){
-                //System.debug('fieldList.contains(fMapping.Source_Field__c) '+fieldList.contains(fMapping.Source_Field__c));
+            for(Field_Mappings__c fMapping : fldList){                
                 if(fieldList.contains(fMapping.Source_Field__c)){  
                     if(fieldFuelTypemap.containskey(fMapping.Source_Field__c)) {
                         effectedFieldMappingList.add(fMapping);                            
@@ -331,102 +307,59 @@ public without sharing class Sustain_Utils {
             for(sObject cf: srcRecords){                
                 String recordTypeName = fldList[0].Object_Mapping__r.source_Record_Type__c != '' && fldList[0].Object_Mapping__r.source_Record_Type__c !='Master' ? 
                     Schema.getGlobalDescribe().get(fldList[0].Object_Mapping__r.source_Object__c).getDescribe().getRecordTypeInfosById().get((String)cf.get('RecordTypeId')).getDeveloperName() : '';
-                //system.debug('createEnergyUseandItemRecords:recordTypeName-->' + recordTypeName);
                 if(String.isBlank(recordTypeName) || recordTypeName == fldList[0].Object_Mapping__r.source_Record_Type__c) {                    
-                    //System.debug('effectedFieldMappingList '+effectedFieldMappingList + 'Size '+effectedFieldMappingList.size());
                     boolean firstValue = true;
                     for(Field_Mappings__c fMapping : effectedFieldMappingList){
-                        System.debug('fMapping.Source_Field__c '+fMapping.Source_Field__c);
+                        //'fMapping.Source_Field__c '+fMapping.Source_Field__c);
                         if(fieldFuelTypemap.containsKey(fMapping.Source_Field__c) && cf.get(fMapping.Source_Field__c) != null){
-                            //System.debug('cf.get(fMapping.Source_Field__c '+cf.get(fMapping.Source_Field__c));
-                            SObject sObj=Schema.getGlobalDescribe().get(trgtObject).newSObject();  
+                           SObject sObj=Schema.getGlobalDescribe().get(trgtObject).newSObject();  
                             sObj.put('Source_Record_ID__c' , cf.id);     
                             Sustain_FuelTypeInformation__mdt mdt=fieldFuelTypemap.get(fMapping.Source_Field__c);                        
-                            // if(cf.get(fMapping.Source_Field__c)!=null){                                                            
-                                for(Field_Mappings__c fmap : notEffectedFieldMappingList){
-                                    System.debug('fieldList.contains(fMapping.Source_Field__c) '+fieldList.contains(fmap.Source_Field__c));
-                                    // if(!fieldList.contains(fmap.Source_Field__c)){                                         
-                                    if((!fmap.Source_Field_Type__c.containsIgnoreCase(Sustain_UtilConstants.lookupLabel) && !fmap.Source_Field_Type__c.containsIgnoreCase(Sustain_UtilConstants.referenceLabel) && !fmap.Source_Field_Type__c.containsIgnoreCase(Sustain_UtilConstants.masterDetailLabel)) || 
-                                        (!fmap.Source_Field__c.contains('sustain_app__') && (fmap.Source_Field_Type__c.containsIgnoreCase(Sustain_UtilConstants.lookupLabel) || fmap.Source_Field_Type__c.containsIgnoreCase(Sustain_UtilConstants.referenceLabel) || fMapping.Source_Field_Type__c.containsIgnoreCase(Sustain_UtilConstants.masterDetailLabel)))){                    
-                                            if(mdt.Fuel_Type__c != 'Electricity' && fmap.Target_Field__c.equals('AllocatedRenewableEnergyInKwh')){
-                                                sObj.put(fmap.Target_Field__c, 0 );    
-                                            }else{   
-                                                sObj.put(fmap.Target_Field__c,cf.get(fmap.Source_Field__c) );
-                                            }
+                            for(Field_Mappings__c fmap : notEffectedFieldMappingList){
+                                //System.debug('fieldList.contains(fMapping.Source_Field__c) '+fieldList.contains(fmap.Source_Field__c));                                                                       
+                                if((!fmap.Source_Field_Type__c.containsIgnoreCase(Sustain_UtilConstants.lookupLabel) && !fmap.Source_Field_Type__c.containsIgnoreCase(Sustain_UtilConstants.referenceLabel) && !fmap.Source_Field_Type__c.containsIgnoreCase(Sustain_UtilConstants.masterDetailLabel)) || 
+                                    (!fmap.Source_Field__c.contains('sustain_app__') && (fmap.Source_Field_Type__c.containsIgnoreCase(Sustain_UtilConstants.lookupLabel) || fmap.Source_Field_Type__c.containsIgnoreCase(Sustain_UtilConstants.referenceLabel) || fMapping.Source_Field_Type__c.containsIgnoreCase(Sustain_UtilConstants.masterDetailLabel)))){                    
+                                        if(mdt.Fuel_Type__c != 'Electricity' && fmap.Target_Field__c.equals('AllocatedRenewableEnergyInKwh')){
+                                            sObj.put(fmap.Target_Field__c, 0 );    
+                                        }else{   
+                                            sObj.put(fmap.Target_Field__c,cf.get(fmap.Source_Field__c) );
                                         }
-                                    else{
-                                        sObj=addRelationShipField(cf,fmap,trgtObject,sObj);
                                     }
-                                    // }
-                                }
-                                if(!firstValue) {
-                                    sObj.put('SuplScope1Emissions',null);
-                                    sObj.put('SuplScope2LocationBasedEmssn',null);
-                                    sObj.put('SuplScope2MarketBasedEmssn',null);
-                                }
-                                firstValue = false;
-                                 
-                                //system.debug('cf.get(fMapping.Source_Field__c)------->'+cf.get(fMapping.Source_Field__c))  ;
-                                //system.debug('fMapping.Source_Field__c------->'+fMapping.Source_Field__c)  ;
-                                //system.debug('fMapping.target_Field__c------->'+fMapping.target_Field__c)  ;
-                                sObj.put('FuelConsumption',cf.get(fMapping.Source_Field__c));
-                                sObj.put('FuelConsumptionUnit',cf.get(mdt.Field_Unit__c));
-                                sObj.put('FuelType',mdt.Fuel_Type__c);
+                                else{
+                                    sObj=addRelationShipField(cf,fmap,trgtObject,sObj);
+                                }                                
+                            }
+                            if(!firstValue) {
+                                sObj.put('SuplScope1Emissions',null);
+                                sObj.put('SuplScope2LocationBasedEmssn',null);
+                                sObj.put('SuplScope2MarketBasedEmssn',null);
+                            }
+                            firstValue = false;                                 
                                 
-                                sObj.put('Name',cf.get('Name') + ' - ' + mdt.Fuel_Type__c);
-                                if(fMapping.Source_Field_Type__c.containsIgnoreCase(Sustain_UtilConstants.Picklistabel)) {
-                                    String str = fMapping.Object_Mapping__r.Target_Object__c+fMapping.Source_Field__c;
-                                    str +=(fMapping.Object_Mapping__r.Source_Record_Type__c !=Sustain_UtilConstants.masterLabel) ? fMapping.Object_Mapping__r.Source_Record_Type__c : '' ;
-                                    str+= (String)cf.get(fMapping.Source_Field__c);
-                                    System.debug('key is '+str);
-                                    if(transfromPickListVals.containskey(str)) {
-                                        sobj.put(fMapping.Target_Field__c, transfromPickListVals.get(str).Sustain_Target_Value__c);
-                                    }
-                                    // for(Sustain_PicklistMigration__mdt mdt : picklistTransfrmList.values()) {
-                                    //     if(cf.cf.get(fMapping.Source_Field__c) == mdt.Sustain_Source_Value__c) {
-                                    //         obj.put(fMapping.Target_Field__c, mdt.Sustain_Target_Value__c);
-                                    //         break;
-                                    //     }
-                                    // }
-                                }
-                                if(cfEnergyUseMap != null && cfEnergyUseMap.get(cf.Id) != null){
-                                    sObj.put('StnryAssetCrbnFtprntId', cfEnergyUseMap.get(cf.Id).sustain_app__ConsumptionReport__r.Target_SFDC_ID__c);
-                                }
-                                //System.debug('uniqueFtPrntList '+ uniqueFtPrntList);
-                                /*if(cfEnergyUseMap != null && cfEnergyUseMap.get(cf.Id) != null && 
-                                    cfEnergyUseMap.get(cf.Id).sustain_app__ConsumptionReport__r.Target_SFDC_ID__c !=null){
-                                    String keyItem = cfEnergyUseMap.get(cf.Id).sustain_app__ConsumptionReport__r.Target_SFDC_ID__c +  mdt.Fuel_Type__c;
-                                    if(!uniqueFtPrntList.contains(keyItem)) {
-                                        SObject itmObj=Schema.getGlobalDescribe().get('StnryAssetCrbnFtprntItm').newSObject();                                        
-                                        itmObj.put('FuelType',mdt.Fuel_Type__c);
-                                        itmObj.put('ParentCarbonFootprintId',sObj.get('StnryAssetCrbnFtprntId'));
-                                        SObject tempObj=cfEnergyUseMap.get(cf.Id);
-                                        Sobject tempObj2=tempObj.getSObject('sustain_app__ConsumptionReport__r');                                        
-                                        itmObj.put('TotalEnergyConsumptionInKwh',tempObj2.get(mdt.Parent_Total_Field__c));
-                                        // if(mdt.Fuel_Type__c.equals('Propane') || mdt.Fuel_Type__c.equals('NaturalGas')){
-                                        //     itmObj.put('TotalEnergyConsumptionInGj',cf.get(fMapping.Source_Field__c));
-                                        // }
-                                        // else{
-                                        //     itmObj.put('TotalEnergyConsumptionInKwh',cf.get(fMapping.Source_Field__c));    
-                                        // }
-                                        if(srcRecordtype.equals('DataCenterRecordTypeAPI')){
-                                            itmObj=addFieldforDataCenterRecordtype(itmObj,cf);
-                                        }
-                                        itmObj.put('Source_Record_ID__c' , cf.id);
-                                        recordToBeInsertedItem.add(itmObj); 
-                                        uniqueFtPrntList.add(keyItem);
-                                    }
-                                }*/
-                                if(!errorSourceRecordIds.contains((string)SObj.get('Source_Record_Id__c'))){
-                                    recordToBeInserted.add(sObj); 
-                                }
-                            // }
+                            sObj.put('FuelConsumption',cf.get(fMapping.Source_Field__c));
+                            sObj.put('FuelConsumptionUnit',cf.get(mdt.Field_Unit__c));
+                            sObj.put('FuelType',mdt.Fuel_Type__c);
+                                
+                            sObj.put('Name',cf.get('Name') + ' - ' + mdt.Fuel_Type__c);
+                            if(fMapping.Source_Field_Type__c.containsIgnoreCase(Sustain_UtilConstants.Picklistabel)) {
+                                String str = fMapping.Object_Mapping__r.Target_Object__c+fMapping.Source_Field__c;
+                                str +=(fMapping.Object_Mapping__r.Source_Record_Type__c !=Sustain_UtilConstants.masterLabel) ? fMapping.Object_Mapping__r.Source_Record_Type__c : '' ;
+                                str+= (String)cf.get(fMapping.Source_Field__c);
+                                //System.debug('key is '+str);
+                                if(transfromPickListVals.containskey(str)) {
+                                    sobj.put(fMapping.Target_Field__c, transfromPickListVals.get(str).Sustain_Target_Value__c);
+                                }                                
+                            }
+                            if(cfEnergyUseMap != null && cfEnergyUseMap.get(cf.Id) != null){
+                                sObj.put('StnryAssetCrbnFtprntId', cfEnergyUseMap.get(cf.Id).sustain_app__ConsumptionReport__r.Target_SFDC_ID__c);
+                            }
+                                
+                            if(!errorSourceRecordIds.contains((string)SObj.get('Source_Record_Id__c'))){
+                                recordToBeInserted.add(sObj); 
+                            }                            
                         }
-                    }
-                    //effectedFieldMappingList.clear();                    
+                    }                                     
                 }
-                
-                //recordToBeInserted.add(obj);  
             }
             
             List<Database.SaveResult> results = new List<Database.SaveResult>();
@@ -435,15 +368,10 @@ public without sharing class Sustain_Utils {
             
             if(recordToBeInserted.size()>0){               
                 results = Database.insert(recordToBeInserted, false);
-                finalWrapper = updateErrorResult(recordToBeInserted,results);
-                //resultsItems = Database.insert(recordToBeInsertedItem, false);
-                //finalWrapper = updateErrorResult(recordToBeInsertedItem, resultsItems);
-                //results.addALL(resultsItems);
-                //recordToBeInserted.addALL(recordToBeInsertedItem);
+                finalWrapper = updateErrorResult(recordToBeInserted,results);                
             }   
             finalWrapper.listOfobject = recordToBeInserted;
-        }
-        catch(Exception e){
+        }catch(Exception e){
             system.debug('createEnergyUseandItemRecords: Error-->'  + e);
             updateExceptionDetail(srcRecords,e);
            
@@ -451,6 +379,7 @@ public without sharing class Sustain_Utils {
         }
         return finalWrapper; 
     }
+
     public static void updateSourceObjectRecords(List<sObject> srcRecords,List<SObject> newCreatedRecords,String trgtObject){
         List<sObject> cfList=new List<sObject>();
         string CurrentMethodName = 'updateSourceObjectRecords';
@@ -503,7 +432,7 @@ public without sharing class Sustain_Utils {
                 else if(!results.get(i).isSuccess()) {
                     String errorMsg = '';
                     for(Database.Error err : results.get(i).getErrors()) { 
-                        System.debug('The following error has occurred.');                        
+                        //System.debug('The following error has occurred.');                        
                         errorMsg += err.getStatusCode() + ': ' + err.getMessage() +';'; 
                         System.debug(errorMsg);
                         System.debug('Account fields that affected this error: ' + err.getFields()); 
@@ -513,12 +442,10 @@ public without sharing class Sustain_Utils {
                     sobject objectName  =  rcdId.getSobjectType().newSObject(rcdId);
                     objectName.put('Id',rcdId);
                     objectName.put('Migration_Status__c','Error Occurred');
-                    objectName.put('Error_Details__c',errorMsg);
-                    //if(objectName.getSObjectType().getDescribe().getName() != 'sustain_app__EmissionFactorElectricity__c') {
-                        resultList.add(rcdId);
-                        updateResults.put(rcdId,objectName);
-                    //}
-                    temp2 ='Fail';
+                    objectName.put('Error_Details__c',errorMsg);                    
+                    resultList.add(rcdId);
+                    updateResults.put(rcdId,objectName);                    
+                    temp2 ='fail';
                 }
             }
             if(ids.size()>0) {
@@ -539,17 +466,14 @@ public without sharing class Sustain_Utils {
                     }
                     Map<String,String> srcTrgtMap=getTargetIds(srcIds,objName);
 
-                    //String sourceSOQL = 'Select Id, Error_Details__c from '+objName+ ' where Id IN: srcIds';
-                    //Map<Id,Sobject> sourceObjectMap = new Map<Id,Sobject>(database.query(sourceSOQL));                    
-
                     for(SObject obj : successList) {                      
                         id rcdId = (ID)obj.get('Source_Record_ID__c');
                         sobject objectName =  rcdId.getSobjectType().newSObject(rcdId);
                         system.debug('rcdId------------------------>' + rcdId);
                         objectName.put('Id',rcdId);
-                        System.debug('resultList.contains(rcdId) Out --> '+resultList.contains(rcdId));
+                        //System.debug('resultList.contains(rcdId) Out --> '+resultList.contains(rcdId));
                         if(!updateResults.containsKey(rcdId)){   
-                            System.debug('resultList.contains(rcdId)IN --> '+resultList.contains(rcdId));   
+                            //System.debug('resultList.contains(rcdId)IN --> '+resultList.contains(rcdId));   
                             if(resultList.contains(rcdId)){
                                 objectName.put('Migration_Status__c','Error Occurred');
                             }else{
@@ -562,33 +486,30 @@ public without sharing class Sustain_Utils {
                                 str = obj.id;
                             }
                             str = str.removeStart(',').removeEnd(',');
-                            system.debug('After str----------->' + str);
+                            //system.debug('After str----------->' + str);
                             objectName.put('Target_SFDC_ID__c',str);
-                            //if(objectName.getSObjectType().getDescribe().getName() != 'sustain_app__EmissionFactorElectricity__c'){
-                                updateResults.put(rcdId,objectName);
-                            //}
+                            
+                            updateResults.put(rcdId,objectName);                           
                         }
                         else{
                             objectName=updateResults.get(rcdId);
                             String str  = (String)objectName.get('Target_SFDC_ID__c');
-                            system.debug('Before str----------->' + str);
+                            //system.debug('Before str----------->' + str);
                             if(String.isNotBlank(str)) {
                                 str+=','+obj.id;
                             } else {
                                 str = obj.id;
                             }
                             str = str.removeStart(',').removeEnd(',');
-                            system.debug('After str----------->' + str);
+                            //system.debug('After str----------->' + str);
                             objectName.put('Target_SFDC_ID__c',str);
                             if(resultList.contains(rcdId)){
                                 objectName.put('Migration_Status__c','Error Occurred');
                             }else{
                                 objectName.put('Migration_Status__c','Completed');
                             }    
-                            system.debug('objectName-->' +  objectName);
-                            //if(objectName.getSObjectType().getDescribe().getName() != 'sustain_app__EmissionFactorElectricity__c'){
-                                updateResults.put(rcdId,objectName);
-                            //}
+                            //system.debug('objectName-->' +  objectName);                            
+                            updateResults.put(rcdId,objectName);                            
                         }
                     }
                 }
@@ -602,22 +523,20 @@ public without sharing class Sustain_Utils {
                 sob.put('Error_Details__c','Atleast One of the Parent Record did not migrated');
                 updateResults.put((string)sob.get('Id'),sob);
             } 
-            temp2 ='Fail';
+            temp2 ='fail';
         }
         system.debug('updateErrorResult:updateResults-->' + updateResults.values().size());
-        for(SObject s : updateResults.values()) {
-            system.debug('updateResults------------>  ' + s);
-        }
+        
         if(updateResults.values().size()>0){
-                try {
-                    System.debug('updateResults.values()------------------->' + updateResults.values());
-                    update updateResults.values();
-                } catch(exception ex) {
-                    system.debug('updateResults:error-->'+ ex);
-                    Sustain_UtilityError.createErrorLog(ex, CurrentClassName, CurrentMethodName);
-                }
+            try {
+                System.debug('updateResults.values()------------------->' + updateResults.values());
+                update updateResults.values();
+            } catch(exception ex) {
+                system.debug('updateResults:error-->'+ ex);
+                Sustain_UtilityError.createErrorLog(ex, CurrentClassName, CurrentMethodName);
+            }
         }
-        if(temp2 == 'fail'){
+        if(temp2 == 'Fail'){
             finalWrapper.listOfobject = recordToBeInserted;
             finalWrapper.status = temp2;    
         }
@@ -630,8 +549,9 @@ public without sharing class Sustain_Utils {
         system.debug('finalWrapper--> ' + finalWrapper);
         return finalWrapper;
     }
+
     // Method updateExceptionDetail added by Karan: To update the error details on the records which are failed to be inserted
-   public static  void updateExceptionDetail(List<sObject> srcRecord, Exception ex){
+    public static  void updateExceptionDetail(List<sObject> srcRecord, Exception ex){
         
         map<string,SObject> updateException = new map<string,SObject>();
         string ErrorDetails = ex.getMessage();
@@ -658,12 +578,14 @@ public without sharing class Sustain_Utils {
             } 
         }
     }
+
     //--------------------------------------//
     public without sharing class SustainUtilWrapper{
         public SustainUtilWrapper(){}
         public List<sObject> listOfobject{get;set;}
         public string status{get;set;}
     }
+
     public static integer getSequebnceNo(Integer seqNo) {
         String sqlStr = '';
         list<Object_Mappings__c> objMappingList = new  list<Object_Mappings__c>();
@@ -683,6 +605,7 @@ public without sharing class Sustain_Utils {
             return objMappingList != null && objMappingList.size() > 0 ? Integer.valueof(objMappingList[0].Sequence_Number__c) : null;
         }
     }
+
     public static  SustainUtilWrapper createOtherEmissionChildRecords(List<sObject> scope,List<Field_Mappings__c> fldList){
         List<SObject> recordToBeInserted = new List<SObject>();
         string CurrentMethodName = 'createOtherEmissionChildRecords';
@@ -702,16 +625,11 @@ public without sharing class Sustain_Utils {
                     Schema.getGlobalDescribe().get(fldList[0].Object_Mapping__r.source_Object__c).getDescribe().getRecordTypeInfosById().get((String)cf.get('RecordTypeId')).getDeveloperName() : '';
                 system.debug('createOtherEmissionChildRecords:recordTypeName-->' + recordTypeName);
                 if(String.isBlank(recordTypeName) || recordTypeName == fldList[0].Object_Mapping__r.source_Record_Type__c ) {
-
-                
-                //String recordTypeName = Schema.getGlobalDescribe().get(fldList[0].Object_Mapping__r.source_Object__c).getDescribe().getRecordTypeInfosById().get((String)cf.get('RecordTypeId')).getName();
-                //system.debug('createOtherEmissionChildRecords:recordTypeName-->' + recordTypeName);
-                //if(recordTypeName == fldList[0].Object_Mapping__r.source_Record_Type__c) {
                     for(Field_Mappings__c fMapping : fldList){
-                        system.debug('fMapping----------------->' + fMapping);
+                        //system.debug('fMapping----------------->' + fMapping);
                         if(fieldFuelTypemap.containsKey(fMapping.Source_Field__c) && cf.get(fMapping.Source_Field__c)!=null){                           
                             Sustain_FuelTypeInformation__mdt mdt=fieldFuelTypemap.get(fMapping.Source_Field__c);
-                            system.debug('Sustain_FuelTypeInformation__mdt-->'+mdt);
+                            //system.debug('Sustain_FuelTypeInformation__mdt-->'+mdt);
                             if(!fuelSObjectMap.containsKey(fieldFuelTypemap.get(fMapping.Source_Field__c).Fuel_Type__c)){  
                                 SObject itmObj=Schema.getGlobalDescribe().get(trgtObject).newSObject();
                                 if(fMapping.source_Field__c=='Name' && Sustain_UtilConstants.MIGRATION_DATA_OBJECTS.contains(fMapping.Object_Mapping__r.source_Object__c)) {
@@ -741,13 +659,7 @@ public without sharing class Sustain_Utils {
                                     System.debug('key is '+str);
                                     if(transfromPickListVals.containskey(str)) {
                                         itmObj.put(fMapping.Target_Field__c, transfromPickListVals.get(str).Sustain_Target_Value__c);
-                                    }
-                                    // for(Sustain_PicklistMigration__mdt mdt : picklistTransfrmList.values()) {
-                                    //     if(cf.cf.get(fMapping.Source_Field__c) == mdt.Sustain_Source_Value__c) {
-                                    //         obj.put(fMapping.Target_Field__c, mdt.Sustain_Target_Value__c);
-                                    //         break;
-                                    //     }
-                                    // }
+                                    }                                   
                                 }
                                 fuelSObjectMap.put(mdt.Fuel_Type__c,itmObj);
                             }
@@ -756,14 +668,11 @@ public without sharing class Sustain_Utils {
                                 itmObj1.put(fMapping.Target_Field__c,cf.get(fMapping.Source_Field__c));
                                 if(mdt.Fuel_Type__c != 'Cooling' && mdt.Fuel_Type__c != 'Heat'){
                                     if(fMapping.Source_Field__c.toLowerCase().contains('co2')) {
-                                        itmObj1.put(targetFieldMap.get('CO2'), mdt.Field_Unit__c);
-                                        
+                                        itmObj1.put(targetFieldMap.get('CO2'), mdt.Field_Unit__c);                                        
                                     } else if(fMapping.Source_Field__c.toLowerCase().contains('n2o')) {
-                                        itmObj1.put(targetFieldMap.get('N2O'), mdt.Field_Unit__c);
-                                        
+                                        itmObj1.put(targetFieldMap.get('N2O'), mdt.Field_Unit__c);                                        
                                     } else if(fMapping.Source_Field__c.toLowerCase().contains('ch4')) {
-                                        itmObj1.put(targetFieldMap.get('CH4'), mdt.Field_Unit__c);
-                                        
+                                        itmObj1.put(targetFieldMap.get('CH4'), mdt.Field_Unit__c);                                        
                                     }
                                 }
                                 fuelSObjectMap.put(mdt.Fuel_Type__c,itmObj1);
@@ -776,7 +685,7 @@ public without sharing class Sustain_Utils {
                                         itmObj2.put('CalorificValue',cf.get('sustain_app__Natural_Gas_Cal_Conversion_kWh_m3__c'));
                                     }                                   
                                 } 
-                                System.debug('cf.get(Target_SFDC_ID__c)-->' + temObjs.get((String)cf.get('id')).target_sfdc_id__c);
+                                //System.debug('cf.get(Target_SFDC_ID__c)-->' + temObjs.get((String)cf.get('id')).target_sfdc_id__c);
                                 if(mdt.Fuel_Type__c == 'Cooling' || mdt.Fuel_Type__c == 'Heat'){
                                     itmObj2.put('SuppliedEmissionsFactorUnit',mdt.Field_Unit__c);
                                 }else{
@@ -803,8 +712,7 @@ public without sharing class Sustain_Utils {
                     } 
                     
                     recordToBeInserted.addAll(fuelSObjectMap.values()); 
-                }
-                
+                }                
             }
             
             SYSTEM.debug('createOtherEmissionChildRecords:recordToBeInserted---->' + trgtObject + ' : '+  + fldList[0].Object_Mapping__r.Source_object__c + '  :  ' +recordToBeInserted.size());
@@ -821,34 +729,27 @@ public without sharing class Sustain_Utils {
         } 
         return finalWrapper;
     }
+
     public static SustainUtilWrapper createBuildingEnergyIntensityValueRecords(List<sObject> srcRecords,List<Field_Mappings__c> fldList){
         SustainUtilWrapper finalWrapper = new SustainUtilWrapper();
         
         string CurrentMethodName = 'createBuildingEnergyIntensityValueRecords';
         
         List<SObject> recordToBeInserted = new List<SObject>();
-        try{
-            //String trgtObject=fldList[0].Object_Mapping__r.Target_Object__c;
+        try{            
             map<String, sustain_app__BuildingEnergyIntensity__c> temObjs= new map<String, sustain_app__BuildingEnergyIntensity__c>([select id,name,target_sfdc_id__c from sustain_app__BuildingEnergyIntensity__c where id in :srcRecords]);
             Map<String,Sustain_FuelTypeInformation__mdt> fieldFuelTypemap=Sustain_UtilConstants.getFuelTypeConsumptionMdt('sustain_app__BuildingEnergyIntensity__c');
             for(sObject cf: srcRecords){               
                 Map<String,sObject> fuelSObjectMap=new Map<String,sObject>();
-                if(fldList != null && fldList.size()>0)
-                //&& fldList[0].Object_Mapping__r.source_Record_Type__c.equals('CBECS'))
-                {                    
+                if(fldList != null && fldList.size()>0){
                     String recordTypeName = fldList[0].Object_Mapping__r.source_Record_Type__c != '' && fldList[0].Object_Mapping__r.source_Record_Type__c !='Master' ? 
                     Schema.getGlobalDescribe().get(fldList[0].Object_Mapping__r.source_Object__c).getDescribe().getRecordTypeInfosById().get((String)cf.get('RecordTypeId')).getDeveloperName() : '';
                     system.debug('createBuildingEnergyIntensityValueRecords:recordTypeName-->' + recordTypeName);
                     if(String.isBlank(recordTypeName) || recordTypeName == fldList[0].Object_Mapping__r.source_Record_Type__c ) {
-
-                    //String recordTypeName = Schema.getGlobalDescribe().get(fldList[0].Object_Mapping__r.source_Object__c).getDescribe().getRecordTypeInfosById().get((String)cf.get('RecordTypeId')).getName();
-                    // system.debug('createBuildingEnergyIntensityValueRecords:recordTypeName-->' + recordTypeName);
-                    //if(recordTypeName == fldList[0].Object_Mapping__r.source_Record_Type__c) {
                         for(Sustain_FuelTypeInformation__mdt fMapping : fieldFuelTypemap.values()){
                             if(cf.get(fMapping.Field_Name__c)!=null){
                                 if(!fuelSObjectMap.containsKey(fMapping.Fuel_Type__c)){
-                                    SObject itmObj=Schema.getGlobalDescribe().get('BldgEnrgyIntensityVal').newSObject();
-                                // itmObj.put(fld.target_field__c,cf.get(fld.source_field__c));                                
+                                    SObject itmObj=Schema.getGlobalDescribe().get('BldgEnrgyIntensityVal').newSObject();                                                          
                                     itmObj.put('FuelType',fMapping.Fuel_Type__c);
                                     itmObj.put('Source_Record_ID__c' , cf.id);
                                     for(Field_Mappings__c fMap : fldList){
@@ -866,8 +767,8 @@ public without sharing class Sustain_Utils {
                                         for(Id tempId : ids){
                                             String objectName=tempId.getsobjecttype().getDescribe().getName();
                                             if(objectName.equals(objName)){
-                                                system.debug('tempId---->' + tempId);
-                                                system.debug('objName---->' + objName + ' : ' + objectName);
+                                                //system.debug('tempId---->' + tempId);
+                                                //system.debug('objName---->' + objName + ' : ' + objectName);
                                                 itmObj.put('BuildingEnergyIntensityId',tempId);
                                                 break;
                                             }
@@ -877,105 +778,22 @@ public without sharing class Sustain_Utils {
                                         if(String.isnotblank(newSourceField)){                    
                                             String objectName=((ID)newSourceField).getsobjecttype().getDescribe().getName();                   
                                             if(objectName.equals(objName)){
-                                                system.debug('newSourceField else---->' + newSourceField);
-                                                system.debug('objName else---->' + objName );
+                                                //system.debug('newSourceField else---->' + newSourceField);
+                                                //system.debug('objName else---->' + objName );
                                                 itmObj.put('BuildingEnergyIntensityId',newSourceField);
                                             }
                                         }
                                         
-                                    }
-                                    //itmObj.put('BuildingEnergyIntensityId',temObjs?.get(cf.id).Target_SFDC_ID__c);
+                                    }                                    
                                     fuelSObjectMap.put(fMapping.Fuel_Type__c,itmObj);
                                     recordToBeInserted.add(itmObj);
                                 }
                             }
                         }
                     }
-                }
-                /*else if(Schema.getGlobalDescribe().get('sustain_app__BuildingEnergyIntensity__c').getDescribe().getRecordTypeInfosById() != null && 
-                        Schema.getGlobalDescribe().get('sustain_app__BuildingEnergyIntensity__c').getDescribe().getRecordTypeInfosById().get((String)cf.get('RecordTypeId')).getDeveloperName() == 'CommercialBuilding'){
-                    for(Sustain_FuelTypeInformation__mdt fMapping : fieldFuelTypemap.values()){
-                        if(cf.get(fMapping.Field_Name__c)!=null){
-                            if(!fuelSObjectMap.containsKey(fMapping.Fuel_Type__c)){
-                                SObject itmObj=Schema.getGlobalDescribe().get('BldgEnrgyIntensityVal').newSObject();
-                                itmObj.put('Source_Record_ID__c' , cf.id);
-                                itmObj.put('FuelType',fMapping.Fuel_Type__c);
-                                String newSourceField=(String) temObjs?.get(cf.id).Target_SFDC_ID__c;
-                                String objName='BldgEnrgyIntensity';
-                                if(String.isnotblank(newSourceField) && newSourceField.contains(',')){
-                                    List<Id> ids=newSourceField.split(',');
-                                    for(Id tempId : ids){
-                                        String objectName=tempId.getsobjecttype().getDescribe().getName();
-                                        if(objectName.equals(objName)){
-                                            system.debug('tempId---->' + tempId);
-                                            system.debug('objName---->' + objName + ' : ' + objectName);
-                                            itmObj.put('BuildingEnergyIntensityId',tempId);
-                                            break;
-                                        }
-                                    }
-                                }
-                                else{
-                                    if(String.isnotblank(newSourceField)){                    
-                                        String objectName=((ID)newSourceField).getsobjecttype().getDescribe().getName();                   
-                                        if(objectName.equals(objName)){
-                                            system.debug('newSourceField else---->' + newSourceField);
-                                            system.debug('objName else---->' + objName );
-                                            itmObj.put('BuildingEnergyIntensityId',newSourceField);
-                                        }
-                                    }
-                                    
-                                }
-                                fuelSObjectMap.put(fMapping.Fuel_Type__c,itmObj);
-                                recordToBeInserted.add(itmObj);
-                            }
-                        }
-                    }*/
-                    /*SObject itmObj=Schema.getGlobalDescribe().get('BldgEnrgyIntensityVal').newSObject();
-                    itmObj.put('Source_Record_ID__c' , cf.id);
-                    String newSourceField=(String) temObjs?.get(cf.id).Target_SFDC_ID__c;
-                    String objName='BldgEnrgyIntensity';
-                    if(String.isnotblank(newSourceField) && newSourceField.contains(',')){
-                        List<Id> ids=newSourceField.split(',');
-                        for(Id tempId : ids){
-                            String objectName=tempId.getsobjecttype().getDescribe().getName();
-                            if(objectName.equals(objName)){
-                                system.debug('tempId---->' + tempId);
-                                system.debug('objName---->' + objName + ' : ' + objectName);
-                                itmObj.put('BuildingEnergyIntensityId',tempId);
-                                break;
-                            }
-                        }
-                    }
-                    else{
-                        if(String.isnotblank(newSourceField)){                    
-                            String objectName=((ID)newSourceField).getsobjecttype().getDescribe().getName();                   
-                            if(objectName.equals(objName)){
-                                system.debug('newSourceField else---->' + newSourceField);
-                                system.debug('objName else---->' + objName );
-                                itmObj.put('BuildingEnergyIntensityId',newSourceField);
-                            }
-                        }
-                        
-                    }
-                    recordToBeInserted.add(itmObj);
-                }*/
-                    /*for(Sustain_FuelTypeInformation__mdt fMapping : fieldFuelTypemap.values()){
-                        if(cf.get(fMapping.Field_Name__c)!=null){
-                            if(!fuelSObjectMap.containsKey(fMapping.Fuel_Type__c)){
-                                SObject itmObj=Schema.getGlobalDescribe().get('BldgEnrgyIntensityVal').newSObject();
-                                itmObj.put('FuelType',fMapping.Fuel_Type__c);
-                                itmObj.put('Source_Record_ID__c' , cf.id);
-                                itmObj.put('BuildingEnergyIntensityId',temObjs?.get(cf.id).Target_SFDC_ID__c);
-                                fuelSObjectMap.put(fMapping.Fuel_Type__c,itmObj);
-                                recordToBeInserted.add(itmObj);
-                            }
-                        }
-                    }*/
-                    
-                /*}*/
-                
+                }               
             }
-             SYSTEM.debug('createBuildingEnergyIntensityValueRecords:recordToBeInserted---->' +recordToBeInserted.size());
+            SYSTEM.debug('createBuildingEnergyIntensityValueRecords:recordToBeInserted---->' +recordToBeInserted.size());
             SYSTEM.debug('createBuildingEnergyIntensityValueRecords:fieldFuelTypemap---->' +fieldFuelTypemap);
             List<Database.SaveResult> results = new List<Database.SaveResult>();
             if(recordToBeInserted.size()>0){
@@ -995,12 +813,14 @@ public without sharing class Sustain_Utils {
     @testVisible
     private static List<SObject> addAccountField(List<String> assetContactIdList, List<String> supplierIds, List<SObject> recordToBeInserted){
         Map<String,String> assetContactTargetIdMap =new Map<String,String>();
-        String soqlStr = 'select sustain_app__Contact__c,Target_SFDC_ID__c from sustain_app__ServiceProvider__c';
+        String soqlStr = 'select sustain_app__Contact__c,sustain_app__Contact__r.Migration_Status__c, sustain_app__Contact__r.Error_Details__c,Target_SFDC_ID__c from sustain_app__ServiceProvider__c';
         if(assetContactIdList != null && assetContactIdList.size() > 0){
-            soqlStr += ' where sustain_app__Contact__c IN : assetContactIdList';
+            soqlStr += ' where sustain_app__Contact__c IN : assetContactIdList order by Migration_Status__c DESC nulls last';
         }else if(supplierIds != null && supplierIds.size() > 0){
-            soqlStr += ' where Id IN: supplierIds';
+            soqlStr += ' where Id IN: supplierIds order by Migration_Status__c DESC nulls last';
         }
+        
+        Map<Id, Sobject> errorSourceRecordMap = new Map<Id, Sobject>();
         
         for(sustain_app__ServiceProvider__c sp : database.query(soqlStr)){
             String supplierOrAccID = '';
@@ -1023,19 +843,39 @@ public without sharing class Sustain_Utils {
                         system.debug('Target IDS else---->' + sp.Target_SFDC_ID__c );
                         supplierOrAccID = sp.Target_SFDC_ID__c;                        
                     }
-                }                
+                } else{
+                    if(assetContactIdList != null && assetContactIdList.size() > 0 && assetContactTargetIdMap.get(sp.sustain_app__Contact__c) == null){
+                        errorSourceRecordIds.add(sp.sustain_app__Contact__c);
+                        errorSourceRecordMap.put(sp.sustain_app__Contact__c,sp.sustain_app__Contact__r);
+                    }else if(supplierIds != null && supplierIds.size() > 0 && assetContactTargetIdMap.get(sp.Id) == null){
+                        errorSourceRecordIds.add(sp.Id);
+                        errorSourceRecordMap.put(sp.Id,sp);
+                    }
+                }               
             }
-            if(assetContactIdList != null && assetContactIdList.size() > 0){
+            if(assetContactIdList != null && assetContactIdList.size() > 0 && assetContactTargetIdMap.get(sp.sustain_app__Contact__c) == null && string.isNotBlank(supplierOrAccID)){
                 assetContactTargetIdMap.put(sp.sustain_app__Contact__c,supplierOrAccID);
-            }else if(supplierIds != null && supplierIds.size() > 0){
-                assetContactTargetIdMap.put(sp.Id,supplierOrAccID);     
+            }else if(supplierIds != null && supplierIds.size() > 0 && assetContactTargetIdMap.get(sp.Id) == null && string.isNotBlank(supplierOrAccID)){
+                assetContactTargetIdMap.put(sp.Id,supplierOrAccID); 
             }                                  
         }
 
-        for(SObject sobj : recordToBeInserted){
-            if(assetContactTargetIdMap.containsKey((String)sObj.get('Source_Record_ID__c'))){
-                sobj.put('AccountId',assetContactTargetIdMap.get((String)sObj.get('Source_Record_ID__c')));
+        if(errorSourceRecordIds.size() > 0){
+            errorSourceRecordIds.removeAll(assetContactTargetIdMap.keySet());
+        }
+        System.debug('errorSourceRecordIds --->'+errorSourceRecordIds);
+
+        for(Integer i = (recordToBeInserted.size()-1); i>=0; i--){
+            if(assetContactTargetIdMap.containsKey((String)recordToBeInserted[i].get('Source_Record_ID__c')) ){
+                recordToBeInserted[i].put('AccountId',assetContactTargetIdMap.get((String)recordToBeInserted[i].get('Source_Record_ID__c'))); 
+                errorSourceRecordMap.remove((String)recordToBeInserted[i].get('Source_Record_ID__c'));              
+            }else if(errorSourceRecordIds.contains((String)recordToBeInserted[i].get('Source_Record_ID__c'))){
+                recordToBeInserted.remove(i);
             }
+        }
+
+        if(errorSourceRecordMap.size() > 0){
+            errorSourceRecordList = errorSourceRecordMap.values();
         }
         return recordToBeInserted;
     }
@@ -1066,14 +906,20 @@ public without sharing class Sustain_Utils {
                         system.debug('Target IDS else---->' + sp.Target_SFDC_ID__c );
                         accId = sp.Target_SFDC_ID__c;                        
                     }
-                }                
+                } else{                    
+                    errorSourceRecordList.add(sp); 
+                }               
             }
-            vendorAccountIdMap.put(sp.Id,accId);  
+            if(string.isNotBlank(accID)){
+                vendorAccountIdMap.put(sp.Id,accId);
+            }              
         }
 
-        for(SObject sobj : recordToBeInserted){
-            if(vendorAccountIdMap.containsKey((String)sObj.get('Source_Record_ID__c'))){
-                sobj.put('AccountId',vendorAccountIdMap.get((String)sObj.get('Source_Record_ID__c')));
+        for(Integer i = (recordToBeInserted.size()-1); i>=0; i--){
+            if(vendorAccountIdMap.containsKey((String)recordToBeInserted[i].get('Source_Record_ID__c'))){
+                recordToBeInserted[i].put('AccountId',vendorAccountIdMap.get((String)recordToBeInserted[i].get('Source_Record_ID__c')));
+            }else{
+                recordToBeInserted.remove(i);
             }
         }
         return recordToBeInserted;
@@ -1105,12 +951,7 @@ public without sharing class Sustain_Utils {
     }
     @testVisible
     private static Sobject addRelationShipField(sobject cf,Field_Mappings__c fMapping,String trgtObject,SObject obj){
-        String srcField=fMapping.Source_Field__c.remove('__c')+'__r';
-        //system.debug('srcField-->' + srcField);
-        //system.debug('cf-->' + cf);
-        //system.debug('fMapping-->' + fMapping);
-        //system.debug('trgtObject-->' + trgtObject);
-        //system.debug('obj-->' + obj);
+        String srcField=fMapping.Source_Field__c.remove('__c')+'__r';        
         SObject tempObj = cf.getSObject(srcField);
         if(tempObj != null) {
             String newSourceField=(String) tempObj.get('Target_SFDC_ID__c');
@@ -1120,13 +961,9 @@ public without sharing class Sustain_Utils {
                 List<Id> ids=newSourceField.split(',');
                 for(Id tempId : ids){
                     String objectName=tempId.getsobjecttype().getDescribe().getName();
-                    if(objectName.equals(objName)){
-                        //system.debug('fMapping.Target_Field__c---->' + fMapping.Target_Field__c);
-                        //system.debug('tempId---->' + tempId);
-                       // system.debug('objName---->' + objName + ' : ' + objectName);
+                    if(objectName.equals(objName)){                       
                         obj.put(fMapping.Target_Field__c,tempId);
-                        if(fMapping.Target_Field__c.equals(Scope3PrntIdFieldAPI) && trgtObject.equals(Scope3ProcurementSummAPI)){
-                            //carbonFootPrintIdList=addToCarbonFootprintIdList(tempId);
+                        if(fMapping.Target_Field__c.equals(Scope3PrntIdFieldAPI) && trgtObject.equals(Scope3ProcurementSummAPI)){                            
                             carbonFootPrintIdList.add(tempId);
                         }
                         break;
@@ -1136,13 +973,9 @@ public without sharing class Sustain_Utils {
             else{
                 if(String.isnotblank(newSourceField)){                    
                     String objectName=((ID)newSourceField).getsobjecttype().getDescribe().getName();                   
-                    if(objectName.equals(objName)){
-                        //system.debug('fMapping.Target_Field__c else ---->' + fMapping.Target_Field__c);
-                        //system.debug('newSourceField else---->' + newSourceField);
-                        //system.debug('objName else---->' + objName );
+                    if(objectName.equals(objName)){                       
                         obj.put(fMapping.Target_Field__c,newSourceField);
-                        if(fMapping.Target_Field__c.equals(Scope3PrntIdFieldAPI) && trgtObject.equals(Scope3ProcurementSummAPI)){
-                            //carbonFootPrintIdList=addToCarbonFootprintIdList(newSourceField);
+                        if(fMapping.Target_Field__c.equals(Scope3PrntIdFieldAPI) && trgtObject.equals(Scope3ProcurementSummAPI)){                           
                             carbonFootPrintIdList.add(newSourceField);
                         }
                     }
@@ -1151,12 +984,11 @@ public without sharing class Sustain_Utils {
                     errorSourceRecordIds.add(cf.Id);
                     errorSourceRecordList.add(cf);
                 }                
-            }
-            
-        }
-        
+            }            
+        }        
         return obj;
     }
+
     private static string getCustomLabelValByName(String name) {
         MetadataService.MetadataPort service = new MetadataService.MetadataPort();
         service.SessionHeader = new MetadataService.SessionHeader_element();
@@ -1164,10 +996,12 @@ public without sharing class Sustain_Utils {
         MetadataService.CustomLabel label = (MetadataService.CustomLabel) service.readMetadata('CustomLabel', new String[] { name }).getRecords()[0];//Label named 'X12345'
         return label.value;
     }
+
     @testVisible
     private static List<String> addToCarbonFootprintIdList(String printId){
         return (List<String>) carbonFootPrintIdList.add(printId);
     }
+
     @testVisible
     private static Map<String,String> getFootPrintIdScope3EmssnIdMap(List<String> carbonFootPrintIdList){
         Map<String,String> footPrintIdScope3EmssnIdMap = new Map<String,String>();
@@ -1179,6 +1013,7 @@ public without sharing class Sustain_Utils {
         }
         return footPrintIdScope3EmssnIdMap;
     }
+
     @testVisible
     private static Map<String,String> getTargetIds(List<String> srcIds,String obj){
         Map<String,String> srcIdTargetIdMap = new Map<String,String>();

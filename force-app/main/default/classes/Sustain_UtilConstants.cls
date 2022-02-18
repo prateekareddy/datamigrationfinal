@@ -27,7 +27,11 @@ public without sharing class Sustain_UtilConstants {
     public static final List<String> stdFieldList=new List<String>{'OwnerId','CreatedById','LastModifiedById','LastModifiedDate','Id','IsDeleted','CreatedDate',
                                                                    'SystemModstamp','LastViewedDate','LastReferencedDate','LastActivityDate','Source_Record_ID__c'};
     
-    public static final List<String> calculateddFieldList =new List<String>{'GeneratedWasteDisposedWasteQuantityinTonnes','GeneratedWasteScope1EmissionsInTco2e'};
+    public static final List<String> calculateddFieldList =new List<String>{'GeneratedWasteDisposedWasteQuantityinTonnes','GeneratedWasteScope1EmissionsInTco2e',
+                                                            'GeneratedWasteScp3DnstrmEndLifeSoldPrdct','GeneratedWasteScp3UpstrmWstGenInOper',
+                                                            'WasteFootprintGeneratedWasteDetailRecordCnt','WasteFootprintTotalWasteQuantityinTonnes',
+                                                            'WasteFootprintScp3UpstrmWstGenInOper','WasteFootprintScp3DnstrmEndLifeSoldPrdct', 
+                                                            'WasteFootprintScope1EmissionsInTco2e', 'WasteFootprintIsRecordLocked', 'WasteFootprintScope1EmissionsInTco2e'};
                                                                        
      public static final List<String> MIGRATION_DATA_OBJECTS=new List<String>{'sustain_app__EmissionFactorElectricity__c','sustain_app__EmissionFactorOther__c','sustain_app__EmissionFactorScope3Dataset__c','sustain_app__EmissionFactorScope3__c','sustain_app__BuildingEnergyIntensity__c',
                                                                    'sustain_app__InflationRate__c'};

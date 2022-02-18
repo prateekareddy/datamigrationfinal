@@ -1,11 +1,8 @@
 .THIS .override_css {
     height:450px;
-   /* border: 2px solid black;*/
     padding-left : 0 !important;
     padding-right : 0 !important;
 }
-
-
 
 .THIS .slds-p-horizontal_medium .THIS.slds-p-horizontal--medium{
     padding-left : 0 !important;

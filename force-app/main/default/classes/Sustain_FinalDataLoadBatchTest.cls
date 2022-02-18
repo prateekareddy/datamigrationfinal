@@ -1,3 +1,10 @@
+/***************************************************************************************************************
+* Name - Sustain_FinalDataLoadBatchTest
+* Description - This class is used as a test class for Sustain_FinalDataLoadBatch apex class.
+* Author - Accenture (Bindhyachal)
+* Created Date -9/19/2021
+* Last Modified By & Date - Accenture, 2/14/2022
+* ***************************************************************************************************************/
 @isTest(SeeAllData=False)
 private class Sustain_FinalDataLoadBatchTest {
     
@@ -41,14 +48,14 @@ private class Sustain_FinalDataLoadBatchTest {
             consumption.sustain_app__ServiceProvider__c = provide.id;
             
             
-            Data_Load_Request__c dataRec = new Data_Load_Request__c();
+            Data_Load_Request__c dataRec = Sustain_TestDataFactory.createDataLoadRequest();
             dataRec.Request_Job_Name__c = 'Complete Data Load';
             dataRec.Data_Load_Type__c = 'Complete Data Load';
             dataRec.Start_Date_Time__c = system.now();
             dataRec.End_Date_Time__c = system.now();
             insert dataRec;
             
-            Object_Mappings__c obj = new Object_Mappings__c();
+            Object_Mappings__c obj = Sustain_TestDataFactory.createObjectMapping();
             obj.Source_Object__c= 'sustain_app__Asset__c';
             obj.Source_Record_Type__c = 'sustain_app__General';
             obj.Target_Object__c = 'Scope3EmssnSrc';
@@ -60,7 +67,7 @@ private class Sustain_FinalDataLoadBatchTest {
             obj.Batch_Size__c = 500;
             insert obj;
             list<Field_Mappings__c> lst = new  list<Field_Mappings__c>();
-            Field_Mappings__c objF = new Field_Mappings__c();
+            Field_Mappings__c objF = Sustain_TestDataFactory.createFieldMapping();
             objF.Mapping_Included__c= true;
             objF.New_Field__c = true;
             objF.Calculated__c = false;
@@ -71,7 +78,7 @@ private class Sustain_FinalDataLoadBatchTest {
             objF.object_mapping__c = obj.id;
             // lst.add(objF);
             
-            Field_Mappings__c objF1 = new Field_Mappings__c();
+            Field_Mappings__c objF1 = Sustain_TestDataFactory.createFieldMapping();
             objF1.Mapping_Included__c= true;
             objF1.New_Field__c = true;
             objF1.Calculated__c = false;
@@ -82,7 +89,7 @@ private class Sustain_FinalDataLoadBatchTest {
             objF1.object_mapping__c = obj.id;
             lst.add(objF1);
             
-            Field_Mappings__c objF2 = new Field_Mappings__c();
+            Field_Mappings__c objF2 = Sustain_TestDataFactory.createFieldMapping();
             objF2.Mapping_Included__c= true;
             objF2.New_Field__c = true;
             objF2.Calculated__c = false;
@@ -93,7 +100,7 @@ private class Sustain_FinalDataLoadBatchTest {
             objF2.object_mapping__c = obj.id;
             lst.add(objF2);
             
-            Field_Mappings__c objF3 = new Field_Mappings__c();
+            Field_Mappings__c objF3 = Sustain_TestDataFactory.createFieldMapping();
             objF3.Mapping_Included__c= true;
             objF3.New_Field__c = true;
             objF3.Calculated__c = false;
@@ -104,7 +111,7 @@ private class Sustain_FinalDataLoadBatchTest {
             objF3.object_mapping__c = obj.id;
             lst.add(objF3);
             
-            Field_Mappings__c objF4 = new Field_Mappings__c();
+            Field_Mappings__c objF4 = Sustain_TestDataFactory.createFieldMapping();
             objF4.Mapping_Included__c= true;
             objF4.New_Field__c = true;
             objF4.Calculated__c = false;
@@ -115,7 +122,7 @@ private class Sustain_FinalDataLoadBatchTest {
             objF4.object_mapping__c = obj.id;
             lst.add(objF4);
             
-            Field_Mappings__c objF5 = new Field_Mappings__c();
+            Field_Mappings__c objF5 = Sustain_TestDataFactory.createFieldMapping();
             objF5.Mapping_Included__c= true;
             objF5.New_Field__c = true;
             objF5.Calculated__c = false;
@@ -126,7 +133,7 @@ private class Sustain_FinalDataLoadBatchTest {
             objF5.object_mapping__c = obj.id;
             lst.add(objF5);
             
-            Field_Mappings__c objF6 = new Field_Mappings__c();
+            Field_Mappings__c objF6 = Sustain_TestDataFactory.createFieldMapping();
             objF6.Mapping_Included__c= true;
             objF6.New_Field__c = true;
             objF6.Calculated__c = false;
@@ -137,7 +144,7 @@ private class Sustain_FinalDataLoadBatchTest {
             objF6.object_mapping__c = obj.id;
             lst.add(objF6);
             
-            Field_Mappings__c objF7 = new Field_Mappings__c();
+            Field_Mappings__c objF7 = Sustain_TestDataFactory.createFieldMapping();
             objF7.Mapping_Included__c= true;
             objF7.New_Field__c = true;
             objF7.Calculated__c = false;
@@ -148,7 +155,7 @@ private class Sustain_FinalDataLoadBatchTest {
             objF7.object_mapping__c = obj.id;
             lst.add(objF7);
             
-            Field_Mappings__c objF8 = new Field_Mappings__c();
+            Field_Mappings__c objF8 = Sustain_TestDataFactory.createFieldMapping();
             objF8.Mapping_Included__c= true;
             objF8.New_Field__c = true;
             objF8.Calculated__c = false;

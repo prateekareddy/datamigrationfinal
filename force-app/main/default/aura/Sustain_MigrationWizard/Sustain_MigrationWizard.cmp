@@ -21,11 +21,7 @@
 <h1><lightning:icon iconName="utility:info" alternativeText="Info!" variant="brand" title="" size="small" />
     &nbsp;<b>Review the standard mapping and make changes as appropriate.</b></h1>
 <p><h1 class="font-13"><b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Note: In case of Custom objects, field count is defaulted to zero. When a mapping is included by clicking on "+", the field count will be updated appropriately.</b></h1></p>
-
-        <!--<h2 style="font-size:12px;"><lightning:icon class="iconStyle" iconName="utility:info" size="x-small" alternativeText="info" variant="brand" title=""  />
-        &nbsp;  Review the standard mapping and make changes as appropriate.</h2> 
-    <p><h2 style="font-size:12px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Note: In case of Custom objects, field count is defaulted to zero. When a mapping is included by clicking on "+", the field count will be updated appropriately.</h2></p>-->
-    <br/>
+<br/>
 
 <lightning:accordion aura:id="accordion" activeSectionName="{!v.activeSections}" allowMultipleSectionsOpen="true" > 
     <aura:if isTrue="{!not(empty(v.wrapObject.stdObjwithCustFieldList))}">
@@ -54,10 +50,7 @@
                             </th>
                             <th scope="col"  class="borderStyle">
                                 <div class="slds-truncate" title="Destination Object: Label">Destination Object: Label</div>
-                            </th>
-                            <!--th scope="col" style="background: lightcyan;">
-                                <div class="slds-truncate" title="Actions">Actions</div>
-                            </th-->
+                            </th>                            
                         </tr>
                     </thead>
                     <!--table body start, Iterate object list as a <tr> -->
@@ -78,11 +71,7 @@
                                 </td>
                                 <td scope="row">
                                     <div class="slds-truncate" title="{!acc.Destination_Object_Label__c}">{!acc.Migration_Util__Destination_Object_Label__c}</div>
-                                </td>
-                                <!--th scope="row">
-                                    <lightning:buttonIcon iconName="utility:preview" size="x-small" alternativeText="View" class="button-icon-magin"/>
-                                    <lightning:buttonIcon iconName="utility:ban" size="x-small" alternativeText="Remove" value="{!acc.Id}" class="button-icon-magin" onclick="{!c.handleRemoveItem}"/>
-                                </th-->
+                                </td>                               
                             </tr>
                         </aura:iteration>
                         
@@ -107,10 +96,7 @@
                             <tr class="slds-line-height_reset">
                                 <th scope="col"  class="borderStyle">
                                     <div class="slds-truncate" title="Source Object:Label">Source Object:Label</div>
-                                </th>
-                                <!--<th scope="col" style="background: lightcyan;">
-                                    <div class="slds-truncate" title="Record Type">Record Type</div>
-                                </th>-->
+                                </th>                                
                                 <th scope="col"  class="borderStyle">
                                     <div class="slds-truncate" title="Total Fields">Total Fields</div>
                                 </th>
@@ -131,10 +117,7 @@
                                 <tr class="slds-hint-parent">
                                     <td scope="row">
                                         <div class="slds-truncate" title="{!acc1.Source_Object_Label__c}">{!acc1.Migration_Util__Source_Object_Label__c}</div>
-                                    </td>
-                                    <!--<td scope="row">
-                                        <div class="slds-truncate" title="{!acc1.Source_Recordtype_Label__c}">{!acc1.Source_Recordtype_Label__c}</div>
-                                    </td>-->
+                                    </td>                                   
                                     <td scope="row">
                                         <div class="slds-truncate" title="{!acc1.Total_Fields__c}">{!acc1.Migration_Util__Total_Fields__c}</div>
                                     </td>
@@ -151,13 +134,7 @@
                                             <aura:set attribute="else">
                                                 <div class="slds-truncate" title="{!acc1.Migration_Util__Destination_Object_Label__c}">{!acc1.Migration_Util__Destination_Object_Label__c}</div>    
                                             </aura:set>
-                                        </aura:if>
-                                        <!--lightning:select aura:id="objectPicklist">
-                                            <aura:iteration items="{!v.wrapObject.objectList}" var="ind" >
-                                                <option  value="{!ind}" selected="{!ind==acc1.Target_Object__c}" >{!ind}</option>
-                                            </aura:iteration>
-                                        </lightning:select-->
-                                        <!--div class="slds-truncate" title="{!acc1.Target_Object__c}">{!acc1.Target_Object__c}</div-->
+                                        </aura:if>                                        
                                     </td>
                                     <td scope="row">
                                         <aura:if isTrue="{!acc1.Migration_Util__Mapping_Included__c== false}">
@@ -205,10 +182,7 @@
                             </th>
                             <th scope="col"  class="borderStyle">
                                 <div class="slds-truncate" title="Destination Object: Label">Destination Object: Label</div>
-                            </th>
-                            <!--th scope="col" style="background: lightcyan;">
-                                <div class="slds-truncate" title="Actions">Actions</div>
-                            </th-->
+                            </th>                          
                         </tr>
                     </thead>
                     <!--table body start, Iterate object list as a <tr> -->
@@ -229,12 +203,9 @@
                                 </td>
                                 <td scope="row">
                                     <div class="slds-truncate" title="{!acc2.Destination_Object_Label__c}">{!acc2.Migration_Util__Destination_Object_Label__c}</div>
-                                </td>
-                                <!--th scope="row">                     
-                                </th-->
+                                </td>                               
                             </tr>
-                        </aura:iteration>
-                        
+                        </aura:iteration>                        
                     </tbody>
                 </table>
             </div>

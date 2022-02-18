@@ -7,34 +7,7 @@
 * ***************************************************************************************************************/
 
 public with sharing class Sustain_UpdateCustomObjectRelationship{
-    private static final string CurrentClassName = 'Sustain_UpdateCustomObjectRelationship';
-    //     public Sustain_UpdateCustomObjectRelationship(){
-    //         system.debug('Inside Constructor');
-    //     }
-    
-    // This method is used to get all relationship field for managed package objects on custom object 
-    /*public static Set<String> getAllReferenceSCObject(String objectName){        
-
-Set<String> relFields = new Set<String>();
-Map <String,Schema.SObjectType> gd = Schema.getGlobalDescribe();
-Schema.SObjectType sobjType = gd.get(objectName);
-Schema.DescribeSObjectResult r = sobjType.getDescribe();
-Map<String, Schema.SObjectField> MapofField = r.fields.getMap();
-
-for(SObjectField aField : r.fields.getMap().values()) {
-if(Sustain_UtilConstants.castTypeToString(aField.getDescribe().getType()).equals(Sustain_UtilConstants.referenceLabel) && 
-aField.getDescribe().isNamePointing()==false &&
-aField.getDescribe().isCustom() ){
-for(Schema.sObjectType refObj: aField.getDescribe().getReferenceTo()){
-if(String.valueOf(refObj).startsWith('sustain_app__')){
-relFields.add(aField.getDescribe().getName());
-}
-}                                       
-}
-}
-System.debug('relFields '+relFields);
-return relFields;
-}*/
+    private static final string CurrentClassName = 'Sustain_UpdateCustomObjectRelationship';    
     
     // This method is used to get all relationship field for managed package objects on custom object 
     public static List<Sobject> updateCustomObjectRecords(List<Sobject> sourceRecords, List<Field_Mappings__c> fieldMappings){ 
@@ -79,8 +52,7 @@ return relFields;
                     }              
                     
                 }
-            }
-            // return sourceRecords;
+            }            
         }catch(Exception e){
             Sustain_UtilityError.createErrorLog(e, CurrentClassName, CurrentMethodName); 
         }

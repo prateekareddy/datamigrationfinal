@@ -162,8 +162,7 @@ global class Sustain_FinalDataLoadBatch implements Database.Batchable<sObject>,D
                                 }else if(sequenceNo == 5 ) {
                                     ids.add(data.sustain_app__EmissionFactorScope3__r.sustain_app__EmissionFactorScope3Dataset__c);
                                 }else if(sequenceNo >= 6 && sequenceNo <= 12) {
-                                    ids.add(data.sustain_app__EmissionFactorScope3__c);
-                                    dataSetIds.add(data.sustain_app__EmissionFactorScope3__r.sustain_app__EmissionFactorScope3Dataset__c);
+                                    ids.add(data.sustain_app__EmissionFactorScope3__c);                                    
                                 } else  if(sequenceNo == 17 ) {
                                     ids.add(data.sustain_app__ServiceProvider__r.id);
                                 }else if(sequenceNo == 18) {
@@ -171,7 +170,7 @@ global class Sustain_FinalDataLoadBatch implements Database.Batchable<sObject>,D
                                 }
                             }                        
                         }
-                        if(sequenceNo == 5) {
+                        if(sequenceNo >= 5 && sequenceNo <=12) {
                             string sql1  =  'select id FROM sustain_app__ConsumptionReport__c where sustain_app__Asset__r.id in:orgAssetIds';
                             list<sustain_app__ConsumptionReport__c> datas1 = database.query(sql1);
                             set<string> datasetId = new Set<String>();
@@ -180,10 +179,14 @@ global class Sustain_FinalDataLoadBatch implements Database.Batchable<sObject>,D
                                     datasetId.add(data.id);
                                 }
                             }
-                            map<string, sustain_app__ProcurementDataset__c>  resultMap = new map<string, sustain_app__ProcurementDataset__c>([select id,sustain_app__EmissionFactorScope3Dataset__c from sustain_app__ProcurementDataset__c where sustain_app__CarbonFootprint__c in :datasetId]);
+                            map<Id, sustain_app__ProcurementDataset__c>  resultMap = new map<Id, sustain_app__ProcurementDataset__c>([select id,sustain_app__EmissionFactorScope3Dataset__c from sustain_app__ProcurementDataset__c where sustain_app__CarbonFootprint__c in :datasetId]);
                             if(resultMap != null) {
-                                for(string key :resultMap.keyset()) {
-                                    ids.add(resultMap.get(key).sustain_app__EmissionFactorScope3Dataset__c);
+                                for(Id key :resultMap.keyset()) {
+                                    if(sequenceNo == 5){
+                                        ids.add(resultMap.get(key).sustain_app__EmissionFactorScope3Dataset__c);
+                                    }else{
+                                        dataSetIds.add(key);
+                                    }
                                 }
                             }
                         }
@@ -511,8 +514,11 @@ global class Sustain_FinalDataLoadBatch implements Database.Batchable<sObject>,D
                 list<Object_Mappings__c> customObjectList;
                 
                 if(objMappingList == null || objMappingList.size() == 0){
-                    sqlStr = 'select id,Target_Object__c,Source_Object__c,Source_Record_Type__c,Target_Record_Type__c,Batch_Size__c from Object_Mappings__c where Status__c = \'Not Started\' AND Object_Type__c = \'custom\' and mapping_included__c=true  and target_object__c !=\'StnryAssetCrbnFtprntItm\' order by  sequence_number__c,Target_Object__c nulls last limit 1';    
-                    customObjectList = Database.query(sqlStr);
+                    Integer failedManagedObject = database.countQuery('SELECT count() FROM Object_Mappings__c where mapping_included__c=true and status__c !=\'Completed\' AND Object_Type__c != \'custom\'');
+                    if(failedManagedObject == 0){
+                        sqlStr = 'select id,Target_Object__c,Source_Object__c,Source_Record_Type__c,Target_Record_Type__c,Batch_Size__c from Object_Mappings__c where Status__c = \'Not Started\' AND Object_Type__c = \'custom\' and mapping_included__c=true  and target_object__c !=\'StnryAssetCrbnFtprntItm\' order by  sequence_number__c,Target_Object__c nulls last limit 1';    
+                        customObjectList = Database.query(sqlStr);
+                    }
                 }
                 system.debug('objMappingList-->' + objMappingList);
                 system.debug('customObjectList-->' + customObjectList);

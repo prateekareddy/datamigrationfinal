@@ -58,8 +58,7 @@
                             <div class="slds-cell-wrap" title="{!acc1.Source_Field_Type__c}">{!acc1.totalRecCount}</div>
                         </td>
                         <td scope="row">
-                            <div class="slds-truncate align-center" >  
-                            <!-- <div class="slds-cell-wrap  align-center notstarted-status" title="{!acc1.Target_Field_Type__c}">{!acc1.Objstatus}</div>-->
+                            <div class="slds-truncate align-center" >                           
                             <aura:if isTrue = "{!v.dLR.Migration_Util__Data_Load_Type__c == 'Complete Data Load' || v.dLR.Migration_Util__Request_Job_Name__c == 'Delete Error Only Data Load'}">
                                 <aura:if isTrue="{!acc1.Objstatus == 'Error'}">
                                     <div data-value="{!acc1.recordId}"  data-name="{!acc1.sourceObjApi + '-' +acc1.sourceObjRecType}">
@@ -82,12 +81,9 @@
                         </td>
                         
                     </tr>
-                </aura:iteration>
-                
-            </tbody>
-            
-        </table>
-                
+                </aura:iteration>                
+            </tbody>            
+        </table>                
     </div>
     <aura:if isTrue="{!(v.startClicked == false &amp;&amp; v.deleteClicked == false)}">        
         <aura:if isTrue="{!(v.dLR == null || v.dLR.Migration_Util__Status__c =='Completed' || v.dLR.Migration_Util__Status__c =='Failed' || v.dLR.Migration_Util__Status__c =='Partial Complete')}">

@@ -1,3 +1,10 @@
+/***************************************************************************************************************
+* Name - Sustain_FinalDataControllerTest
+* Description - This class is used as a test class for Sustain_FinalDataController apex class.
+* Author - Accenture (Bindhyachal)
+* Created Date -9/19/2021
+* Last Modified By & Date - Accenture, 2/16/2022
+* ***************************************************************************************************************/
 @isTest(SeeAllData=False)
 private class Sustain_FinalDataControllerTest {
     @testSetup 
@@ -50,16 +57,13 @@ private class Sustain_FinalDataControllerTest {
             totalRcdCount = Sustain_FinalDataController.getLatestDataLoad();
             test.stopTest();
         }
-        system.assertEquals(true, totalRcdCount !=null);
-        
-    }
-    
+        system.assertEquals(true, totalRcdCount !=null);        
+    }    
     
     static testmethod void startFinalDataLoadTest() {
         Object_Mappings__c obj = Sustain_TestDataFactory.createObjectMapping();
         obj.Source_Object__c = 'sustain_app__ProcurementDataset__c';
-        obj.Source_Record_Type__c = 'Master';
-        // obj.Source_Record_Type__c = 'Master';
+        obj.Source_Record_Type__c = 'Master';       
         obj.Target_Object__c = 'Scope3PcmtSummary';
         obj.Target_Record_Type__c = 'Master';
         obj.Status__c = 'Not Started';
@@ -188,7 +192,7 @@ private class Sustain_FinalDataControllerTest {
     }
     
     static testmethod void checkRunningJobIsSampleFinalTest() {
-      
+        
         User u1 = Sustain_TestDataFactory.createAdmninUser();
         boolean stepValue;
         System.runAs(u1){
@@ -199,6 +203,5 @@ private class Sustain_FinalDataControllerTest {
         system.assertEquals(true, stepValue);
         
     }
-    
     
 }

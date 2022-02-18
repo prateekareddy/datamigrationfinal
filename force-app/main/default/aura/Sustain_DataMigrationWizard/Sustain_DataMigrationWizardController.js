@@ -2,8 +2,7 @@
     doInit : function(component, event, helper) {
         helper.showSpinner(component);		
         helper.getStage(component, event, helper);  
-        helper.runningjobStatus(component, event, helper);
-        //helper.hideSpinner(component);
+        helper.runningjobStatus(component, event, helper);        
     },
     refreshParent : function(component, event, helper) {
         component.set("v.selectedStep",event.getParam("stapeName"));
@@ -28,8 +27,7 @@
             var childComponent = component.find("fieldMappingCmp");
             var message = childComponent.handleChange(function(flagResult) {
                 if(flagResult===true){
-                    component.set("v.showConfirmDialogOfFieldMap", true);  
-                    // $A.get('e.force:refreshView').fire();
+                    component.set("v.showConfirmDialogOfFieldMap", true);                      
                 }
                 else{
                     var message = childComponent.saveMapping(function(result) {
@@ -37,8 +35,7 @@
                             getselectedStep = "step4";
                             component.set("v.selectedStep",getselectedStep);
                             helper.updateStage(component, event, helper,getselectedStep);
-                            component.find("confirmDataMap").reloadChild();
-                            // $A.get('e.force:refreshView').fire();
+                            component.find("confirmDataMap").reloadChild();                           
                         }
                     });
                 }

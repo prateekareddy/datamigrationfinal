@@ -1,11 +1,11 @@
-/**
-* @description       : 
-* @author            : Accenture
-* @group             : 
-* @last modified on  : 08-31-2021
-* @last modified by  : Accenture
-**/
-@isTest
+/***************************************************************************************************************
+* Name - Sustain_MigrationWizardControllerTest
+* Description - This class is used as a test class for Sustain_MigrationWizardController apex class.
+* Author - Accenture (Bindhyachal)
+* Created Date -9/19/2021
+* Last Modified By & Date - Accenture, 2/16/2022
+* ***************************************************************************************************************/
+@isTest(SeeAllData=False)
 public class Sustain_MigrationWizardControllerTest {
     static testmethod void getObjMappingTest() {
         list<Object_Mappings__c> objs = new LIST<Object_Mappings__c>();
@@ -78,15 +78,15 @@ public class Sustain_MigrationWizardControllerTest {
     }
     
     static testmethod void deleteDataLoadReqTest() {
-         sustain_app__Asset__c asset=new sustain_app__Asset__c();
+        sustain_app__Asset__c asset=new sustain_app__Asset__c();
         asset.Name='test';
         asset.Target_SFDC_ID__c = null;
         asset.Migration_Status__c = 'Not Started';
         insert asset;
-          List<String> lstAsset=new List<String>();
+        List<String> lstAsset=new List<String>();
         lstAsset.add(asset.name);
         Object_Mappings__c obj = Sustain_TestDataFactory.createObjectMapping();
-         obj.Source_Object__c= 'sustain_app__Asset__c';
+        obj.Source_Object__c= 'sustain_app__Asset__c';
         obj.Target_Object__c = 'Contact';
         obj.Source_Object_Label__c = 'Test';
         obj.Mapping_Included__c = true;
@@ -100,7 +100,6 @@ public class Sustain_MigrationWizardControllerTest {
         System.runAs(u1){
             test.startTest();
             Sustain_MigrationWizardController.deleteDataLoadReq();
-            //Sustain_SampleDataLoadCtrl.createDataLoadReq(lstAsset);
             test.stopTest();
         }
         list<Object_Mappings__c> objs = [select id from Object_Mappings__c];
@@ -110,37 +109,33 @@ public class Sustain_MigrationWizardControllerTest {
     
     
     @isTest static void migrationWizardControllerTestMethod(){
-        /*Migration_Status__c ms = new Migration_Status__c();
-ms.Current_Migration_Stage__c   = 'Org Data Scan Output';             
-ms.Ready_To_Launch__c = true;
-insert ms;*/
-        
-        Default_Emission_Factors__c def=new Default_Emission_Factors__c();
-        def.Name='test';
-        def.Factor_Value__c='testemission';
-        insert def;
-        Map<String,Default_Emission_Factors__c> defMap=new Map<String,Default_Emission_Factors__c>();
-        defMap.put(def.id, def);
-        
-        Test.startTest();
-        EmissionFactorWrapper wrap=Sustain_MigrationWizardController.getAllEmissionFactors();
-        ObjMappingListWrapper objWrap=Sustain_MigrationWizardController.getObjMapping();
-        Sustain_MigrationWizardController.MappingListWrapper fieldWrap= Sustain_MigrationWizardController.getAllMapping();
-        String stage=Sustain_MigrationWizardController.getCurrentStage();
-        boolean flag=Sustain_MigrationWizardController.getMigrationStatusSetting();
-        boolean flag2=Sustain_MigrationWizardController.updateMigrationStatus('step3');
-        Sustain_MigrationWizardController.updateMigrationStatus(null);
-      //  boolean flag3=Sustain_MigrationWizardController.getMigrationStatus();
-        boolean flag5=Sustain_MigrationWizardController.getRunningMetadataJobFlag();
-        // Sustain_MigrationWizardController.getDefaultEmissionFactors();
-        //  Sustain_MigrationWizardController.createEmissionFactorRecords(defMap);
-        Sustain_MigrationWizardController.getMigrationStatusData();  
-        Sustain_MigrationWizardController.startFinalDataLoad();
-         Sustain_MigrationWizardController.getObjectMappingCount();
-        //Sustain_MigrationWizardController.executeBatchJob();
-        Test.stopTest();
-        system.assertEquals(fieldWrap!=null, true);
-       // system.assertEquals(Wrap!=null, true);
+        User u1 = Sustain_TestDataFactory.createAdmninUser();
+        System.runAs(u1){
+            Default_Emission_Factors__c def=new Default_Emission_Factors__c();
+            def.Name='test';
+            def.Factor_Value__c='testemission';
+            insert def;
+            Map<String,Default_Emission_Factors__c> defMap=new Map<String,Default_Emission_Factors__c>();
+            defMap.put(def.id, def);
+            
+            Test.startTest();
+            EmissionFactorWrapper wrap=Sustain_MigrationWizardController.getAllEmissionFactors();
+            ObjMappingListWrapper objWrap=Sustain_MigrationWizardController.getObjMapping();
+            Sustain_MigrationWizardController.MappingListWrapper fieldWrap= Sustain_MigrationWizardController.getAllMapping();
+            String stage=Sustain_MigrationWizardController.getCurrentStage();
+            boolean flag=Sustain_MigrationWizardController.getMigrationStatusSetting();
+            boolean flag2=Sustain_MigrationWizardController.updateMigrationStatus('step3');
+            Sustain_MigrationWizardController.updateMigrationStatus(null);
+            boolean flag5=Sustain_MigrationWizardController.getRunningMetadataJobFlag();
+            Sustain_MigrationWizardController.getMigrationStatusData();  
+            Sustain_MigrationWizardController.startFinalDataLoad();
+            Sustain_MigrationWizardController.getObjectMappingCount();
+            
+            Test.stopTest();
+              system.assertEquals(fieldWrap!=null, true);       
+         
+        }
+      
     }
     static testmethod void getAllMappingsTest() {
         Object_Mappings__c obj = Sustain_TestDataFactory.createObjectMapping();
@@ -203,13 +198,7 @@ insert ms;*/
         
         Migration_Status__c m =  new Migration_Status__c();
         m.Ready_to_Launch__c =true;
-        insert m;
-        /* List<Object_Mappings__c> mappingList=[select id,Object_Type__c,Source_Object__c,(select id from Field_Mappings__r) from Object_Mappings__c where Object_Type__c=: Sustain_UtilConstants.customLabel
-and Mapping_Included__c=true];
-List<Field_Mappings__c> fieldMappingList=[SELECT Id, Source_Field__c,Source_Field_Label__c,Source_Field_Type__c,Target_Field_Label__c,Target_Field__c, Target_Field_Type__c, Calculated__c, 
-New_Field__c,Mapping_Included__c, Object_Mapping__c, Object_Mapping__r.Source_Object__c,Object_Mapping__r.Target_Object__c,
-Object_Mapping__r.Total_Fields__c,Object_Mapping__r.Total_To_Review_Fields__c,Object_Mapping__r.Source_Object_Label__c,Object_Mapping__r.Destination_Object_Label__c,Comments__c,Custom_Field__c FROM Field_Mappings__c
-where Object_Mapping__r.Mapping_Included__c=true order by Object_Mapping__c];*/
+        insert m;     
         
         List<String> utilityFieldList =new List<String>();
         Test.startTest();
@@ -223,17 +212,11 @@ where Object_Mapping__r.Mapping_Included__c=true order by Object_Mapping__c];*/
         Sustain_CreateMigrationMapping.createObjectMapping('list');
         Sustain_CreateMigrationMapping.createCustomObjectMapping();
         Sustain_CreateMigrationMapping.createCustObjMappingforMngPckgDependentFieldsforSpecific(mappingList);
-        Sustain_CreateMigrationMapping.getObjectType('GeneratedWaste');
-        //sustain_CreateMigrationMapping.createFieldMappingForStdObjs(mappingList, utilityFieldList);
-        // Sustain_CreateMigrationMapping.createFieldMappingForCustObjs(mappingList, utilityFieldList);
-        // Sustain_CreateMigrationMapping.getTargetObjectNameField('sustain_app__BuildingEnergyIntensity__c');
-        List<Sustain_MigrationWizardController.CustomFieldWrapper> fieldList=Sustain_MigrationWizardController.getAllCustomFields('OtherEmssnFctrSet');
-       boolean t;
+        Sustain_CreateMigrationMapping.getObjectType('GeneratedWaste');            
+        List<Sustain_MigrationWizardController.CustomFieldWrapper> fieldList=Sustain_MigrationWizardController.getAllCustomFields('OtherEmssnFctrSet');            
         Test.stopTest();
         List<Object_Mappings__c> objMapList=[select id from Object_Mappings__c limit 100];
-        t = Sustain_MigrationWizardController.getMigrationStatus();
-       // system.assertEquals(objMapList.size()<0, true);
-        // system.assertEquals(true, t);
+        boolean t = Sustain_MigrationWizardController.getMigrationStatus();     
     }
-    
+     
 }

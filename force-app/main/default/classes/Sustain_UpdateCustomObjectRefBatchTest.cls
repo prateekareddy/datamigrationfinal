@@ -3,9 +3,8 @@
 * Description - This class is used as a test class for Sustain_UpdateCustomObjectRefBatch apex class.
 * Author - Accenture (Bindhyachal)
 * Created Date -9/14/2021
-* Last Modified By & Date - Accenture, 9/14/2021
+* Last Modified By & Date - Accenture, 2/17/2022
 * ***************************************************************************************************************/
-
 @isTest(SeeAllData=False)
 private class Sustain_UpdateCustomObjectRefBatchTest{
     
@@ -13,7 +12,7 @@ private class Sustain_UpdateCustomObjectRefBatchTest{
          Object_Mappings__c obj = Sustain_TestDataFactory.createObjectMapping();
         obj.Source_Object__c = 'sustain_app__ProcurementDataset__c';
         obj.Source_Record_Type__c = 'Master';
-        // obj.Source_Record_Type__c = 'Master';
+        
         obj.Target_Object__c = 'Scope3PcmtSummary';
         obj.Target_Record_Type__c = 'Master';
         obj.Status__c = 'Not Started';

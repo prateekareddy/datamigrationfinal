@@ -11,7 +11,7 @@ public  without sharing class Sustain_MigrateCustomFieldsController {
             system.debug('scope-->' + fldMaps.size());
             for(String fm: fldMaps.keySet()){
                 for(Field_Mappings__c fmapping : fldMaps.get(fm)){
-                    fieldsName.add(fmapping.Source_Field__c.replace('Migration_Util__', ''));
+                    fieldsName.add(fmapping.Source_Field__c.replace(Label.Sustain_Name_Space_Prefix, ''));
                     objName = fmapping.Object_Mapping__r.Source_Object__c;
                 }
                 readCustomObjectSync(new list<String>{objName}, objName, fieldsName, fldMaps);              }            
@@ -46,10 +46,10 @@ public  without sharing class Sustain_MigrateCustomFieldsController {
                         MetadataService.CustomObject obj = (MetadataService.CustomObject) md;
                         if(obj.fields != null) {
                             for(MetadataService.CustomField field : obj.fields) {
-                                String fieldName = field.fullName.replace('Migration_Util__', '').replace('Migration_Util__', '');
+                                String fieldName = field.fullName.replace(Label.Sustain_Name_Space_Prefix, '').replace(Label.Sustain_Name_Space_Prefix, '');
                                 system.debug('fieldName--> ' + fieldName);
                                 if(field != null && fieldNames.contains(fieldName)) {
-                                    if(field.fullName.contains('Migration_Util__')){
+                                    if(field.fullName.contains(Label.Sustain_Name_Space_Prefix)){
                                         field.fullName = fieldName;
                                     }else {
                                         field.fullName = field.fullName.replace('sustain_app__', '').replace('Sustain_app__', '');    
@@ -75,6 +75,7 @@ public  without sharing class Sustain_MigrateCustomFieldsController {
     }
     
     // Create fields on targets objects
+    @testVisible
     private static void createCustomField(Map<String,List<MetadataService.CustomField>> objFieldMaps, String sourceObjName,  Map<String,List<Field_Mappings__c>> refFieldMap ){
         string CurrentMethodName = 'createCustomField';
         system.debug('Inside createCustomField');
@@ -100,8 +101,8 @@ public  without sharing class Sustain_MigrateCustomFieldsController {
                             if(fieldName.contains('sustain_app__')){
                                 fieldName=fieldName.remove('sustain_app__');
                             }
-                            customField.fullName = objName.replace('sustain_app__', '').replace('Sustain_app__', '')+'.'+fieldName.replace('Migration_Util__',''); 
-                            fieldNamesTobeCreated.add(objName.replace('sustain_app__', '').replace('Sustain_app__', '').replace('Migration_Util__','')+'.'+fieldName.replace('Migration_Util__',''));                    
+                            customField.fullName = objName.replace('sustain_app__', '').replace('Sustain_app__', '')+'.'+fieldName.replace(Label.Sustain_Name_Space_Prefix,''); 
+                            fieldNamesTobeCreated.add(objName.replace('sustain_app__', '').replace('Sustain_app__', '').replace(Label.Sustain_Name_Space_Prefix,'')+'.'+fieldName.replace(Label.Sustain_Name_Space_Prefix,''));                    
                             fields.add(customField);
                         }
                     }
@@ -125,7 +126,7 @@ public  without sharing class Sustain_MigrateCustomFieldsController {
                                     customField.relationshipLabel = fld.Target_Field__c.replace('__c','');
                                     customField.relationshipName = fld.Target_Field__c.replace('__c','');
                                     customField.referenceTo = fld.Reference_To__c;  
-                                    fieldNamesTobeCreated.add(objName.replace('Migration_Util__','')+'.'+fld.Target_Field__c.replace('Migration_Util__',''));
+                                    fieldNamesTobeCreated.add(objName.replace(Label.Sustain_Name_Space_Prefix,'')+'.'+fld.Target_Field__c.replace(Label.Sustain_Name_Space_Prefix,''));
                                     System.debug(customField.label + customField.fullName + customField.relationshipLabel + customField.referenceTo);
                                     fields.add(customField);
                                 }
@@ -134,8 +135,7 @@ public  without sharing class Sustain_MigrateCustomFieldsController {
                     }
                 }
                 System.debug('Metadata Created '+fields + fields.Size());
-                List<MetadataService.SaveResult> results = metadataservices.createMetadata(fields);
-                //metadataservice.createMetadata(fields);
+                List<MetadataService.SaveResult> results = metadataservices.createMetadata(fields);                
                 system.debug('Field Create Successfull' +  fieldNamesTobeCreated);
                 //Updating FLS for Admin only
                 
@@ -186,9 +186,9 @@ public  without sharing class Sustain_MigrateCustomFieldsController {
                 String key ='';
                 if((Sustain_UtilConstants.STATICFIELDNAMES.contains(fl.Target_Field__c) ||
                     fl.Object_Mapping__r.Object_Type__c == 'custom' ) && !fl.Target_Field__c.contains('Source_Record_ID__c') )  {        
-                    key = fl.Object_Mapping__r.source_Object__c.replace('Migration_Util__','')+ '.' + fl.Target_Field__c.replace('Migration_Util__','');
+                    key = fl.Object_Mapping__r.source_Object__c.replace(Label.Sustain_Name_Space_Prefix,'')+ '.' + fl.Target_Field__c.replace(Label.Sustain_Name_Space_Prefix,'');
                 } else {
-                    key = fl.Object_Mapping__r.Target_Object__c.replace('Migration_Util__','')+ '.' + fl.Target_Field__c.replace('Migration_Util__','');
+                    key = fl.Object_Mapping__r.Target_Object__c.replace(Label.Sustain_Name_Space_Prefix,'')+ '.' + fl.Target_Field__c.replace(Label.Sustain_Name_Space_Prefix,'');
                 }
                 System.debug('inside key '+Key);
                 if(fldMap != null && 

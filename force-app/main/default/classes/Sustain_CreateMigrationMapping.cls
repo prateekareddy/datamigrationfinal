@@ -37,15 +37,12 @@ global without sharing class Sustain_CreateMigrationMapping {
                     temp.Sequence_Number__c =Integer.valueOf(inputValues[8].trim());
                     temp.Delete_Sequence_No__c =Integer.valueOf(inputValues[9].trim());
                     temp.Batch_Size__c =Integer.valueOf(inputValues[10].trim());
-                    temp.Object_Type__c = getObjectType(inputValues[1]);
+                    if(inputValues[1] != 'Vendor__c'){
+                        temp.Object_Type__c = getObjectType(inputValues[1]);
+                    }else{
+                        temp.Object_Type__c = Sustain_UtilConstants.standardLabel;
+                    }
                     
-                    //System.debug('Total record '+Database.countQuery('select count() from '+inputValues[1]));
-                    /*String QueryString = 'SELECT count() FROM '+inputValues[1];
-                    if(inputValues[3] != null && inputValues[3] != 'Master'){
-                        QueryString = QueryString + ' where recordType.DeveloperName = \''+inputValues[3] + '\''; 
-                    } 
-                    temp.Total_Records__c = String.valueOf(Database.countQuery(QueryString));
-                    System.debug(' temp.Total_Records__c'+ temp.Total_Records__c);*/
                     objMapList.add(temp);
                 }
             }
@@ -62,7 +59,7 @@ global without sharing class Sustain_CreateMigrationMapping {
         string CurrentMethodName = 'createFieldsMapping';
         try{
             //delete previous records
-                deleteFieldMapping();
+            deleteFieldMapping();
             /* start processing */
             Map<String,Id> srcObjRecordtypeMap=new Map<String,Id>();
             for(Object_Mappings__c oMap:[select id,Source_Record_Type__c,Source_Object__c,Target_Object__c,Target_Record_Type__c from Object_Mappings__c where Source_Object__c!=null]){
@@ -118,7 +115,7 @@ global without sharing class Sustain_CreateMigrationMapping {
         for (SObjectField aField : sObj.getDescribe().fields.getMap().values()) {
             Schema.DescribeFieldResult fieldDesc = aField.getDescribe();
             if (fieldDesc.isCustom() && !fieldDesc.getName().startsWith('sustain_app__')
-                && !utilityFieldList.contains(fieldDesc.getName().removeStart('Migration_Util__'))) {
+                && !utilityFieldList.contains(fieldDesc.getName().removeStart(Label.Sustain_Name_Space_Prefix))) {
                     return Sustain_UtilConstants.standardWithCustFieldLabel;
                 }
         }
@@ -132,13 +129,9 @@ global without sharing class Sustain_CreateMigrationMapping {
             Map<String, Schema.SObjectType> globalMap = Schema.getGlobalDescribe();
             List<String> utilityObjectList=Sustain_UtilConstants.getUtilityItems();
 
-            /*Boolean isValidObj = false;
-            String objectName = '';*/
-
             for (Schema.SObjectType obj : globalMap.values()) {
-                Schema.DescribeSObjectResult objDesc = obj.getDescribe();
-                //isValidObj = false;     
-                if(/*!objDesc.getName().startsWith('sustain_app__') &&*/ objDesc.iscustom() && !objDesc.getName().endsWith('__mdt')
+                Schema.DescribeSObjectResult objDesc = obj.getDescribe();               
+                if(objDesc.iscustom() && !objDesc.getName().endsWith('__mdt')
                    && !objDesc.isCustomSetting() && !objDesc.getName().endsWith('__kav') && !objDesc.getName().endsWith('__ka')
                    && !utilityObjectList.contains(objDesc.getName()) && objDesc.getName().endsWith('__c')){
                        for(SObjectField aField : objDesc.fields.getMap().values()) {
@@ -158,8 +151,7 @@ global without sharing class Sustain_CreateMigrationMapping {
                                     temp.Object_Type__c = Sustain_UtilConstants.customLabel;
                                     objMapList.add(temp);
                                     break;  
-                                   /*isValidObj = true;  
-                                   objectName =  objDesc.getName(); */                            
+                                                            
                                }else if(objName.contains('__c') && !objName.startsWith('sustain_app__') && objDesc.getName().startsWith('sustain_app__') ){
                                     temp = new Object_Mappings__c();
                                     temp.Source_Object_Label__c = res.getLabel();
@@ -169,17 +161,8 @@ global without sharing class Sustain_CreateMigrationMapping {
                                     temp.Destination_Object_Label__c =res.getLabel();
                                     temp.Object_Type__c = Sustain_UtilConstants.customLabel;
                                     objMapList.add(temp);
-                                    break;  
-                                    /*isValidObj = true;    
-                                    objectName =  objName;*/                                
-                               }
-                               /*if(isValidObj){
-                                    String QueryString = 'SELECT count() FROM '+ objectName;                                    
-                                    temp.Total_Records__c = String.valueOf(Database.countQuery(QueryString));
-                                    System.debug(' temp.Total_Records__c'+ temp.Total_Records__c);                                    
-                                    objMapList.add(temp);
-                                    break;    
-                               }*/
+                                    break;                                                                
+                               }                         
                            }
                        }
                    }
@@ -229,21 +212,18 @@ global without sharing class Sustain_CreateMigrationMapping {
             for (SObjectField aField : sObj.getDescribe().fields.getMap().values()) {
                 Schema.DescribeFieldResult fieldDesc = aField.getDescribe();
                 if (fieldDesc.isCustom()&& !fieldDesc.getName().startsWith('sustain_app__')
-                    && !utilityFieldList.contains(fieldDesc.getName().removeStart('Migration_Util__')) /*&& !fieldDesc.isCalculated()*/) {
+                    && !utilityFieldList.contains(fieldDesc.getName().removeStart(Label.Sustain_Name_Space_Prefix)) ) {
                         Field_Mappings__c temp = new Field_Mappings__c();
                         temp.Source_Field_Label__c = fieldDesc.getLabel();
-                        temp.Source_Field__c = fieldDesc.getName().removeStart('Migration_Util__');
-                        temp.Source_Field_Type__c = Sustain_UtilConstants.castTypeToString(fieldDesc.getType());
-                        //temp.Target_Field_Label__c = fieldDesc.getLabel();
-                        //temp.Target_Field__c = fieldDesc.getName();
-                        //temp.Target_Field_Type__c = Sustain_UtilConstants.castTypeToString(fieldDesc.getType());
+                        temp.Source_Field__c = fieldDesc.getName().removeStart(Label.Sustain_Name_Space_Prefix);
+                        temp.Source_Field_Type__c = Sustain_UtilConstants.castTypeToString(fieldDesc.getType());                     
                         temp.Required__c=!fieldDesc.isNillable();
                         if(temp.Source_Field_Type__c.equals(Sustain_UtilConstants.referenceLabel) && fieldDesc.isNamePointing()==false){
                             List<Schema.sObjectType> sobjType=fieldDesc.getReferenceTo();
                             Schema.DescribeSObjectResult res=sobjType[0].getDescribe();
-                            temp.Reference_To__c=res.getName().removeStart('Migration_Util__'); 
+                            temp.Reference_To__c=res.getName().removeStart(Label.Sustain_Name_Space_Prefix); 
                         }
-                        temp.Calculated__c =fieldDesc.isCalculated(); //false;
+                        temp.Calculated__c =fieldDesc.isCalculated(); 
                         temp.New_Field__c = false;
                         temp.Mapping_Included__c =false;
                         temp.Object_Mapping__c=obj.id;
@@ -262,20 +242,17 @@ global without sharing class Sustain_CreateMigrationMapping {
             String fieldLabel= getTargetObjectNameField(obj.Target_Object__c);
             for (SObjectField aField : sObj.getDescribe().fields.getMap().values()) {
                 Schema.DescribeFieldResult fieldDesc = aField.getDescribe();
-                if (!Sustain_UtilConstants.stdFieldList.contains(fieldDesc.getName()) && !utilityFieldList.contains(fieldDesc.getName().removeStart('Migration_Util__'))
-                    /*&& !fieldDesc.isCalculated()*/) {
+                if (!Sustain_UtilConstants.stdFieldList.contains(fieldDesc.getName()) && !utilityFieldList.contains(fieldDesc.getName().removeStart(Label.Sustain_Name_Space_Prefix))
+                   ) {
                         Field_Mappings__c temp = new Field_Mappings__c();
                         temp.Source_Field_Label__c = fieldDesc.getLabel();
-                        temp.Source_Field__c = fieldDesc.getName().removeStart('Migration_Util__');
-                        temp.Source_Field_Type__c = Sustain_UtilConstants.castTypeToString(fieldDesc.getType());
-                        //temp.Target_Field_Label__c = fieldDesc.getLabel();
-                        //temp.Target_Field__c = fieldDesc.getName();
-                        //temp.Target_Field_Type__c = Sustain_UtilConstants.castTypeToString(fieldDesc.getType());
+                        temp.Source_Field__c = fieldDesc.getName().removeStart(Label.Sustain_Name_Space_Prefix);
+                        temp.Source_Field_Type__c = Sustain_UtilConstants.castTypeToString(fieldDesc.getType());                      
                         temp.Required__c=!fieldDesc.isNillable();
                         if(temp.Source_Field_Type__c.equals(Sustain_UtilConstants.referenceLabel) && fieldDesc.isNamePointing()==false){
                             List<Schema.sObjectType> sobjType=fieldDesc.getReferenceTo();
                             Schema.DescribeSObjectResult res=sobjType[0].getDescribe();
-                            temp.Reference_To__c=res.getName().removeStart('Migration_Util__'); 
+                            temp.Reference_To__c=res.getName().removeStart(Label.Sustain_Name_Space_Prefix); 
                         }
                         temp.Calculated__c =fieldDesc.isCalculated(); //false;
                         temp.New_Field__c = false;
@@ -380,27 +357,27 @@ global without sharing class Sustain_CreateMigrationMapping {
                                    for(String trgtObj : fullMappingMap.get(res.getName())){
                                        Field_Mappings__c temp = new Field_Mappings__c();
                                        temp.Source_Field_Label__c = fieldDesc.getLabel();
-                                       temp.Source_Field__c = fieldDesc.getName().removeStart('Migration_Util__');
-                                       temp.Reference_To__c = trgtObj.removeStart('Migration_Util__');
+                                       temp.Source_Field__c = fieldDesc.getName().removeStart(Label.Sustain_Name_Space_Prefix);
+                                       temp.Reference_To__c = trgtObj.removeStart(Label.Sustain_Name_Space_Prefix);
                                        temp.Calculated__c =false;
                                        temp.New_Field__c = true;
                                        temp.Comments__c='New Field';
                                        temp.Mapping_Included__c =true;
                                        temp.Target_Field_Label__c = Schema.getGlobalDescribe().get(trgtObj).getDescribe().getLabel();
-                                       temp.Target_Field__c = trgtObj.removeStart('Migration_Util__')+'__c';
+                                       temp.Target_Field__c = trgtObj.removeStart(Label.Sustain_Name_Space_Prefix)+'__c';
                                        temp.Target_Field_Type__c ='Reference';
                                        temp.Source_Field_Type__c='Reference';
                                        temp.Object_Mapping__c=objMapId;
                                        if(trgtObjCountMap.containsKey(trgtObj)){
                                            integer i=trgtObjCountMap.get(trgtObj);
                                            temp.Target_Field_Label__c = Schema.getGlobalDescribe().get(trgtObj).getDescribe().getLabel()+i;
-                                           temp.Target_Field__c = trgtObj.removeStart('Migration_Util__')+i+'__c';
+                                           temp.Target_Field__c = trgtObj.removeStart(Label.Sustain_Name_Space_Prefix)+i+'__c';
                                            i++;
                                            trgtObjCountMap.put(trgtObj,i);
                                        }
                                        else{
                                            temp.Target_Field_Label__c = Schema.getGlobalDescribe().get(trgtObj).getDescribe().getLabel();
-                                           temp.Target_Field__c = trgtObj.removeStart('Migration_Util__')+'__c';
+                                           temp.Target_Field__c = trgtObj.removeStart(Label.Sustain_Name_Space_Prefix)+'__c';
                                            trgtObjCountMap.put(trgtObj,1);
                                        }
                                        fieldMapList.add(temp);
@@ -414,7 +391,6 @@ global without sharing class Sustain_CreateMigrationMapping {
                            objTemp.Mapping_Included__c=true;
                            objMapList.add(objTemp);
                        }
-                       //fieldMapList.addAll(addUtiltiyFieldMappingRecords(objMapId));
                 }
             }
             if(fieldMapList.size()>0){
@@ -428,7 +404,7 @@ global without sharing class Sustain_CreateMigrationMapping {
             Set<Id> objIds = new Set<Id>();
             integer objList = database.countquery('select COUNT() from Object_Mappings__c LIMIT 10000');
             System.debug('objList '+objList);
-
+            
             for(Object_Mappings__c oMap: [select Id, Source_Record_Type__c,Source_Object__c from Object_Mappings__c LIMIT 10000]){
                 objIds.add(oMap.Id);
                 counter++;
@@ -444,11 +420,8 @@ global without sharing class Sustain_CreateMigrationMapping {
             }
             
             // Scheduling batch call to create vendors data
-            Sustain_CreateVendorRecordBatch nextcustBatch = new Sustain_CreateVendorRecordBatch(1);
-            database.executeBatch(nextcustBatch, 1000);
-            
-            //creating fields on target objects
-            //createSourceRecordIDFields(UserInfo.getSessionId());
+            Sustain_CreateVendorRecordBatch nextcustBatch = new Sustain_CreateVendorRecordBatch(1, emailAdress, userInfo.getOrganizationId());
+            database.executeBatch(nextcustBatch, 1000);            
         }
         catch(Exception e){
             Sustain_UtilityError.createErrorLog(e, CurrentClassName, CurrentMethodName);
@@ -476,8 +449,8 @@ global without sharing class Sustain_CreateMigrationMapping {
                             for(String trgtObj : fullMappingMap.get(res.getName())){
                                 Field_Mappings__c temp = new Field_Mappings__c();
                                 temp.Source_Field_Label__c = fieldDesc.getLabel();
-                                temp.Source_Field__c = fieldDesc.getName().removeStart('Migration_Util__');
-                                temp.Reference_To__c = trgtObj.removeStart('Migration_Util__');
+                                temp.Source_Field__c = fieldDesc.getName().removeStart(Label.Sustain_Name_Space_Prefix);
+                                temp.Reference_To__c = trgtObj.removeStart(Label.Sustain_Name_Space_Prefix);
                                 temp.Calculated__c =false;
                                 temp.New_Field__c = true;
                                 temp.Comments__c='New Field';
@@ -488,13 +461,13 @@ global without sharing class Sustain_CreateMigrationMapping {
                                 if(trgtObjCountMap.containsKey(trgtObj)){
                                     integer i=trgtObjCountMap.get(trgtObj);
                                     temp.Target_Field_Label__c = Schema.getGlobalDescribe().get(trgtObj).getDescribe().getLabel()+i;
-                                    temp.Target_Field__c = trgtObj.removeStart('Migration_Util__')+i+'__c';
+                                    temp.Target_Field__c = trgtObj.removeStart(Label.Sustain_Name_Space_Prefix)+i+'__c';
                                     i++;
                                     trgtObjCountMap.put(trgtObj,i);
                                 }
                                 else{
                                     temp.Target_Field_Label__c = Schema.getGlobalDescribe().get(trgtObj).getDescribe().getLabel();
-                                    temp.Target_Field__c = trgtObj.removeStart('Migration_Util__')+'__c';
+                                    temp.Target_Field__c = trgtObj.removeStart(Label.Sustain_Name_Space_Prefix)+'__c';
                                     trgtObjCountMap.put(trgtObj,1);
                                 }
                                 fieldMapList.add(temp);
@@ -508,8 +481,7 @@ global without sharing class Sustain_CreateMigrationMapping {
                     objTemp.Mapping_Included__c=true;
                     objTemp.Target_Object__c = objDesc.getName(); 
                     objTemp.Destination_Object_Label__c =objDesc.getLabel();
-                    objMapList.add(objTemp);
-                    //fieldMapList.addAll(addUtiltiyFieldMappingRecords(objMap.Id));
+                    objMapList.add(objTemp);                   
                 }
             }
             if(fieldMapList.size()>0){
@@ -588,23 +560,10 @@ global without sharing class Sustain_CreateMigrationMapping {
             
             if(emailaddresses!= null & emailaddresses.size() >0){
                 Sustain_SendNotification sendData =new Sustain_SendNotification();
-                sendData.sendEmailNotification('Sustain_PackageInstallEmails',emailaddresses);   
-                //sendData.sendChatterNotification('Sustain_PackageInstallEmails');
+                sendData.sendEmailNotification('Sustain_PackageInstallEmails',emailaddresses);                   
             }
         }  catch(Exception e){
             Sustain_UtilityError.createErrorLog(e, CurrentClassName, CurrentMethodName); 
         }
-    }   
-    
-    /*@future(callout=true)
-    public static void createSourceRecordIDFields(String sessionIDS){   
-        try{
-            Sustain_MigrateCustomFieldsController.createField( Sustain_UtilConstants.SCFirstCoreObjectNames, 'Source_Record_ID__c', 255, 'Text', 'Source Record ID', sessionIDS);
-            Sustain_MigrateCustomFieldsController.createField( Sustain_UtilConstants.SCSecondCoreObjectNames, 'Source_Record_ID__c', 255, 'Text', 'Source Record ID', sessionIDS);
-            Sustain_MigrateCustomFieldsController.createField( Sustain_UtilConstants.SCThirdCoreObjectNames, 'Source_Record_ID__c', 255, 'Text', 'Source Record ID', sessionIDS);
-            Sustain_MigrateCustomFieldsController.createField( Sustain_UtilConstants.SCFourCoreObjectNames, 'Source_Record_ID__c', 255, 'Text', 'Source Record ID', sessionIDS);
-        }  catch(Exception e){
-            Sustain_UtilityError.createErrorLog(e);
-        }
-    } */           
+    }           
 }

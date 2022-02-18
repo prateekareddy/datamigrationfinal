@@ -5,10 +5,8 @@
             var evt = $A.get("e.force:navigateToComponent");
             evt.setParams({
                 componentDef : "c:Sustain_DataMigrationWizard"
-            });
-            //alert('Hi1');
-            evt.fire();
-            // alert('Hi2');
+            });            
+            evt.fire();           
         }else{            
             var toastEvent = $A.get("e.force:showToast");                    
             toastEvent.setParams({
@@ -23,8 +21,7 @@
         }
         
     },
-    doInit : function(component, event, helper) {
-        //helper.showSpinner(component);
+    doInit : function(component, event, helper) {        
         var getSettingsAction = component.get("c.getMigrationStatus");
         
         getSettingsAction.setCallback(this, function(response) {

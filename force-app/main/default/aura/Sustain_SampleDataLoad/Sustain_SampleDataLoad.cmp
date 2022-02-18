@@ -28,12 +28,7 @@
     <aura:registerEvent name="handleRefreshEvent" type="c:Sustain_UpdateParentEvent"/>
     <aura:handler name="init" value="{!this}" action="{!c.doInit}" />
     <lightning:empApi aura:id="empApi"/>
-  <div class="slds-m-left_large myText" >
-        <!--<h1 class="myTextSize"><lightning:icon class="iconStyle" iconName="utility:info" alternativeText="info" variant="brand" title="" size="small" />
-            &nbsp;{!$Label.c.Sustain_SampleDataLoadLabel}</h1> 
-        <p><h1 class="myTextSize">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{!$Label.c.Sustain_SampleDataLoadLabel1}</h1></p>
-        -->
-      
+  <div class="slds-m-left_large myText" >      
         <h1><lightning:icon iconName="utility:info" alternativeText="Info!" variant="brand" title="" size="small" />
         &nbsp;<b>{!$Label.c.Sustain_SampleDataLoadLabel}</b></h1>
     	<p><h1 class="font-size-13" ><b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{!$Label.c.Sustain_SampleDataLoadLabel1}</b></h1></p>
@@ -52,45 +47,9 @@
                                onchange="{!c.handleAssetChange}"/>
                 </lightning:layoutItem>
                 
-                <!-- keyup="{!c.keyPressController} updateOn="keyup"-->
-                
-                <lightning:layoutItem class="slds-size_6-of-12 slds-p-left_small">
-                    <!--<input type="text" onclick="{!c.openModel}" 
-                           class="inputSize  display-inline-block inputText-display"
-                           value="{!v.resultCmp}" />-->
-                    <!--<ui:inputText 
-                                  class="inputSize  display-inline-block inputText-display"
-                                  value="{!v.resultCmp}"
-                                  click="{!c.openModel}"
-                                  />-->
-                  <!--  <lightning:dualListbox aura:id="selectGenre"
-                               name="Genre"
-                               sourceLabel="Available Asset"
-                               selectedLabel="Selected Asset"
-                               options="{!v.listOfAssetRecords }"
-                               value="{!v.resultCmp}"
-                               onchange="{!c.handleAssetChange}"/> -->
-                    <!--  <div class="slds-grid slds-m-top_xx-small">
-                        <Selected Records Pills Section>
-                        <div class=" inputSize slds-m-left_xx-small slds-size_6-of-12 display-inline-block slds-form-element__control">
-                            <aura:iteration items="{!v.lstSelectedRecords}" var="sr">
-                                <lightning:pill class="slds-m-around_xx-small" label="{!sr.Name}" name="{!sr.Id}" onremove="{! c.clear }">
-                                    <aura:set attribute="media">
-                                        <lightning:icon iconName="standard:answer_public" size="x-small" alternativeText="icon"/>
-                                    </aura:set>
-                                </lightning:pill>
-                            </aura:iteration>
-                            <ul style="min-height:40px;margin-top:0px !important" class="slds-listbox slds-listbox_vertical slds-dropdown slds-dropdown_fluid slds-lookup__menu slds" role="listbox">
-                                <lightning:spinner class="slds-hide" variant="brand" size="small" aura:id="mySpinner"/>
-                                <aura:iteration items="{!v.listOfSearchRecords}" var="singleRec">
-                                    <c:Sustain_ChildDataLoad oRecord="{!singleRec}"/>                                
-                                </aura:iteration>
-                            </ul>
-                        </div>
-                    </div> -->
+                <lightning:layoutItem class="slds-size_6-of-12 slds-p-left_small">                    
                 </lightning:layoutItem>
-            </lightning:layout>
-            
+            </lightning:layout>            
         </div>
     </div>
     <aura:if isTrue="{!v.batchSuccess == true}">
@@ -181,38 +140,13 @@
                                           onclick="{! c.handleCloseModal }"
                                           alternativeText="close"
                                           variant="bare-inverse"
-                                          class="slds-modal__close"/>
-                    <!--<div>
-                        <ui:inputText 
-                                      updateOn="keyup"
-                                      keyup="{!c.keyPressController}"
-                                      class="inputSize  display-inline-block inputText-display"
-                                      value="{!v.searchKeyword}"
-                                      placeholder="Type Name of Organization Asset"/>
-                        <div class=" inputSize slds-m-left_xx-small slds-size_2-of-12 display-inline-block slds-form-element__control">
-                            <aura:iteration items="{!v.resultCmp}" var="sr">
-                                <lightning:pill class="slds-m-around_xx-small" label="{!sr}" name="{!sr}" onremove="{! c.clear }">
-                                    <aura:set attribute="media">
-                                        <lightning:icon iconName="standard:answer_public" size="x-small" alternativeText="icon"/>
-                                    </aura:set>
-                                </lightning:pill>
-                            </aura:iteration>
-                        </div>
-                    </div>-->
+                                          class="slds-modal__close"/>                    
                 </header>
                 <div class="slds-modal__content slds-p-around_medium" id="modal-content-id-1">
                     <h1 class="myTextSize"><b>Available Organization Assets</b></h1>
                     <br/>
-                    <aura:iteration items="{!v.listOfAssetRecords}" var="assets">
-                        <!--<ui:inputCheckbox class="myCheckbox" aura:id="checkboxs" label="{!assets}" text="{!assets}" change="{!c.handleCheckTask}"/>-->
-                    	<!--<ui:inputCheckbox class="myCheckbox" aura:id="checkboxs" label="{!assets.value}"  value="{!assets.status}" text="{!assets.value}" />-->
-                        <lightning:input aura:id="checkboxs" type="checkbox" label="{!assets.value}" checked="{!assets.status}" value="{!assets.value}" />
-                    	<!--<div class="slds-checkbox">
-                            <input type="checkbox" name="chk" id="{!assets}" onchange="{!c.getSelectedAsset}"/>                            
-                            <label class="slds-checkbox__label" for="{!assets}">
-                                <span class="slds-checkbox_faux"></span>                                
-                            </label>
-                        </div>-->
+                    <aura:iteration items="{!v.listOfAssetRecords}" var="assets">                       
+                        <lightning:input aura:id="checkboxs" type="checkbox" label="{!assets.value}" checked="{!assets.status}" value="{!assets.value}" />                    	
                     </aura:iteration>
                     <br/>
                 </div>

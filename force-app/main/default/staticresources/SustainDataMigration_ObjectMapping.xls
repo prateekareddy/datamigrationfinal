@@ -24,25 +24,25 @@ Supplier,sustain_app__ServiceProvider__c,Master,Master,Supplier,Supplier,Master,
 Vendor,Vendor__c,Master,Master,Account,Account,Master,Master,18,5,800
 Vendor,Vendor__c,Master,Master,Supplier,Supplier,Master,Master,18,3,800
 Asset Contact,sustain_app__Contact__c,Master,Master,Contact,Contact,Master,Master,19,1,800
-Organization Asset,sustain_app__Asset__c,Building,Building,Stationary Asset Environmental Source,StnryAssetEnvrSrc,Commercial Building,Commercial,20,28,600
+Organization Asset,sustain_app__Asset__c,Building,Building,Stationary Asset Environmental Source,StnryAssetEnvrSrc,Commercial Building,Commercial_Building,20,28,600
 Organization Asset,sustain_app__Asset__c,Building,Building,Stationary Asset Environmental Source,StnryAssetEnvrSrc,Data Center,Data_Center,21,29,600
 Organization Asset,sustain_app__Asset__c,Vehicle,Vehicle,Vehicle Asset Emissions Source,VehicleAssetEmssnSrc,Fleet Vehicle,Fleet_Vehicle,22,30,600
 Organization Asset,sustain_app__Asset__c,Vehicle,Vehicle,Vehicle Asset Emissions Source,VehicleAssetEmssnSrc,Private Jet,Private_Jet,23,31,600
 Organization Asset,sustain_app__Asset__c,General,General,Scope 3 Emissions Source,Scope3EmssnSrc,Master,Master,24,32,600
-Carbon Footprint,sustain_app__ConsumptionReport__c,Commercial Building,Real_Estate_Facility,Stationary Asset Carbon Footprint,StnryAssetCrbnFtprnt,Master,Master,25,20,400
-Carbon Footprint,sustain_app__ConsumptionReport__c,Data Center Facility,Data_Center_Facility,Stationary Asset Carbon Footprint,StnryAssetCrbnFtprnt,Master,Master,26,21,400
-Carbon Footprint,sustain_app__ConsumptionReport__c,Travel,Travel,Scope 3 Carbon Footprint,Scope3CrbnFtprnt,Master,Master,27,22,400
-Carbon Footprint,sustain_app__ConsumptionReport__c,General Scope 3,GeneralScope3,Scope 3 Carbon Footprint,Scope3CrbnFtprnt,Master,Master,28,23,400
-Carbon Footprint,sustain_app__ConsumptionReport__c,Procurement,Procurement,Scope 3 Carbon Footprint,Scope3CrbnFtprnt,Master,Master,29,24,400
-Carbon Footprint,sustain_app__ConsumptionReport__c,Vehicles,Vehicles,Vehicle Asset Carbon Footprint,VehicleAssetCrbnFtprnt,Master,Master,30,25,400
-Energy Use Record,sustain_app__EnergyConsumption__c,Commercial Building,Real_Estate_Facility,Stationary Asset Energy Use,StnryAssetEnrgyUse,Master,Master,31,12,200
+Carbon Footprint,sustain_app__ConsumptionReport__c,Commercial Building,Real_Estate_Facility,Stationary Asset Carbon Footprint,StnryAssetCrbnFtprnt,Master,Master,25,22,400
+Carbon Footprint,sustain_app__ConsumptionReport__c,Data Center Facility,Data_Center_Facility,Stationary Asset Carbon Footprint,StnryAssetCrbnFtprnt,Master,Master,26,23,400
+Carbon Footprint,sustain_app__ConsumptionReport__c,Travel,Travel,Scope 3 Carbon Footprint,Scope3CrbnFtprnt,Master,Master,27,24,400
+Carbon Footprint,sustain_app__ConsumptionReport__c,General Scope 3,GeneralScope3,Scope 3 Carbon Footprint,Scope3CrbnFtprnt,Master,Master,28,25,400
+Carbon Footprint,sustain_app__ConsumptionReport__c,Procurement,Procurement,Scope 3 Carbon Footprint,Scope3CrbnFtprnt,Master,Master,29,26,400
+Carbon Footprint,sustain_app__ConsumptionReport__c,Vehicles,Vehicles,Vehicle Asset Carbon Footprint,VehicleAssetCrbnFtprnt,Master,Master,30,27,400
+Energy Use Record,sustain_app__EnergyConsumption__c,Commercial Building,Real_Estate_Facility,Stationary Asset Energy Use,StnryAssetEnrgyUse,Master,Master,31,12,50
 Energy Use Record,sustain_app__EnergyConsumption__c,Data Center Facility,Data_Center_Facility,Stationary Asset Energy Use,StnryAssetEnrgyUse,Master,Master,32,13,50
-Energy Use Record,sustain_app__EnergyConsumption__c,Freight Hauling,FreightHauling,Freight Hauling Energy Use,FrgtHaulingEnrgyUse,Master,Master,33,16,50
+Energy Use Record,sustain_app__EnergyConsumption__c,Freight Hauling,FreightHauling,Freight Hauling Energy Use,FrgtHaulingEnrgyUse,Master,Master,33,16,300
 Energy Use Record,sustain_app__EnergyConsumption__c,Air Travel,Air_Travel,Air Travel Energy Use,AirTravelEnrgyUse,Master,Master,34,11,300
 Energy Use Record,sustain_app__EnergyConsumption__c,Ground Travel,Ground_Travel,Ground Travel Energy Use,GroundTravelEnrgyUse,Master,Master,35,17,300
 Energy Use Record,sustain_app__EnergyConsumption__c,Fleet Vehicle,Fleet_Vehicle,Vehicle Asset Energy Use,VehicleAssetEnrgyUse,Master,Master,36,14,300
 Energy Use Record,sustain_app__EnergyConsumption__c,Private Jet,Private_Jet,Vehicle Asset Energy Use,VehicleAssetEnrgyUse,Master,Master,37,15,300
 Energy Use Record,sustain_app__EnergyConsumption__c,Hotel Stay,Hotel_Stay,Hotel Stay Energy Use,HotelStayEnrgyUse,Master,Master,38,18,300
 Energy Use Record,sustain_app__EnergyConsumption__c,Rental Car,Rental_Car,Rental Car Energy Use,RentalCarEnrgyUse,Master,Master,39,19,300
-Procurement Dataset,sustain_app__ProcurementDataset__c,Master,Master,Scope 3 Procurement Summary,Scope3PcmtSummary,Master,Master,40,27,600
-Procurement Entry,sustain_app__ProcurementEntry__c,Master,Master,Scope 3 Procurement Item,Scope3PcmtItem,Master,Master,41,26,600
+Procurement Dataset,sustain_app__ProcurementDataset__c,Master,Master,Scope 3 Procurement Summary,Scope3PcmtSummary,Master,Master,40,21,600
+Procurement Entry,sustain_app__ProcurementEntry__c,Master,Master,Scope 3 Procurement Item,Scope3PcmtItem,Master,Master,41,20,600

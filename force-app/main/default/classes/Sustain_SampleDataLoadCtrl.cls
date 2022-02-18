@@ -40,7 +40,7 @@ public without sharing class Sustain_SampleDataLoadCtrl {
         Data_Load_Request__c dataRec = new Data_Load_Request__c();
         try{
             List<String> orgAssetIds = new List<String>();
-            //List<sustain_app__Asset__c> orgAssetRecs = [Select id,Name from sustain_app__Asset__c Where Name IN : orgAssetData Limit 1000];
+            
             List<sustain_app__Asset__c> assets = database.query('Select id,Name from sustain_app__Asset__c Where Name IN :orgAssetData Limit 1000');
             for(sustain_app__Asset__c orgData : assets){
                 orgAssetIds.add(orgData.Id);
@@ -52,11 +52,9 @@ public without sharing class Sustain_SampleDataLoadCtrl {
             dataRec.Status__c = 'In Progress';
             Database.insert(dataRec);
             if(String.isNotBlank(dataRec.Id) && String.isNotEmpty(dataRec.Id)){
-               // List<Sustain_SampleLoadObjects__mdt> datalist = [select Source_Object__c, Sequence_Number__c from Sustain_SampleLoadObjects__mdt where source_object__c='sustain_app__EnergyConsumption__c' order by Sequence_Number__c];
-               List<Sustain_SampleLoadObjects__mdt> datalist = [select Source_Object__c, Sequence_Number__c from Sustain_SampleLoadObjects__mdt where Sequence_Number__c=1 order by Sequence_Number__c];
+                List<Sustain_SampleLoadObjects__mdt> datalist = [select Source_Object__c, Sequence_Number__c from Sustain_SampleLoadObjects__mdt where Sequence_Number__c=1 order by Sequence_Number__c];
                     double sequence = double.valueOf(datalist[0].Sequence_Number__c);
                     String objName = datalist[0].Source_Object__c;
-                    //string sqlStr = 'select id,Target_Object__c,Source_Object__c,Source_Record_Type__c,Target_Record_Type__c from Object_Mappings__c where Source_Object__c=:objName and Status__c = \'Not Started\' AND Object_Type__c != \'custom\' and mapping_included__c=true  order by sequence_number__c,Target_Object__c nulls last';
                     string sqlStr = 'select id,Target_Object__c,Source_Object__c,Source_Record_Type__c,Target_Record_Type__c,Batch_Size__c from Object_Mappings__c where Source_Object__c=:objName and Status__c = \'Not Started\' AND Object_Type__c != \'custom\' and mapping_included__c=true  order by sequence_number__c,Target_Object__c nulls last';
                     system.debug('createDataLoadReq sql -->' + sqlStr);
                     list<Object_Mappings__c> objMappingList = Database.query(sqlStr);
@@ -109,12 +107,10 @@ public without sharing class Sustain_SampleDataLoadCtrl {
         string CurrentMethodName = 'getOrgAssetData';
         List<String> allOrgAssetData = new List<String>();
         try{
-            // List<sustain_app__Asset__c> assetRecs = [Select id,Name from sustain_app__Asset__c Limit 1000];
             for(sustain_app__Asset__c data : [Select id,Name from sustain_app__Asset__c where Migration_Status__c != 'Completed' AND sustain_app__ParentAsset__c = null Limit 1000]){
                 allOrgAssetData.add(data.Name);
             }
-            allOrgAssetData.sort();
-            // return allOrgAssetData;
+            allOrgAssetData.sort();            
         }catch(Exception e){
             System.debug('An exception occurred: ' + e.getMessage());
             Sustain_UtilityError.createErrorLog(e, CurrentClassName, CurrentMethodName); 
@@ -124,23 +120,10 @@ public without sharing class Sustain_SampleDataLoadCtrl {
     
     @AuraEnabled
     public static Data_Load_Request__c getlatestDataLoad(){
-      //  string sampleLoad ;
+      
         try{
             List<Data_Load_Request__c> dataRecStatus = [Select id,Name,End_Date_Time__c,Status__c,Data_Load_Type__c,LastModifiedDate from Data_Load_Request__c order by CreatedDate desc Limit 1];
-            /*String dataRecStatusvalue= dataRecStatus.Status__c;
-            system.debug('dataRecStatus'+dataRecStatus);
-            if(String.isNotBlank(dataRecStatusvalue) &&  String.isNotEmpty(dataRecStatusvalue)){
-                if(dataRecStatusvalue.equalsIgnoreCase('Completed'))
-                    sampleLoad = 'Completed';
-                if (dataRecStatusvalue.equalsIgnoreCase('In Progress'))
-                    sampleLoad = 'In Progress';
-                if (dataRecStatusvalue.equalsIgnoreCase('Partial Complete'))
-                    sampleLoad = 'Partial Complete';
-                if (dataRecStatusvalue.equalsIgnoreCase('Failed'))
-                    sampleLoad = 'Failed';
-                if (dataRecStatusvalue.equalsIgnoreCase('Not Started'))
-                    sampleLoad = 'Not Started';               
-            }*/
+            
             if(dataRecStatus.size()>0){
                 return dataRecStatus[0];
             }

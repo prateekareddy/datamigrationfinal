@@ -42,6 +42,18 @@
         <enabled>true</enabled>
     </classAccesses>
     <classAccesses>
+        <apexClass>Sustain_CreateSourceIDFieldsBatchTest</apexClass>
+        <enabled>true</enabled>
+    </classAccesses>
+    <classAccesses>
+        <apexClass>Sustain_CreateVendorRecordBatch</apexClass>
+        <enabled>true</enabled>
+    </classAccesses>
+    <classAccesses>
+        <apexClass>Sustain_CreateVendorRecordBatchTest</apexClass>
+        <enabled>true</enabled>
+    </classAccesses>
+    <classAccesses>
         <apexClass>Sustain_DataMappingDetailController</apexClass>
         <enabled>true</enabled>
     </classAccesses>
@@ -526,76 +538,6 @@
         <field>Vendor__c.Vendor_Name__c</field>
         <readable>true</readable>
     </fieldPermissions>
-   <!-- <fieldPermissions>
-        <editable>true</editable>
-        <field>Waste_Generated__c.Error_Details__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>Waste_Generated__c.Hazardous__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>Waste_Generated__c.Migration_Status__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>Waste_Generated__c.Organization_Asset__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>Waste_Generated__c.Recycled__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>Waste_Generated__c.Report_End_Date__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>Waste_Generated__c.Report_Start_Date__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>Waste_Generated__c.Scope3EmssnSrc__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>Waste_Generated__c.Scope_1_emissions_tCo2e__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>Waste_Generated__c.StnryAssetEnvrSrc__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>Waste_Generated__c.Target_SFDC_ID__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>Waste_Generated__c.VehicleAssetEmssnSrc__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>Waste_Generated__c.Waste_Quantity_Disposed_Tonnes__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>Waste_Generated__c.Waste_Type__c</field>
-        <readable>true</readable>
-    </fieldPermissions>-->
     <fieldPermissions>
         <editable>true</editable>
         <field>sustain_app__Asset__c.Error_Details__c</field>
@@ -897,15 +839,6 @@
         <object>Vendor__c</object>
         <viewAllRecords>true</viewAllRecords>
     </objectPermissions>
-    <objectPermissions>
-        <allowCreate>true</allowCreate>
-        <allowDelete>true</allowDelete>
-        <allowEdit>true</allowEdit>
-        <allowRead>true</allowRead>
-        <modifyAllRecords>true</modifyAllRecords>
-        <object>Waste_Generated__c</object>
-        <viewAllRecords>true</viewAllRecords>
-    </objectPermissions>
     <tabVisibilities>
         <tab>Data_Load_Request__c</tab>
         <visibility>DefaultOn</visibility>
@@ -920,6 +853,10 @@
     </tabVisibilities>
     <tabVisibilities>
         <tab>Object_Mappings__c</tab>
+        <visibility>DefaultOn</visibility>
+    </tabVisibilities>
+    <tabVisibilities>
+        <tab>Vendor__c</tab>
         <visibility>DefaultOn</visibility>
     </tabVisibilities>
     <userLicense>Salesforce</userLicense>
@@ -1439,10 +1376,10 @@
         <enabled>true</enabled>
         <name>NewReportBuilder</name>
     </userPermissions>
-   <!-- <userPermissions>
+    <userPermissions>
         <enabled>true</enabled>
         <name>OmnichannelInventorySync</name>
-    </userPermissions>-->
+    </userPermissions>
     <userPermissions>
         <enabled>true</enabled>
         <name>Packaging2</name>
@@ -1547,10 +1484,10 @@
         <enabled>true</enabled>
         <name>TransferAnyLead</name>
     </userPermissions>
-    <!--<userPermissions>
+    <userPermissions>
         <enabled>true</enabled>
         <name>UseOmnichannelInventoryAPIs</name>
-    </userPermissions>-->
+    </userPermissions>
     <userPermissions>
         <enabled>true</enabled>
         <name>UseTeamReassignWizards</name>
@@ -1579,10 +1516,10 @@
         <enabled>true</enabled>
         <name>ViewDataCategories</name>
     </userPermissions>
-    <!--<userPermissions>
+    <userPermissions>
         <enabled>true</enabled>
         <name>ViewDataLeakageEvents</name>
-    </userPermissions>-->
+    </userPermissions>
     <userPermissions>
         <enabled>true</enabled>
         <name>ViewDeveloperName</name>
@@ -1611,10 +1548,10 @@
         <enabled>true</enabled>
         <name>ViewMyTeamsDashboards</name>
     </userPermissions>
-  <!--  <userPermissions>
+    <userPermissions>
         <enabled>true</enabled>
         <name>ViewPlatformEvents</name>
-    </userPermissions>-->
+    </userPermissions>
     <userPermissions>
         <enabled>true</enabled>
         <name>ViewPublicDashboards</name>
@@ -1631,12 +1568,12 @@
         <enabled>true</enabled>
         <name>ViewSetup</name>
     </userPermissions>
-    <!--<userPermissions>
+    <userPermissions>
         <enabled>true</enabled>
         <name>ViewUserPII</name>
     </userPermissions>
     <userPermissions>
         <enabled>true</enabled>
         <name>WorkCalibrationUser</name>
-    </userPermissions>-->
+    </userPermissions>
 </Profile>

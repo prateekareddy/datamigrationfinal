@@ -4,6 +4,7 @@
     <columns>NAME</columns>
     <columns>Source_Object_Label__c</columns>
     <columns>Source_Object__c</columns>
+    <columns>Source_Recordtype_Label__c</columns>
     <columns>Source_Record_Type__c</columns>
     <columns>Target_Object__c</columns>
     <columns>Target_Record_Type__c</columns>

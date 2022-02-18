@@ -169,7 +169,7 @@
         <excludedStandardButtons>Import</excludedStandardButtons>
         <excludedStandardButtons>MassChangeOwner</excludedStandardButtons>
         <excludedStandardButtons>PrintableListView</excludedStandardButtons>
-      <!--  <excludedStandardButtons>IsotopeSubscription</excludedStandardButtons>-->
+        <excludedStandardButtons>IsotopeSubscription</excludedStandardButtons>
     </searchLayouts>
     <sharingModel>ControlledByParent</sharingModel>
     <visibility>Public</visibility>

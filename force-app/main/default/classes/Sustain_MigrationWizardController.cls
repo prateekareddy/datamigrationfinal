@@ -184,16 +184,16 @@ public without sharing class Sustain_MigrationWizardController {
         SObjectType sObj = Schema.getGlobalDescribe().get(objName);
         for (SObjectField aField : sObj.getDescribe().fields.getMap().values()) {
             Schema.DescribeFieldResult fieldDesc = aField.getDescribe();
-            if (!Sustain_UtilConstants.stdFieldList.contains(fieldDesc.getName()) && !utilityFields.contains(fieldDesc.getName().removeStart('Migration_Util__')) && 
-                !calculatedFields.contains(objName+fieldDesc.getName().removeStart('Migration_Util__c'))) {
+            if (!Sustain_UtilConstants.stdFieldList.contains(fieldDesc.getName()) && !utilityFields.contains(fieldDesc.getName().removeStart(Label.Sustain_Name_Space_Prefix)) && 
+                !calculatedFields.contains(objName+fieldDesc.getName().removeStart(Label.Sustain_Name_Space_Prefix))) {
                 CustomFieldWrapper wrap=new CustomFieldWrapper();
                 wrap.targetFieldLabel=fieldDesc.getLabel();
-                wrap.targetFieldAPI=fieldDesc.getName().removeStart('Migration_Util__');
+                wrap.targetFieldAPI=fieldDesc.getName().removeStart(Label.Sustain_Name_Space_Prefix);
                 wrap.targetFieldType=Sustain_UtilConstants.castTypeToString(fieldDesc.getType());
                 if(wrap.targetFieldType=='Reference' && fieldDesc.isNamePointing()==false){
                     List<Schema.sObjectType> sobjType=fieldDesc.getReferenceTo();
                     Schema.DescribeSObjectResult res=sobjType[0].getDescribe();
-                    wrap.referenceTo=res.getName().removeStart('Migration_Util__'); 
+                    wrap.referenceTo=res.getName().removeStart(Label.Sustain_Name_Space_Prefix); 
                 }
                 fieldList.add(wrap);
             }
@@ -252,13 +252,11 @@ public without sharing class Sustain_MigrationWizardController {
 
     @AuraEnabled
     public static boolean getSCPackageVersion(){
-        //Integer majorVer, minorVer;
+       
         String verNo = '';
         // Getting sustainability cloud package details like version number
         List<Publisher> scPackageDetails = [SELECT Id,MajorVersion, MinorVersion, Name, NamespacePrefix from Publisher where NamespacePrefix = 'sustain_app' limit 1];
-        if(scPackageDetails.size() > 0){
-            //majorVer = scPackageDetails[0].MajorVersion;
-            //minorVer = scPackageDetails[0].MinorVersion;  
+        if(scPackageDetails.size() > 0){            
             verNo = String.valueOf(scPackageDetails[0].MajorVersion)+ '.' + String.valueof(scPackageDetails[0].MinorVersion);  
         }
         System.debug('Ver No => '+verNo);
@@ -421,14 +419,14 @@ public without sharing class Sustain_MigrationWizardController {
         string CurrentMethodName = 'getAllEmissionFactors';
         try{
             EmissionFactorWrapper wrap= new EmissionFactorWrapper();    
-            List<Sobject> elecFctrList = database.query('select id,Name from ElectricityEmssnFctrSet where Source_Record_ID__c = null order by Lastmodifieddate desc limit 1000');
-            List<Sobject> othFctrList=database.query('select id,Name from OtherEmssnFctrSet where Source_Record_ID__c = null order by Lastmodifieddate desc limit 1000');
-            List<Sobject> airFctrList=database.query('select id,Name from AirTravelEmssnFctr where Source_Record_ID__c = null order by Lastmodifieddate desc limit 1000');
-            List<Sobject> grndFctrList=database.query('select id,Name from GroundTravelEmssnFctr where Source_Record_ID__c = null order by Lastmodifieddate desc limit 1000');
-            List<Sobject> frgtFctrList=database.query('select id,Name from FrgtHaulingEmssnFctr where Source_Record_ID__c = null order by Lastmodifieddate desc limit 1000');
-            List<Sobject> htlFctrList=database.query('select id,Name from HotelStayEmssnFctr where Source_Record_ID__c = null order by Lastmodifieddate desc limit 1000');
-            List<Sobject> refriFctrList=database.query('select id,Name from RefrigerantEmssnFctr where Source_Record_ID__c = null order by Lastmodifieddate desc limit 1000');
-            List<Sobject> rntalFctrList=database.query('select id,Name from RentalCarEmssnFctr where Source_Record_ID__c = null order by Lastmodifieddate desc limit 1000');
+            List<Sobject> elecFctrList = database.query('select id,Name from ElectricityEmssnFctrSet order by Lastmodifieddate desc limit 1000');
+            List<Sobject> othFctrList=database.query('select id,Name from OtherEmssnFctrSet order by Lastmodifieddate desc limit 1000');
+            List<Sobject> airFctrList=database.query('select id,Name from AirTravelEmssnFctr order by Lastmodifieddate desc limit 1000');
+            List<Sobject> grndFctrList=database.query('select id,Name from GroundTravelEmssnFctr order by Lastmodifieddate desc limit 1000');
+            List<Sobject> frgtFctrList=database.query('select id,Name from FrgtHaulingEmssnFctr order by Lastmodifieddate desc limit 1000');
+            List<Sobject> htlFctrList=database.query('select id,Name from HotelStayEmssnFctr order by Lastmodifieddate desc limit 1000');
+            List<Sobject> refriFctrList=database.query('select id,Name from RefrigerantEmssnFctr order by Lastmodifieddate desc limit 1000');
+            List<Sobject> rntalFctrList=database.query('select id,Name from RentalCarEmssnFctr order by Lastmodifieddate desc limit 1000');
             wrap.elecFctrList=elecFctrList;
             wrap.othFctrList=othFctrList;
             wrap.airFctrList=airFctrList;

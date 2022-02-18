@@ -1,4 +1,11 @@
-@isTest  
+/***************************************************************************************************************
+* Name - MetadataServiceTest
+* Description - This class is used as a test class for MetadataService apex class.
+* Author - Accenture (Bindhyachal)
+* Created Date -9/19/2021
+* Last Modified By & Date - Accenture, 2/16/2022
+* ***************************************************************************************************************/
+@isTest(SeeAllData=False)
 private class MetadataServiceTest{  
     private class WebServiceMockImpl implements WebServiceMock {
         public void doInvoke(
@@ -219,7 +226,6 @@ private class MetadataServiceTest{
             new MetadataService.SharingRules();
             new MetadataService.CustomConsoleComponents();
             new MetadataService.Portal();
-            //new MetadataService.DomainWhitelist();
             new MetadataService.ChartSummary();
             new MetadataService.RunTestFailure();
             new MetadataService.Territory();
@@ -255,12 +261,10 @@ private class MetadataServiceTest{
             new MetadataService.DeployOptions();
             new MetadataService.FlowAssignment();
             new MetadataService.ProfileApplicationVisibility();
-            //new MetadataService.CustomApplicationComponents();
             new MetadataService.FlowElementReferenceOrValue();
             new MetadataService.EntitlementTemplate();
             new MetadataService.ProfileTabVisibility();
             new MetadataService.ActionOverride();
-            //new MetadataService.WorkspaceMappings();
             new MetadataService.WorkflowAction();
             new MetadataService.DashboardFolder();
             new MetadataService.PermissionSetApexPageAccess();
@@ -398,8 +402,7 @@ private class MetadataServiceTest{
             new MetadataService.LiveChatAgentConfig();
             new MetadataService.AdjustmentsSettings();                               
             new MetadataService.ForecastingSettings();                                
-            new MetadataService.QuickActionListItem();           
-            //new MetadataService.Branding();          
+            new MetadataService.QuickActionListItem();                    
             new MetadataService.QuickActionLayoutItem();                     
             new MetadataService.OpportunityListFieldsSelectedSettings();        
             new MetadataService.ApprovalStepRejectBehavior();
@@ -431,13 +434,11 @@ private class MetadataServiceTest{
             new MetadataService.NextAutomatedApprover();
             new MetadataService.ApprovalProcess();
             new MetadataService.QuickActionLayout();
-            //new MetadataService.PushNotifications();
             new MetadataService.ForecastRangeSettings();
             new MetadataService.IdeaReputationLevel();
             new MetadataService.NetworkTabSet();
             new MetadataService.SkillProfileAssignments();
             new MetadataService.CustomShortcut();
-            //new MetadataService.PagesToOpen();
             new MetadataService.AgentConfigUserAssignments();
             new MetadataService.NetworkMemberGroup();
             new MetadataService.FindSimilarOppFilter();
@@ -1137,7 +1138,7 @@ private class MetadataServiceTest{
     }
 
     @IsTest
-    private static void elfMissingGetResultTest() { // elf patch
+    private static void elfMissingGetResultTest() {
         Test.startTest();
             new MetadataService.readWorkflowRuleResponse_element().getResult();
             new MetadataService.readSamlSsoConfigResponse_element().getResult();

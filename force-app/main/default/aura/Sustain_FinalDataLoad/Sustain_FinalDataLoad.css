@@ -1,16 +1,12 @@
 .THIS .align-center{
     text-align: left;
 }
-
-.THIS .table-class
-{
-        border: 2px solid black;
-
+.THIS .table-class{
+    border: 2px solid black;
 }
 .THIS .tableFixHead{ 
-                overflow: auto;
-                height: 513px;
-    /*border: 2px solid black;*/
+    overflow: auto;
+    height: 513px;
 }
 .THIS .notstarted-status{
    background: gray;

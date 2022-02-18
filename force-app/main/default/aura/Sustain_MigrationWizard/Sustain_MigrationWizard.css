@@ -20,19 +20,7 @@
     height: 50px;
     overflow: auto;
 }
-/*.THIS thead{
-    display: table;
-    width: calc( 100% - 1em );
-    table-layout: fixed;
 
-}
-.THIS tbody{
-    display: block;
-    width: 100%;
-    table-layout: fixed;
-    height: 50px;
-    overflow: auto;
-}*/
 .THIS .iconStyle {
     --sds-c-icon-color-foreground-default: #1434A4;
 }

@@ -1,3 +1,10 @@
+/***************************************************************************************************************
+* Name - Sustain_UtilsTest
+* Description - This class is used as a test class for Sustain_Utils apex class.
+* Author - Accenture (Gopalarao)
+* Created Date -9/28/2021
+* Last Modified By & Date - Accenture, 2/16/2022
+* ***************************************************************************************************************/
 @isTest(SeeAllData=False)
 private class Sustain_UtilsTest {
     
@@ -6,7 +13,7 @@ private class Sustain_UtilsTest {
         List<SObject> sObjectNew = new List<SObject>();
         List<Database.SaveResult> results =new List<Database.SaveResult>();
         List<String> assetContactIdList=new List<String>();
-        
+        List<String> assetContactIdList1=new List<String>();
         sustain_app__ServiceProvider__c supplier=new sustain_app__ServiceProvider__c();
         supplier.Name='Constellation Energy';
         insert supplier;
@@ -40,23 +47,24 @@ private class Sustain_UtilsTest {
          User u1 = Sustain_TestDataFactory.createAdmninUser();
         
         Test.startTest();
-        System.runAs(u1){
-            Sustain_Utils.createGenericRecords(newSObject, fieldMappingList);
-            Sustain_Utils.createGenericRecords(null, null);
-            Sustain_Utils.createEnergyUseandItemRecords(newSObject, fieldMappingList);
-            Sustain_Utils.createEnergyUseandItemRecords(null, null);
-            Sustain_Utils.updateSourceObjectRecords(newSObject, sObjectNew, 'GeneratedWaste');
-            Sustain_Utils.updateSourceObjectRecords(null, null, 'GeneratedWaste');
-            Sustain_Utils.updateErrorResult(newSObject, results);
-            Sustain_Utils.createOtherEmissionChildRecords(newSObject, fieldMappingList);
-            Sustain_Utils.createOtherEmissionChildRecords(null, null);
-            Sustain_Utils.createBuildingEnergyIntensityValueRecords(newSObject, fieldMappingList);
-            Sustain_Utils.createBuildingEnergyIntensityValueRecords(null, null);
-            //Sustain_Utils.addAccountField(assetContactIdList, newSObject);
-            Sustain_Utils.getTargetIds(assetContactIdList, 'sustain_app__BuildingEnergyIntensity__c');
-            Sustain_Utils.getFootPrintIdScope3EmssnIdMap(assetContactIdList);
-            Sustain_Utils.addToCarbonFootprintIdList('printId');
-        }
+            System.runAs(u1){
+                Sustain_Utils.createGenericRecords(newSObject, fieldMappingList);
+                Sustain_Utils.createGenericRecords(null, null);
+                Sustain_Utils.createEnergyUseandItemRecords(newSObject, fieldMappingList);
+                Sustain_Utils.createEnergyUseandItemRecords(null, null);
+                Sustain_Utils.updateSourceObjectRecords(newSObject, sObjectNew, 'GeneratedWaste');
+                Sustain_Utils.updateSourceObjectRecords(null, null, 'GeneratedWaste');
+                Sustain_Utils.updateErrorResult(newSObject, results);
+                Sustain_Utils.createOtherEmissionChildRecords(newSObject, fieldMappingList);
+                Sustain_Utils.createOtherEmissionChildRecords(null, null);
+                Sustain_Utils.createBuildingEnergyIntensityValueRecords(newSObject, fieldMappingList);
+                Sustain_Utils.createBuildingEnergyIntensityValueRecords(null, null);
+                Sustain_Utils.addAccountField(assetContactIdList,assetContactIdList, newSObject);
+                Sustain_Utils.addAccountIDField(assetContactIdList,newSObject);
+                Sustain_Utils.getTargetIds(assetContactIdList, 'sustain_app__BuildingEnergyIntensity__c');
+                Sustain_Utils.getFootPrintIdScope3EmssnIdMap(assetContactIdList);
+                Sustain_Utils.addToCarbonFootprintIdList('printId');            
+            }
         Test.stopTest();
         String sql = 'select id from GeneratedWaste';
         list<Sobject> lst = database.query(sql);

@@ -4,7 +4,7 @@
         <itemInstances>
             <componentInstance>
                 <componentName>Sustain_MigrationWizardHomePage</componentName>
-              <!--  <identifier>Sustain_MigrationWizardHomePage</identifier>-->
+                <identifier>Sustain_MigrationWizardHomePage</identifier>
             </componentInstance>
         </itemInstances>
         <itemInstances>
@@ -18,7 +18,7 @@
                     <value>true</value>
                 </componentInstanceProperties>
                 <componentName>desktopDashboards:embeddedDashboard</componentName>
-              <!--  <identifier>desktopDashboards_embeddedDashboard1</identifier>-->
+                <identifier>desktopDashboards_embeddedDashboard1</identifier>
             </componentInstance>
         </itemInstances>
         <itemInstances>
@@ -32,7 +32,7 @@
                     <value>true</value>
                 </componentInstanceProperties>
                 <componentName>desktopDashboards:embeddedDashboard</componentName>
-              <!--  <identifier>desktopDashboards_embeddedDashboard2</identifier>-->
+                <identifier>desktopDashboards_embeddedDashboard2</identifier>
             </componentInstance>
         </itemInstances>
         <name>main</name>

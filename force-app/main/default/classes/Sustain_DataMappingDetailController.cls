@@ -79,14 +79,13 @@ public class Sustain_DataMappingDetailController {
         list<totalRcdCountwrapper> totalDataList = new list<totalRcdCountwrapper> ();
         list<totalRcdCountwrapper> tempDataList1 = new list<totalRcdCountwrapper> ();
         list<totalRcdCountwrapper> tempDataList2 = new list<totalRcdCountwrapper> ();
-        //totalCountwrapperCustomClass totalCountObj  = new totalCountwrapperCustomClass();
         
         list<Object_Mappings__c> objDetails  = [select id, Source_Object__c,Total_Records__c,Target_Object__c,Source_Object_Label__c,Source_Recordtype_Label__c,  
                 Destination_Object_Label__c , Total_Fields__c,Total_To_Review_Fields__c,Removed_Field_Mapping_Count__c  from Object_Mappings__c where 
                 Mapping_Included__c=true AND Total_Mapping_Eligible_Field__c > 0 AND  Check_Source_And_Target__c ='true' 
                 order by Removed_Field_Mapping_Count__c DESC, Source_Object_Label__c ASC];
         integer totalFieldsCount = 0;
-        //integer totalObjCount = 0;
+       
         integer totalPendingReview = 0;
         integer totalRemovedFileds = 0;
         integer totaFieldsMapped = 0;
@@ -97,7 +96,7 @@ public class Sustain_DataMappingDetailController {
         list<string> objName = new list<string>();
         
         if(objDetails != null) {
-            //totalObjCount = objDetails?.size();
+           
             for (Object_Mappings__c obj : objDetails) {
                 totalFieldsCount+=Integer.valueOf(obj.Total_Fields__c);
                 totalPendingReview+= Integer.valueOf(obj.Total_To_Review_Fields__c);
@@ -105,16 +104,6 @@ public class Sustain_DataMappingDetailController {
                 totaFieldsMapped = Integer.valueOf(obj.Total_Fields__c) - Integer.valueOf(obj.Removed_Field_Mapping_Count__c);
                 boolean status = totaFieldsMapped == Integer.valueOf(obj.Total_Fields__c) ? true : false;
                 
-                //For sorting fieldmapping record
-                /*if(status == true){
-                    recObj1 = new totalRcdCountwrapper(Integer.valueOf(obj.Total_Fields__c), totaFieldsMapped, obj.Source_Object_Label__c, 
-                            obj.Source_Recordtype_Label__c, obj.Destination_Object_Label__c,status, obj.id,obj.Target_Object__c);
-                    tempDataList1.add(recObj1);
-                }else{
-                    recObj2 = new totalRcdCountwrapper(Integer.valueOf(obj.Total_Fields__c), totaFieldsMapped, obj.Source_Object_Label__c, 
-                            obj.Source_Recordtype_Label__c, obj.Destination_Object_Label__c,status, obj.id,obj.Target_Object__c);
-                    totalDataList.add(recObj2);
-                }*/
                 recordObj = new totalRcdCountwrapper(Integer.valueOf(obj.Total_Fields__c), totaFieldsMapped, obj.Source_Object_Label__c, 
                             obj.Source_Recordtype_Label__c, obj.Destination_Object_Label__c,status, obj.id,obj.Target_Object__c);
                 if(obj.Total_Records__c != null){
@@ -128,7 +117,7 @@ public class Sustain_DataMappingDetailController {
                 }
             }
         }
-        //totalRecodCount = getTotalRecordCount(objName);        
+             
         totalCountwrapper totalCountObj  = new totalCountwrapper(totalObjectCount, totalFieldsCount, totalRemovedFileds, totalPendingReview,totalRecodCount,'');
         mainWrapper resultObj = new mainWrapper(totalDataList, totalCountObj);  
         return resultObj;
@@ -148,7 +137,7 @@ public class Sustain_DataMappingDetailController {
             return false;
         }       
     }
-    
+    @testVisible
     private static Long getTotalRecordCount(List<String> objNames) {
         long totalRcdCount = 0;
         try {

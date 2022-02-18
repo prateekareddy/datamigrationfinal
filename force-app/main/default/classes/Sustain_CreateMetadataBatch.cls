@@ -18,10 +18,9 @@ global class Sustain_CreateMetadataBatch implements Database.Batchable<sObject>,
             'Object_Mapping__r.Target_Object__c,Source_Field_Type__c, Target_Field__c, Reference_To__c, Target_Field_Type__c, To_Review__c FROM Field_Mappings__c '+
             'where ((New_Field__c = true AND Object_Mapping__r.Mapping_Included__c = true AND Mapping_Included__c = true AND Calculated__c = false) OR Source_Field__c IN:staticFlds ) AND Field_Created__c = false order By Object_Mapping__r.Source_Object__c ASC';
         System.debug('query--------------> ' + query);
-        return Database.getQueryLocator(query);
-        
-    } 
-    
+        return Database.getQueryLocator(query);        
+    }
+
     // Execute method
     global void execute(Database.BatchableContext BC, List<Field_Mappings__c> scope) {
         System.debug('Inside execute--------------> ');
@@ -32,10 +31,9 @@ global class Sustain_CreateMetadataBatch implements Database.Batchable<sObject>,
         List<Object_Mappings__c> staticFieldMappingsObj = new List<Object_Mappings__c>();
         List<Field_Mappings__c> fieldMappingsObj = new List<Field_Mappings__c>();
         Set<String> staticFieldObj = new Set<String>();
-        Map<String, List<Field_Mappings__c>> refFieldOnSourceMap = new Map<String, List<Field_Mappings__c>>();
-       
+        Map<String, List<Field_Mappings__c>> refFieldOnSourceMap = new Map<String, List<Field_Mappings__c>>();       
+        
         try {
-
             Set<String> createdFields = new Set<String>();
             String sql = 'SELECT id,Name,Object_Mapping__r.Target_Object__c,Target_Field__c, Field_Created__c FROM Field_Mappings__c '
              +' where Field_Created__c = true and id in:scope order By Object_Mapping__r.Source_Object__c ASC';
@@ -45,24 +43,19 @@ global class Sustain_CreateMetadataBatch implements Database.Batchable<sObject>,
             Map<String, Schema.SObjectType> globalDescribe = Schema.getGlobalDescribe();
             List<String> apiNames = new List<String>();
             String uniqueKey = '';
-            if(Sustain_UtilConstants.STATICFIELDNAMES.contains(scope[0].Source_Field__c) && scope[0].Source_Field__c != 'Source_Record_ID__c')/* || 
-                scope[0].Object_Mapping__r.Object_Type__c == 'custom')*/{
+            if(Sustain_UtilConstants.STATICFIELDNAMES.contains(scope[0].Source_Field__c) && scope[0].Source_Field__c != 'Source_Record_ID__c'){
                 apiNames.add(scope[0].Object_Mapping__r.source_Object__c);
-                uniqueKey = scope[0].Object_Mapping__r.source_Object__c.replace('Migration_Util__', '') + '.' + scope[0].Target_Field__c.replace('Migration_Util__', '');
+                uniqueKey = scope[0].Object_Mapping__r.source_Object__c.replace(Label.Sustain_Name_Space_Prefix, '') + '.' + scope[0].Target_Field__c.replace(Label.Sustain_Name_Space_Prefix, '');
             } else {
                 apiNames.add(scope[0].Object_Mapping__r.Target_Object__c);
-                uniqueKey = scope[0].Object_Mapping__r.Target_Object__c.replace('Migration_Util__', '') + '.' + scope[0].Target_Field__c.replace('Migration_Util__', '');
+                uniqueKey = scope[0].Object_Mapping__r.Target_Object__c.replace(Label.Sustain_Name_Space_Prefix, '') + '.' + scope[0].Target_Field__c.replace(Label.Sustain_Name_Space_Prefix, '');
             }
-            
-            //apiNames.add(scope[0].Object_Mapping__r.source_Object__c);
-            //apiNames.add(scope[0].Object_Mapping__r.Target_Object__c);
-
             Schema.DescribeSObjectResult[] results = Schema.describeSObjects(apiNames);
             for(Schema.DescribeSobjectResult describeResult : results){
                 System.debug('describeResult '+describeResult.getLabel());
                 for(Schema.SobjectField field: describeResult.fields.getMap().values()){
-                    if(describeResult.getName().replace('Migration_Util__', '')+'.'+field.getDescribe().getName().replace('Migration_Util__', '') == uniqueKey){
-                        createdFields.add(describeResult.getName().replace('Migration_Util__', '')+'.'+field.getDescribe().getName().replace('Migration_Util__', ''));
+                    if(describeResult.getName().replace(Label.Sustain_Name_Space_Prefix, '')+'.'+field.getDescribe().getName().replace(Label.Sustain_Name_Space_Prefix, '') == uniqueKey){
+                        createdFields.add(describeResult.getName().replace(Label.Sustain_Name_Space_Prefix, '')+'.'+field.getDescribe().getName().replace(Label.Sustain_Name_Space_Prefix, ''));
                         break;
                     }
                     system.debug('fields--->' + describeResult.getName()+'.'+field.getDescribe().getName());
@@ -75,14 +68,14 @@ global class Sustain_CreateMetadataBatch implements Database.Batchable<sObject>,
                 if(!createdFields.contains(fmapping.Object_Mapping__r.Target_Object__c+ '.' + fmapping.Target_Field__c) 
                  && !createdFields.contains(fmapping.Object_Mapping__r.source_Object__c+ '.' + fmapping.Target_Field__c)){
                     if(!Sustain_UtilConstants.STATICFIELDNAMES.contains(fmapping.Source_Field__c) && fmapping.Object_Mapping__r.Object_Type__c != 'custom'){
-                       fieldsName.add(fmapping.Source_Field__c.replace('Migration_Util__', ''));                
+                       fieldsName.add(fmapping.Source_Field__c.replace(Label.Sustain_Name_Space_Prefix, ''));                
                         system.debug('fmapping.Source_Field__c-->' + fmapping.Source_Field__c);  
                         objectsName.add(fmapping.Object_Mapping__r.Source_Object__c); 
                         trgtObject.add(fmapping.Object_Mapping__r.Target_Object__c); 
                         system.debug('objectsName-->' + objectsName);
                         system.debug('trgtObject-->' + trgtObject);
                         Sustain_MigrateCustomFieldsController.readCustomObjectSync(new list<String>(objectsName	), (new list<string>(trgtObject))[0], fieldsName, null);  
-                    } else if(fmapping.Object_Mapping__r.Object_Type__c == 'custom' /*fmapping.Object_Mapping__r.Source_Object__c == fmapping.Object_Mapping__r.Target_Object__c*/){
+                    } else if(fmapping.Object_Mapping__r.Object_Type__c == 'custom' ){
                         List<Field_Mappings__c> fieldMapList = new List<Field_Mappings__c>();
                         System.debug('refFieldOnSourceMap '+refFieldOnSourceMap);
                         String key = fmapping.Object_Mapping__r.Source_Object__c+'.'+fmapping.Source_Field__c;
@@ -139,8 +132,7 @@ global class Sustain_CreateMetadataBatch implements Database.Batchable<sObject>,
             emailAddress.add(us.email);
             Sustain_SendNotification sendData =new Sustain_SendNotification();
             if(String.isBlank(errorMessage)){               
-                Migration_Status__c ms = Migration_Status__c.getOrgDefaults();
-                //ms.Current_Migration_Stage__c = migStage;
+                Migration_Status__c ms = Migration_Status__c.getOrgDefaults();                
                 ms.Metadata_Created__c = true;
                 ms.Running_Metadata_Job__c = false;
                 update ms;  

@@ -2,12 +2,10 @@
 	init : function(component, event, helper) {
 		helper.loadData(component, event, helper);
         helper.checkCurRunJobIsSampleFinal(component, event, helper);
-
 	},
     startLoad : function(component, event, helper) {
     component.set("v.startClicked",true);
-            component.set("v.deleteClicked",false);
-            //alert(component.get("v.resultCmp"));
+            component.set("v.deleteClicked",false);            
             var action = component.get("c.startFinalDataLoad");            
             action.setCallback(this, function(response) {
                 var state = response.getState();
@@ -26,34 +24,10 @@
         action.setCallback(this, function(response) {
             var state = response.getState();
             if (state === "SUCCESS") {
-                var storeResponse = response.getReturnValue();
-                //alert(storeResponse);
+                var storeResponse = response.getReturnValue();                
                 component.set("v.displaybuttons",storeResponse);
                 var compEvent = component.getEvent("handleRefreshEvent");
-                compEvent.fire();
-                       /* if (component.isValid() && response !== null && response.getState() == 'SUCCESS') {
-                            var toastEvent = $A.get("e.force:showToast");                    
-                            toastEvent.setParams({
-                                title : 'Success',
-                                message: 'Delete migrated data job has been initiated, we will notify you once its done.',
-                                duration:' 5000',
-                                key: 'info_alt',
-                                type: 'success',
-                                mode: 'pester'
-                            });
-                            toastEvent.fire();
-                        }  else {
-                            var toastEvent = $A.get("e.force:showToast");                    
-                            toastEvent.setParams({
-                                title : 'Error',
-                                message: 'There is a problem. Please contact System Admin.',
-                                duration:' 5000',
-                                key: 'info_alt',
-                                type: 'error',
-                                mode: 'pester'
-                            });
-                            toastEvent.fire();
-                        }*/
+                compEvent.fire();                       
             }
         });
         $A.enqueueAction(action);
@@ -69,8 +43,7 @@
         action.setCallback(this, function(response) {
             var state = response.getState();
             if (state === "SUCCESS") {
-                var storeResponse = response.getReturnValue();
-                //alert(storeResponse);
+                var storeResponse = response.getReturnValue();                
                 component.set("v.displaybuttons",storeResponse);
                 var compEvent = component.getEvent("handleRefreshEvent");
                 compEvent.fire();                       
@@ -79,8 +52,7 @@
         $A.enqueueAction(action);
     },
     
-    viewReportPage :  function(component,event,helper){
-        //alert('inside viewReportPage ');
+    viewReportPage :  function(component,event,helper){        
         event.preventDefault();
         var ctarget = event.currentTarget.dataset.value; 
         var ctargetName = event.currentTarget.dataset.name;
@@ -89,22 +61,14 @@
         if(ctargetName !== '' && ctargetName !==null) {
             let list = ctargetName.split("-");
             srcApiName = list[0];
-            srcRcdType = list[1];
-            //alert('ctargetName-->'+ ctargetName);
-            //alert('list-->'+ list);
-            //alert('srcApiName--> '+ srcApiName);
-            //alert('srcRcdType--> '+ srcRcdType);
+            srcRcdType = list[1];            
             var action = component.get("c.getREportIdByObjName");
             action.setParams({ srcApiName : srcApiName},{ srcRcdType : srcRcdType});
             action.setCallback(this, function(response) {
-                var state = response.getState();
-                //alert('response.getState()-->'+response.getState());
+                var state = response.getState();               
                 if (state === "SUCCESS") {
                     var reportId = response.getReturnValue();
-                    var urlEvent = $A.get("e.force:navigateToURL");
-                   // urlEvent.setParams({
-                   // "url": '/lightning/r/Report/' + response.getReturnValue() +'/view'
-                   // window.open('/lightning/r/Report/' + response.getReturnValue() +'/view');
+                    var urlEvent = $A.get("e.force:navigateToURL");                  
                    if(reportId != null && reportId != undefined){
                     window.open('/lightning/r/Report/'+reportId + '/view?reportFilters=OR[{"operator":"equals","value":"Error Occurred","column":"'+srcApiName+'.Migration_Util__Migration_Status__c"}]','_blank');
                    }else{
@@ -118,16 +82,13 @@
                                 mode: 'pester'
                             });
                             toastEvent.fire();
-                   }
-                    //  });
-                  //  urlEvent.fire();
+                   }                  
                 }
             });
             $A.enqueueAction(action);
         }
     },
-    handleFinish : function(component,event,helper){
-        //component.set("v.selectedStep", "step1");
+    handleFinish : function(component,event,helper){        
         var urlEvent = $A.get("e.force:navigateToURL");
         urlEvent.setParams({
             "url": "/lightning/page/home"

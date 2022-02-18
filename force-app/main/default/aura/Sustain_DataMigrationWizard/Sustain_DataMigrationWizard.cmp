@@ -23,15 +23,11 @@
     <aura:attribute name="checkboxChecked" type="boolean" default="false"/>
     <aura:attribute name="migStatusData" type="boolean" />
     
-    <aura:handler name="init" value="{!this}" action="{!c.doInit}"/>
-    <aura:handler name="reloadparent" event="c:Sustain_ReloadParentCompEvnt" action="{!c.refreshParent}"/>
-    
-    <aura:handler name="handleProceedEvent" event="c:Sustain_handleProceedEvent" action="{!c.handleNext}"/>
     <!--aura handler with waiting and donewaiting events-->
-    <!--aura:handler event="aura:waiting" action="{!c.showSpinner}"/>
-    <aura:handler event="aura:doneWaiting" action="{!c.hideSpinner}"/-->
-    <aura:handler name="handleRefreshEvent" event="c:Sustain_UpdateParentEvent" action="{!c.handleRefreshEvent}"/>
-    <!--<lightning:spinner aura:id="Spinner" alternativeText="Loading" size="medium" variant="brand" class="slds-hide"/>-->
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}"/>
+    <aura:handler name="reloadparent" event="c:Sustain_ReloadParentCompEvnt" action="{!c.refreshParent}"/>    
+    <aura:handler name="handleProceedEvent" event="c:Sustain_handleProceedEvent" action="{!c.handleNext}"/>    
+    <aura:handler name="handleRefreshEvent" event="c:Sustain_UpdateParentEvent" action="{!c.handleRefreshEvent}"/>    
     
     <!--loading spinner start-->
     <aura:if isTrue="{!v.spinner}">
@@ -43,20 +39,16 @@
             </div>
         </div>
     </aura:if>
-    <!-- Loading spinner end-->   
+    <!-- Loading spinner end-->      
     
-    <!--c:Sustain_ShowSpinnerCmp show="{!v.showSpinner}"/-->
-
-    <div class="slds-p-around_xx-large" style="background:white;">
-       
+    <div class="slds-p-around_xx-large" style="background:white;">       
         <lightning:progressIndicator currentStep="{!v.selectedStep}" type="path">
             <lightning:progressStep label="Org Data Scan Output" value="step1" onclick="{!c.selectStep1}" />
             <lightning:progressStep label="Review/Update Object Mapping" value="step2" onclick="{!c.selectStep2}" />
             <lightning:progressStep label="Review/Update Field Mapping" value="step3" disabled = "{!v.latestDataLoad}" onclick="{!c.selectStep3}" />
             <lightning:progressStep label="Confirm Data Mapping" value="step4" onclick="{!c.selectStep4}" />
             <lightning:progressStep label="Verify Sample Data Load" value="step5" onclick="{!c.selectStep5}" />
-            <lightning:progressStep label="Complete Data load" value="step6" />
-            
+            <lightning:progressStep label="Complete Data load" value="step6" />            
         </lightning:progressIndicator> 
       
         <div class="slds-p-around--medium">

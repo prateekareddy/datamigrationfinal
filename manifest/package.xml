@@ -736,6 +736,17 @@
 		<members>Sustain_SampleLoadObjects.sustain_app_BuildingSizeCategory_c</members>
 		<members>Sustain_SampleLoadObjects.sustain_app_ProcurementDataset_c</members>
 		<members>Sustain_SampleLoadObjects.sustain_app_ProcurementEntry_c</members>
+		 <members>Sustain_SampleLoadObjects.Supplier_Account</members>
+
+        <members>Sustain_SampleLoadObjects.Vendor_Account</members>
+
+        <members>Sustain_SampleLoadObjects.Organizational_Asset_Data_Center</members>
+
+        <members>Sustain_SampleLoadObjects.Organizational_Asset_Fleet_Vehicle</members>
+
+        <members>Sustain_SampleLoadObjects.Organizational_Asset_Private_Jet</members>
+
+        <members>Sustain_SampleLoadObjects.Organizational_Asset_Real_State</members>
 		<name>CustomMetadata</name>
 	</types>
 	<types>

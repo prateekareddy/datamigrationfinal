@@ -19,8 +19,17 @@ global with sharing class Sustain_DeleteTargetRecordsBatch implements Database.B
     global Database.QueryLocator start(Database.BatchableContext BC) {        
         dataLoadReq.Status__c = 'In Progress';
         update dataLoadReq;
-
-        String soqlStr = 'Select Id  FROM ' + currentObjMap.target_Object__c + ' where Source_Record_ID__c != null';
+       
+        String soqlStr = 'Select Id ';
+        if(currentObjMap.Source_Object__c.equals(orgAssetObjAPI) && currentObjMap.Target_Object__c.equals('StnryAssetEnvrSrc') ){
+            soqlStr += ',ParentEnvironmentalSourceId ';      
+        } else if(currentObjMap.Source_Object__c.equals(orgAssetObjAPI) && (currentObjMap.Target_Object__c.equals('VehicleAssetEmssnSrc') || currentObjMap.Target_Object__c.equals('Scope3EmssnSrc'))){ 
+            soqlStr += ',ParentEmissionSourceId ';
+        } else if(currentObjMap.Source_Object__c.equals(carbonFootPrintObjAPI) && currentObjMap.Target_Object__c.equals('StnryAssetCrbnFtprnt')){
+            soqlStr += ',PrevYrAnnlCarbonFootprintId ';
+        }
+        
+        soqlStr += 'FROM ' + currentObjMap.target_Object__c + ' where Source_Record_ID__c != null';
 
         if(isErrorDataOnly){
             String sqlSource = 'Select Id from ' + currentObjMap.Source_Object__c + ' where Migration_Status__c =  \'Error Occurred\'';
@@ -35,13 +44,7 @@ global with sharing class Sustain_DeleteTargetRecordsBatch implements Database.B
         if(currentObjMap.target_Record_Type__c != null && currentObjMap.target_Record_Type__c != 'Master'){
             soqlStr = soqlStr + ' and recordType.DeveloperName =\'' + recordTypeName + '\'';
         }
-        if(currentObjMap.Source_Object__c.equals(orgAssetObjAPI) && currentObjMap.Target_Object__c.equals('StnryAssetEnvrSrc') ){
-            soqlStr += ' order by ParentEnvironmentalSourceId nulls last';
-        } else if(currentObjMap.Source_Object__c.equals(orgAssetObjAPI) && (currentObjMap.Target_Object__c.equals('VehicleAssetEmssnSrc') || currentObjMap.Target_Object__c.equals('Scope3EmssnSrc'))){ 
-             soqlStr += ' order by ParentEmissionSourceId nulls last';
-        } else if(currentObjMap.Source_Object__c.equals(carbonFootPrintObjAPI) && currentObjMap.Target_Object__c.equals('StnryAssetCrbnFtprnt')){
-            soqlStr += ' order by PrevYrAnnlCarbonFootprintId nulls last';
-        }
+        
         System.debug('soqlStr -->'+soqlStr);
         return Database.getQueryLocator(soqlStr);
     }
@@ -50,8 +53,40 @@ global with sharing class Sustain_DeleteTargetRecordsBatch implements Database.B
     global void execute(Database.BatchableContext BC, List<Sobject> scope) {
         string CurrentMethodName = 'execute';
         system.debug('value of scope'+scope);
-        try{            
-            List<Database.DeleteResult> deleteResults = Database.delete(scope, false);
+        try{ 
+            List<Database.DeleteResult> deleteResults;
+            
+            if(currentObjMap.Target_Object__c.equals('StnryAssetEnvrSrc')  || currentObjMap.Target_Object__c.equals('VehicleAssetEmssnSrc') || 
+                currentObjMap.Target_Object__c.equals('Scope3EmssnSrc') || currentObjMap.Target_Object__c.equals('StnryAssetCrbnFtprnt')){                
+                String parentFieldName = '';          
+                List<Sobject> parentSobjectList = new List<Sobject>();
+                List<Sobject> childSobjectList = new List<Sobject>();
+                if(currentObjMap.Source_Object__c.equals(orgAssetObjAPI) && currentObjMap.Target_Object__c.equals('StnryAssetEnvrSrc') ){
+                    parentFieldName = 'ParentEnvironmentalSourceId';      
+                } else if(currentObjMap.Source_Object__c.equals(orgAssetObjAPI) && (currentObjMap.Target_Object__c.equals('VehicleAssetEmssnSrc') || currentObjMap.Target_Object__c.equals('Scope3EmssnSrc'))){ 
+                    parentFieldName = 'ParentEmissionSourceId';
+                } else if(currentObjMap.Source_Object__c.equals(carbonFootPrintObjAPI) && currentObjMap.Target_Object__c.equals('StnryAssetCrbnFtprnt')){
+                    parentFieldName = 'PrevYrAnnlCarbonFootprintId';
+                }
+                for(Sobject sob: scope){
+                    if(parentFieldName != '' && sob.get(parentFieldName) == null){
+                        childSobjectList.add(sob);    
+                    }else{
+                        parentSobjectList.add(sob);
+                    }
+                }
+                if(childSobjectList.size() > 0){
+                    deleteResults = Database.delete(childSobjectList, false);
+                }
+
+                if(parentSobjectList.size() > 0){
+                    List<Database.DeleteResult> tempdeleteResults = Database.delete(parentSobjectList, false);
+                    deleteResults.addAll(tempdeleteResults);
+                }
+            }else{
+               deleteResults = Database.delete(scope, false);
+            }
+            
             for(Integer i=0;i<deleteResults.size();i++){
                 if (!deleteResults.get(i).isSuccess()){    
                     Database.Error error = deleteResults.get(i).getErrors().get(0);                  
@@ -104,8 +139,7 @@ global with sharing class Sustain_DeleteTargetRecordsBatch implements Database.B
                 soqlDelete += ' where Status__c != \'Not Started\' LIMIT 1000';
             }
             System.debug('soqlDelete '+soqlDelete);
-            //objMapList = database.query(soqlDelete);
-
+           
             for(Object_Mappings__c objMap : database.query(soqlDelete)){
                 objMap.Status__c= 'Not Started';
                 objMapList.add(objMap);

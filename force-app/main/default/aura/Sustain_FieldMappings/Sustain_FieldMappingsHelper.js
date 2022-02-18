@@ -1,16 +1,14 @@
 ({
 	loadData: function(component, event, helper) {
         //call apex class method
-        var action = component.get("c.getAllMapping");
-         
-        //var tabName = component.find()
+        var action = component.get("c.getAllMapping");         
+        
         // set the parameters to method  
         action.setCallback(this, function(response) {
             //store state of response
             var state = response.getState();
             if (state === "SUCCESS") {
-                var resultData = response.getReturnValue();
-                //console.log("v.dataSize" +resultData.length);
+                var resultData = response.getReturnValue();                
                 //set response value in wrapperList attribute on component.
                 
                 component.set("v.selectedObject" , true);
@@ -25,7 +23,7 @@
                 var fieldList= [];
                 var fieldListMap = component.get("v.fieldMappingList");
                 var setVar=[];
-                //var temp=[];
+               
                 for(var i=0; i<fieldListMap.length; i++){
                     if(fieldListMap[i].Migration_Util__Object_Mapping__c===wrapperListId[0].Id){
                         fieldList.push(fieldListMap[i]);
@@ -36,11 +34,7 @@
                 }
                 component.set("v.affectedfFieldMappingList",fieldList);
                 component.set("v.updatedSet",setVar);
-                /*for(var i=0;i<fieldList.length;i++){
-                    if(fieldList[i].To_Review__c===true){
-                        temp.push(fieldList[i]);
-                    }
-                }*/
+             
                 component.set("v.filtertedList",fieldList);
                 if(fieldList.length>= 10){
                      var cmpTarget = component.find("myTable");
@@ -105,8 +99,7 @@
         // the server-side action returns
         action.setCallback(this, function(response) {
             var state = response.getState();
-            if (state === "SUCCESS") {
-                
+            if (state === "SUCCESS") {                
                 // Alert the user with the value returned 
                 // from the server
                 component.set("v.custFieldList",response.getReturnValue());
@@ -114,10 +107,7 @@
                 var custFieldList=component.get("v.custFieldList");
                 //add it to array
                 fullMap.push({key: objName, value: custFieldList});
-                component.set("v.custFieldFullMap",fullMap);
-                // You would typically fire a event here to trigger 
-                // client-side notification that the server-side 
-                // action is complete 
+                component.set("v.custFieldFullMap",fullMap);                
             }
         });
         $A.enqueueAction(action);
@@ -132,10 +122,7 @@
         // the server-side action returns
         action.setCallback(this, function(response) {
             var state = response.getState();
-            if (state === "SUCCESS") {
-                // You would typically fire a event here to trigger 
-                // client-side notification that the server-side 
-                // action is complete
+            if (state === "SUCCESS") {                
                var toastEvent = $A.get("e.force:showToast");
                toastEvent.setParams({
                      title: 'Success!',
@@ -144,13 +131,7 @@
                });
                toastEvent.fire();
             }
-        }); 
-        // optionally set storable, abortable, background flag here
-        
-        // A client-side action could cause multiple events, 
-        // which could trigger other events and 
-        // other server-side action calls.
-        // $A.enqueueAction adds the server-side action to the queue.
+        });        
         $A.enqueueAction(action);
     },
     
@@ -160,14 +141,10 @@
         // the server-side action returns
         action.setCallback(this, function(response) {
             var state = response.getState();
-            if (state === "SUCCESS") {
-                
-                // Alert the user with the value returned 
-                // from the server
+            if (state === "SUCCESS") {                
                 component.set("v.allMappingList",response.getReturnValue());
             }
         });
         $A.enqueueAction(action);
-    },
-    
+    },    
 })

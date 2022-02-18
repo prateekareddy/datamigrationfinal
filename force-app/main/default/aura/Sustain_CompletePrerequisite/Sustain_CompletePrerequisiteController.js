@@ -1,6 +1,5 @@
 ({
     doInit: function(component, event, helper) {
-        //helper.scheduleCreateFieldBatch(component, event, helper);
         helper.getFactorList(component, event, helper);
     },
 	closeModal : function(component, event, helper) {

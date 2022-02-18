@@ -94,8 +94,7 @@ public class Sustain_FinalDataController {
     public static mainWrapper getDataMappingDetails() {        
         totalRcdCountwrapper recordObj = null;
         list<totalRcdCountwrapper> totalDataList = new list<totalRcdCountwrapper> ();
-        //totalCountwrapperCustomClass totalCountObj  = new totalCountwrapperCustomClass();
-        
+      
         list<Object_Mappings__c> objDetails  = [select id, Source_Object__c,Status__c,Target_Object__c,Source_Object_Label__c,Total_Records__c,Source_Recordtype_Label__c,Source_Record_Type__c, Destination_Object_Label__c    , Total_Fields__c,Total_To_Review_Fields__c,Removed_Field_Mapping_Count__c  from Object_Mappings__c where Mapping_Included__c=true order by sequence_number__c ASC nulls last];
         integer totalRecCount =0;
         integer totalFieldsCount = 0;

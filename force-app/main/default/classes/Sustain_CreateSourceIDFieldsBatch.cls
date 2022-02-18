@@ -8,6 +8,8 @@
 global class Sustain_CreateSourceIDFieldsBatch implements Database.Batchable<sObject>,Database.Stateful, Database.AllowsCallouts {
     
     private static final string CurrentClassName = 'Sustain_CreateSourceIDFieldsBatch';
+    public boolean noErrorExist = true;
+
     global Database.QueryLocator start(Database.BatchableContext BC) {
         String query = 'SELECT id,Name,Target_Object__c FROM Object_Mappings__c where Object_Type__c != \'custom\'' ;
         return Database.getQueryLocator(query);
@@ -34,25 +36,34 @@ global class Sustain_CreateSourceIDFieldsBatch implements Database.Batchable<sOb
                     Sustain_MigrateCustomFieldsController.createField( objNames, 'Source_Record_ID__c', 255, 'Text', 'Source Record ID', userInfo.getSessionID());
                     objNames = new Set<String>();
                 }
-            }
-            /*Sustain_MigrateCustomFieldsController.createField( Sustain_UtilConstants.SCFirstCoreObjectNames, 'Source_Record_ID9__c', 255, 'Text', 'Source Record ID', userInfo.getSessionID());
-            Sustain_MigrateCustomFieldsController.createField( Sustain_UtilConstants.SCSecondCoreObjectNames, 'Source_Record_ID9__c', 255, 'Text', 'Source Record ID', userInfo.getSessionID());
-            Sustain_MigrateCustomFieldsController.createField( Sustain_UtilConstants.SCThirdCoreObjectNames, 'Source_Record_ID9__c', 255, 'Text', 'Source Record ID', userInfo.getSessionID());
-            Sustain_MigrateCustomFieldsController.createField( Sustain_UtilConstants.SCFourCoreObjectNames, 'Source_Record_ID9__c', 255, 'Text', 'Source Record ID', userInfo.getSessionID());
-            */
+            }            
             
         } catch(Exception e){
             Sustain_UtilityError.createErrorLog(e, CurrentClassName, CurrentMethodName); 
+            noErrorExist = false;
         }        
     }
     
     // Finish Method
-    global void finish(Database.BatchableContext BC) {        
+    global void finish(Database.BatchableContext BC) {    
         User us = [Select id,Name,email from User where id=:Userinfo.getUserId() limit 1];
         List<String> emailAddress = new List<String>();
         emailAddress.add(us.email);    
-        Sustain_SendNotification sendData =new Sustain_SendNotification();        
-        sendData.sendChatterNotification('MetadataEmails');
-        sendData.sendEmailNotification('Sustain_MetadataEmails',emailAddress);
+        Sustain_SendNotification sendData =new Sustain_SendNotification();    
+        if(noErrorExist){    
+            Migration_Status__c ms = Migration_Status__c.getInstance(UserInfo.getOrganizationId());
+            if(ms==null){
+                ms = new Migration_Status__c();                              
+            }
+            ms.Current_Migration_Stage__c   = 'Org Data Scan Output'; 
+            ms.Ready_To_Launch__c = false;
+            ms.MetaData_Created__c = false;
+            ms.Source_Record_ID_Metadata_Created__c = true;
+            upsert ms;   
+            sendData.sendChatterNotification('MetadataEmails');
+            sendData.sendEmailNotification('Sustain_MetadataEmails',emailAddress);
+        }else{
+            sendData.sendEmailNotification('Sustain_MetadataErrorEmails',emailAddress);
+        }
     }
 }
